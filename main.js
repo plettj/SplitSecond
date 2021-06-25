@@ -1,3 +1,5 @@
+// MAIN, GLOBAL, & INITIALIZATION
+
 // Global variables
 let width = 16; // in units
 let height = 12;
@@ -5,11 +7,15 @@ let unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
+let paused = false;
+let stepCounter = 0; // animation step digit
+let step = 0; // actual animation step
+let time = 1; // -1 = BACKWARDS TIME
+let frame = 0; // CORE OPERATION: up when forward, down when backward!!!!
 
 // Canvas holder
 let ctx = [];
-
-function canvasInit(num) {
+function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
         canvas.id = "Canvas" + i;
@@ -19,7 +25,18 @@ function canvasInit(num) {
         ctx.push(canvas.getContext('2d'));
     }
 }
-canvasInit(3);
+makeContexts(3);
+
+// Image holder
+let img = [];
+function makeImages(srcs) {
+    for (let i = 0; i < img.length; i++) {
+        let image = new Image();
+        image.src = "images/" + srcs[i];
+        img.push(image);
+    }
+}
+makeImages(["BlockTileset.png"]);
 
 
 // Game logic
@@ -29,6 +46,7 @@ var paused = false;
 // To run actual frame-by-frame animation
 function animate() {
 	if (!paused) {
+        frame += time;
         // Stuff to run each frame goes here.
 	}
 	raf = window.requestAnimationFrame(animate);
