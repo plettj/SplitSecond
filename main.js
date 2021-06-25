@@ -25,12 +25,13 @@ function makeContexts(num) {
         ctx.push(canvas.getContext('2d'));
     }
 }
-makeContexts(3);
+makeContexts(1);
+console.log(ctx);
 
 // Image holder
 let img = [];
 function makeImages(srcs) {
-    for (let i = 0; i < img.length; i++) {
+    for (let i = 0; i < srcs.length; i++) {
         let image = new Image();
         image.src = "images/" + srcs[i];
         img.push(image);
@@ -40,7 +41,6 @@ makeImages(["BlockTileset.png"]);
 
 
 // Game logic
-var paused = false;
 
 
 // To run actual frame-by-frame animation
@@ -52,4 +52,8 @@ function animate() {
 	raf = window.requestAnimationFrame(animate);
 }
 
-animate();
+
+window.onload = function () {
+    levels.drawLevel(0);
+    animate();
+}
