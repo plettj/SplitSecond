@@ -1,0 +1,14 @@
+* {
+    margin: 0;
+}
+
+body {
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+canvas {
+    position: absolute;
+    left: calc((100% - var(--unit) * var(--width)) / 2);
+    top: calc((100% - var(--unit) * var(--height)) / 2);
+    background-color: rgba(0, 0, 0, 0);
+}
