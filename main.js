@@ -3,7 +3,7 @@
 // Global variables
 let width = 16; // in units
 let height = 12;
-let unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
+let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
