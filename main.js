@@ -8,13 +8,14 @@ document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
 let paused = false;
+let accentStones = 12; // average number of blocks until an accent stone is added.
 let stepCounter = 0; // animation step digit
 let step = 0; // actual animation step
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: up when forward, down when backward!!!!
 
 // Canvas holder
-let ctx = [];
+let ctx = []; // 0: background; 3: front
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
@@ -25,8 +26,7 @@ function makeContexts(num) {
         ctx.push(canvas.getContext('2d'));
     }
 }
-makeContexts(1);
-console.log(ctx);
+makeContexts(4);
 
 // Image holder
 let img = [];

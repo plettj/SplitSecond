@@ -3,12 +3,13 @@
 }
 
 body {
-    background-color: rgba(0, 0, 0, 1);
+    background-color: #05081b;
 }
 
 canvas {
     position: absolute;
+    outline: black solid var(--unit);
     left: calc((100% - var(--unit) * var(--width)) / 2);
     top: calc((100% - var(--unit) * var(--height)) / 2);
-    background-color: #05081b;
+    background-color: rgba(0, 0, 0, 0);
 }
