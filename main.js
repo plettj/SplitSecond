@@ -1,9 +1,11 @@
-// MAIN, GLOBAL, & INITIALIZATION
+// GLOBAL, INITIALIZATION, & EVENTS
 
-// Global variables
+// GLOBAL VARIABLES
+
 let width = 16; // in units
 let height = 12;
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
+let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
@@ -11,11 +13,14 @@ let paused = false;
 let accentStones = 12; // average number of blocks until an accent stone is added.
 let stepCounter = 0; // animation step digit
 let step = 0; // actual animation step
+let stepSpeed = 6; // 6 steps per second
 let time = 1; // -1 = BACKWARDS TIME
-let frame = 0; // CORE OPERATION: up when forward, down when backward!!!!
+let frame = 0; // CORE OPERATION: going up when forward, down when backward!
+
+// INITIALIZATION
 
 // Canvas holder
-let ctx = []; // 0: background; 3: front
+let ctx = []; // [0-background, 1-moon, 2-meteors, 3-hills, 4-blocks, 5-, 6-, 7-avatar]
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
@@ -26,7 +31,7 @@ function makeContexts(num) {
         ctx.push(canvas.getContext('2d'));
     }
 }
-makeContexts(4);
+makeContexts(8);
 
 // Image holder
 let img = [];
@@ -37,23 +42,47 @@ function makeImages(srcs) {
         img.push(image);
     }
 }
-makeImages(["BlockTileset.png"]);
+makeImages(["BlockTileset.png", "AvatarTileset.png", "Background.png", "Moon.png", "Hills.png", "MeteorTileset.png"]);
 
-
-// Game logic
-
+// *** Where it all starts. ***
+window.onload = function () {
+    levels.drawLevel(0);
+    background.addMeteor(6, 0);
+    background.addMeteor(14, 20);
+    background.update(false);
+    animate();
+}
 
 // To run actual frame-by-frame animation
 function animate() {
 	if (!paused) {
         frame += time;
+        if (!(frame % (60 / stepSpeed))) {
+            stepCounter++;
+            step += time;
+            background.update();
+        }
         // Stuff to run each frame goes here.
 	}
 	raf = window.requestAnimationFrame(animate);
 }
 
+// EVENTS
 
-window.onload = function () {
-    levels.drawLevel(0);
-    animate();
+function keyPressed(code, num) {
+    /*if (code > 36 && code < 41) avatar.keys[code - 37] = num;
+	else if (code === 65) avatar.keys[0] = num; // Left
+	else if (code === 87 || code === 32) avatar.keys[1] = num; // Up
+	else if (code === 68) avatar.keys[2] = num; // Right
+	else if (code === 83) avatar.keys[3] = num; // Down
+    else*/ if ((code === 69 || code === 32) && num) swapTime();
 }
+
+document.addEventListener("keydown", function(event) {
+	keyPressed(event.keyCode, 1);
+});
+document.addEventListener("keyup", function(event) {
+	keyPressed(event.keyCode, 0);
+});
+
+document.addEventListener('contextmenu', event => event.preventDefault());
