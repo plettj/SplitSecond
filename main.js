@@ -10,10 +10,10 @@ document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
 let paused = false;
-let accentStones = 12; // average number of blocks until an accent stone is added.
+let accentStones = 14; // average number of blocks until an accent stone is added.
 let stepCounter = 0; // animation step digit
 let step = 0; // actual animation step
-let stepSpeed = 6; // 6 steps per second
+let stepSpeed = 7; // 6 steps per second
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
 
@@ -48,7 +48,8 @@ makeImages(["BlockTileset.png", "AvatarTileset.png", "Background.png", "Moon.png
 window.onload = function () {
     levels.drawLevel(0);
     background.addMeteor(6, 0);
-    background.addMeteor(14, 20);
+    background.addMeteor(9, 160);
+    background.addMeteor(13, 50);
     background.update(false);
     animate();
 }
@@ -57,7 +58,7 @@ window.onload = function () {
 function animate() {
 	if (!paused) {
         frame += time;
-        if (!(frame % (60 / stepSpeed))) {
+        if (!(frame % Math.round(60 / stepSpeed))) {
             stepCounter++;
             step += time;
             background.update();
