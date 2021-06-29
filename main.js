@@ -47,9 +47,9 @@ makeImages(["BlockTileset.png", "AvatarTileset.png", "Background.png", "Moon.png
 // *** Where it all starts. ***
 window.onload = function () {
     levels.drawLevel(0);
-    background.addMeteor(6, 0);
-    background.addMeteor(9, 160);
-    background.addMeteor(13, 50);
+    //background.addMeteor(6, 0);
+    //background.addMeteor(9, 160);
+    //background.addMeteor(13, 50);
     background.update(false);
     animate();
 }
@@ -57,13 +57,14 @@ window.onload = function () {
 // To run actual frame-by-frame animation
 function animate() {
 	if (!paused) {
+        avatar.physics();
         frame += time;
         if (!(frame % Math.round(60 / stepSpeed))) {
             stepCounter++;
             step += time;
             background.update();
         }
-        // Stuff to run each frame goes here.
+        // Normal stuff that runs each frame goes here.
 	}
 	raf = window.requestAnimationFrame(animate);
 }
@@ -71,12 +72,12 @@ function animate() {
 // EVENTS
 
 function keyPressed(code, num) {
-    /*if (code > 36 && code < 41) avatar.keys[code - 37] = num;
+    if (code > 36 && code < 41) avatar.keys[code - 37] = num;
 	else if (code === 65) avatar.keys[0] = num; // Left
 	else if (code === 87 || code === 32) avatar.keys[1] = num; // Up
 	else if (code === 68) avatar.keys[2] = num; // Right
 	else if (code === 83) avatar.keys[3] = num; // Down
-    else*/ if ((code === 69 || code === 32) && num) swapTime();
+    else if ((code === 69 || code === 32) && num) swapTime();
 }
 
 document.addEventListener("keydown", function(event) {
