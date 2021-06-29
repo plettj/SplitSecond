@@ -38,7 +38,7 @@ let avatar = {
 
         if (this.action == 1 || this.action == 2) {
             this.vcoor[0] += (this.action * 2 - 3) * this.amax[0];
-            if (Math.abs(this.vcoor[0] > this.vmax[0])) this.vcoor[0] -= (this.action * 2 - 3) * this.amax[0];
+            if (Math.abs(this.vcoor[0]) > this.vmax[0]) this.vcoor[0] -= (this.action * 2 - 3) * this.amax[0];
         } else if (!this.action) {
             this.vcoor[0] = Math.sign(this.vcoor[0]) * (Math.abs(this.vcoor[0]) - this.amax[0]);
         }
