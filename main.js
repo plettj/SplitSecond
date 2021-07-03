@@ -47,9 +47,9 @@ makeImages(["BlockTileset.png", "AvatarTileset.png", "Background.png", "Moon.png
 // *** Where it all starts. ***
 window.onload = function () {
     levels.drawLevel(0);
-    //background.addMeteor(6, 0);
-    //background.addMeteor(9, 160);
-    //background.addMeteor(13, 50);
+    background.addMeteor(6, 0);
+    background.addMeteor(9, 160);
+    background.addMeteor(13, 50);
     background.update(false);
     animate();
 }
