@@ -42,7 +42,7 @@ function makeImages(srcs) {
         img.push(image);
     }
 }
-makeImages(["BlockTileset.png", "Background.png"]);
+makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 
 // *** Where it all starts. ***
 window.onload = function () {

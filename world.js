@@ -19,7 +19,7 @@ let avatar = {
         this.vcoor = [0, 0];
     },
     draw: function (a) { // a: [xOnTileset, yOnTileset]
-        //ctx[7].drawImage(img[1], a[0] * 100, a[1] * 100, 100, 100, this.coor[0], this.coor[1], unit, unit);
+        ctx[5].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, this.coor[0], this.coor[1], unit, unit);
     },
     physics: function () { // physics for the avatar.
         clear(5, this.coor);
