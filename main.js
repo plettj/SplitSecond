@@ -20,7 +20,7 @@ let frame = 0; // CORE OPERATION: going up when forward, down when backward!
 // INITIALIZATION
 
 // Canvas holder
-let ctx = []; // [0-background, 1-moon, 2-meteors, 3-hills, 4-blocks, 5-, 6-, 7-avatar]
+let ctx = []; // [0-background, 1-blocks, 2-objects, 3-ghosts, 4-ghostBlocks, 5-avatar]
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
@@ -31,7 +31,7 @@ function makeContexts(num) {
         ctx.push(canvas.getContext('2d'));
     }
 }
-makeContexts(8);
+makeContexts(6);
 
 // Image holder
 let img = [];
@@ -42,15 +42,12 @@ function makeImages(srcs) {
         img.push(image);
     }
 }
-makeImages(["BlockTileset.png", "AvatarTileset.png", "Background.png", "Moon.png", "Hills.png", "MeteorTileset.png"]);
+makeImages(["BlockTileset.png", "Background.png"]);
 
 // *** Where it all starts. ***
 window.onload = function () {
     levels.drawLevel(0);
-    background.addMeteor(6, 0);
-    background.addMeteor(9, 160);
-    background.addMeteor(13, 50);
-    background.update(false);
+    ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     animate();
 }
 
@@ -62,7 +59,6 @@ function animate() {
         if (!(frame % Math.round(60 / stepSpeed))) {
             stepCounter++;
             step += time;
-            background.update();
         }
         // Normal stuff that runs each frame goes here.
 	}

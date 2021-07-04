@@ -1,46 +1,18 @@
 // BLOCKS, OBJECTS, LEVELS, & GRAPHICS
 
-function clear(context, coor = false) {
+function clear(context, coor = false) { // clears contexts
     if (!coor) ctx[context].clearRect(0, 0, ctx[context].canvas.width, ctx[context].canvas.height);
     else ctx[context].clearRect(coor[0] - unit / 20, coor[1] - unit / 20, unit * 1.1, unit * 1.1);
 }
-
-function Meteor(x, startStep) {
-    this.x = x; // in pixels
-    this.step = startStep;
-    this.gen = Math.floor(Math.random() * 9); // cell to start animating
-    this.update = function () { // draw based on the global "step"
-        if (step >= this.step && step - this.step < (height * 5 + 5)) {
-            ctx[2].drawImage(img[5], ((this.gen + step) % 9) * 250, 0, 250, 300, (this.x - step + this.step) * pixel, (step - this.step - 15) * pixel * 2 - pixel, unit * 2.5, unit * 3);
-        } else return false;
+function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
+    if (x >= width) return true;
+    else if (l[y][x] !== 0) return false;
+    let above = 0;
+    for (i = 0; i < y; i++) {
+        if (above !== 2) above = l[i][x];
+        else if (l[i][x] == 1) above = 1;
     }
-}
-
-let background = {
-    moon: [(width - 6.5) * 10, 15], // coordinates, in "pixels"
-    meteors: [],
-    update: function (update = true) {
-        if (update) { // move the meteors and moon
-            ctx[2].clearRect(0, 0, width * unit, height * unit);
-            for (let i = 0; i < this.meteors.length; i++) {
-                this.meteors[i].update();
-            }
-            // UPDATE THE MOONNNNN DON'T FORGET
-        } else { // draw the whole background
-            ctx[0].drawImage(img[2], 0, 0, unit * width, unit * height);
-            ctx[1].drawImage(img[3], unit * (width - 6.5), unit * 1.5, unit * 4, unit * 4);
-            ctx[2].clearRect(0, 0, width * unit, height * unit);
-            ctx[3].clearRect(0, 0, width * unit, height * unit); // clear the moon canvas too.
-            ctx[3].drawImage(img[4], 0, 0, unit * width, unit * height);
-        }
-    },
-    addMeteor: function (x/* in units */, startStep) {
-        this.meteors.push(new Meteor(x * 10, startStep));
-    },
-    reset: function () {
-        // clear the meteor and moon canvases.
-        // call this.update(false)
-    }
+    return (above == 2);
 }
 
 let levels = {
@@ -50,41 +22,50 @@ let levels = {
         this.levels.push(values);
     },
     drawLevel: function (level) { // draw the specified level
-        let colour = Math.floor(Math.random() * 4);
-        let next = Math.floor(Math.random() * accentStones * 2);
-        for (let y = 0; y < this.levels[level].length; y++) {
-            for (let x = 0; x < this.levels[level][0].length; x++) {
-                switch (this.levels[level][y][x]) {
-                    case 1: // normal block
-                        let blocks = [0, 0, 0, 0]; // [right, left, up, down]
-                        let l = levels.levels[level];
-                        if (x > 0) if (l[y][x - 1] !== 1) blocks[1] = 1;
-                        if (x < this.levels[level][0].length - 1) if (l[y][x + 1] !== 1) blocks[0] = 1;
-                        if (y > 0) if (l[y - 1][x] !== 1) blocks[2] = 1;
-                        if (y < this.levels[level].length - 1) if (l[y + 1][x] !== 1) blocks[3] = 1;
-                        ctx[4].drawImage(img[0], (blocks[1] + 2 * blocks[0]) * 100, (blocks[2] + 2 * blocks[3]) * 100, 100, 100, x * unit, y * unit, unit, unit);
-                        
-                        if (!blocks[2] || (!blocks[0] && !blocks[3]) || !blocks[1]) {
-                            if (!next) { // place accent stone
-                                let params = [[400, 100, 0], [500, 100, 0], [600, 200, 1]]; // [column, width, x]
-                                let possible = []; // possible kinds of accent stones
-                                if (!blocks[2]) possible.push(0);
-                                if ((!blocks[0] && !blocks[3])) possible.push(1);
-                                if (!blocks[1]) possible.push(2);
-                                let pi = Math.floor(Math.random() * possible.length); // this way, params[possible[pi]] holds the params for the drawing
-                                ctx[4].drawImage(img[0], params[possible[pi]][0], (colour % 4) * 100, params[possible[pi]][1], 100, x * unit - params[possible[pi]][2] * unit, y * unit, unit * params[possible[pi]][1] / 100, unit);
-                                next = Math.floor(Math.random() * accentStones * 2);
-                                colour += 1;
-                            } else next--;
+        let l = this.levels[level];
+        let semiShape = [0, []]; // [(1-open {=} 2-line {+}), [x's of no {=}]];
+        for (let y = 0; y < height; y++) {
+            let semiNext = [0, []]; // the going "semiShape" for the next row
+            for (let x = 0; x < width; x++) {
+                switch (l[y][x]) {
+                    case 0:
+                        if (semisolid(x, y, l)) { // semisolid above
+                            let option = Math.floor(Math.random() * 4); // style option: 1-{=} 2-{+} 3-{-}
+                            if (semisolid(x + 1, y, l)) { // RIGHT is available
+                                if (semiShape[1].includes(x)) { // CAN'T do {=}
+                                    if (option == 1) option = (Math.floor(Math.random() * 2)) * 2;
+                                }
+                            } else option = (Math.floor(Math.random() * 2)) * 3;
+                            if (option == 1) semiNext[1].push(x);
+                            if (semiShape[0]) option = option % 3;
+                            ctx[1].drawImage(img[0], option * 100, 500 + semiShape[0] * 100, 100, 100, x * unit, y * unit, unit, unit);
+                            semiShape[0] = option % 3; // % 3 turns option {-} into 0 (good!)
                         }
                         break;
+                    case 1: // normal block
+                        let blocks = [0, 0, 0, 0]; // [right, left, up, down]; 1 means not there.
+                        if (x < width - 1) if (l[y][x + 1] !== 1) blocks[0] = 1;
+                        if (x > 0) if (l[y][x - 1] !== 1) blocks[1] = 1;
+                        if (y > 0) if (l[y - 1][x] !== 1) blocks[2] = 1;
+                        if (y < height - 1) if (l[y + 1][x] !== 1) blocks[3] = 1;
+                        ctx[1].drawImage(img[0], (blocks[1] + 2 * blocks[0]) * 100, (blocks[2] + 2 * blocks[3]) * 100, 100, 100, x * unit, y * unit, unit, unit);
+                        if (x > 0 && y > 0) if (!blocks[1] && !blocks[2] && l[y - 1][x - 1] !== 1) ctx[1].drawImage(img[0], 400, 0, 100, 100, x * unit, y * unit, unit, unit);
+                        if (x < width - 1 && y > 0) if (!blocks[0] && !blocks[2] && l[y - 1][x + 1] !== 1) ctx[1].drawImage(img[0], 400, 100, 100, 100, x * unit, y * unit, unit, unit);
+                        if (x < width - 1 && y < height - 1) if (!blocks[0] && !blocks[3] && l[y + 1][x + 1] !== 1) ctx[1].drawImage(img[0], 400, 200, 100, 100, x * unit, y * unit, unit, unit);
+                        if (x > 0 && y < height - 1) if (!blocks[1] && !blocks[3] && l[y + 1][x - 1] !== 1) ctx[1].drawImage(img[0], 400, 300, 100, 100, x * unit, y * unit, unit, unit);
+                        break;
                     case 2: // semisolid block
+                        let blocks2 = [0, 0]; // [right, left]; 1 means not there.
+                        if (x < width - 1) if (l[y][x + 1] !== 2) blocks2[0] = 1;
+                        if (x > 0) if (l[y][x - 1] !== 2) blocks2[1] = 1;
+                        ctx[1].drawImage(img[0], (blocks2[1] + 2 * blocks2[0]) * 100, 400, 100, 100, x * unit, y * unit, unit, unit);
                         break;
                     case 3: // avatar location
                         avatar.init([x * unit, y * unit]);
                         break;
                 }
             }
+            semiShape = semiNext;
         }
         // draw the buttons and spikes and walls and doors and stuff
     },
@@ -100,12 +81,12 @@ levels.addLevel([
     [1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1, 1, 1],
     [1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1],
     [1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
+    [1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1, 1, 1, 1, 1],
     [1, 1, 0, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 0, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0],
+    [3, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 2, 0, 0, 0],
     [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]);
