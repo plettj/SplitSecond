@@ -12,10 +12,10 @@ let avatar = {
     dir: 1, // 0-left 1-right
     inAir: 0, // 0-grounded 1-in air
     vcoor: [0, 0], // velocity of the avatar
-    vmax: [pixel * 1.2, 1 / 3.25 * unit], // max velocity: [x, y]
+    vmax: [pixel * 1.2, 1 / 3.85 * unit], // max velocity: [x, y]
     amax: 1 / 7 * pixel, // max acceleration
-    gravity: 1 / 5 * pixel,
-    jump: 1 / 3.25 * unit, // jump speed.
+    gravity: 1 / 7 * pixel,
+    jump: 1 / 3.85 * unit, // jump speed.
     init: function (coor) {
         this.coor = coor;
         this.dir = 1;
@@ -24,12 +24,14 @@ let avatar = {
     draw: function (a) { // a: [xOnTileset, yOnTileset]
         ctx[5].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
     },
-    drawTempSquares: function (squares) {
+    drawTempSquares: function (squares, colour, opacity = 0.3) {
         ctx[4].beginPath();
+        ctx[4].globalAlpha = opacity;
+        ctx[4].fillStyle = colour;
         for (let i = 0; i < squares.length; i++) {
-            ctx[4].rect(squares[i][0] * unit, squares[i][1] * unit, unit, unit);
+            ctx[4].fillRect(squares[i][0] * unit, squares[i][1] * unit, unit, unit);
         }
-        ctx[4].stroke();
+        //ctx[4].stroke();
     },
     physics: function () { // physics for the avatar.
         clear(5, this.coor);
@@ -49,6 +51,7 @@ let avatar = {
         /* On the axis you're testing, use AFTER;
            On the other axis, use BEFORE.
            WAIT THIS ALLOWS DIAGONAL CLIPS OH NO */
+        // Solve corner clips: if BEFORE square = 1.
         
         let wallCheck = !(after[3] >= height || after[2] < 0); // if you go through the top or bottom of the screen, don't throw errors!
         if (before[3] < after[3]) { // DOWN - crossed into new cell
@@ -113,6 +116,20 @@ let avatar = {
                 this.vcoor[1] -= this.jump;
                 this.inAir = 1;
             }
+        }
+        
+        //clear(4);
+        //this.drawTempSquares([[before[0], before[2]], [before[1], before[2]], [before[0], before[3]], [before[1], before[3]]], "#ff1515");
+        //this.drawTempSquares([[after[0], after[2]], [after[1], after[2]], [after[0], after[3]], [after[1], after[3]]], "#15ffff");
+        let CLIPPED = false;
+        if (before[2] >= 0 && before[2] < height) if (l[before[2]][before[0]] == 1 || l[before[2]][before[1]] == 1) CLIPPED = true;
+        if (before[3] >= 0 && before[3] < height) if (l[before[3]][before[0]] == 1 || l[before[3]][before[1]] == 1) CLIPPED = true;
+        if (CLIPPED) {
+            console.log("You've corner-clipped!!");
+            //this.drawTempSquares([[Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)]], "#1515ff", 0.9);
+            let centerCo = [Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
+            if (centerCo[1] >= 0 && centerCo[1] < height) if (l[centerCo[1][0]] !== 1) if (this.vcoor[0] > 0) this.coor[0] = centerCo[0] * unit + 2 * pixel;
+            else this.coor[0] = centerCo[0] * unit - 1 * pixel;
         }
 
         if (!this.action && Math.abs(this.vcoor[0]) < this.vmax[0] / 4) this.coor[0] -= this.vcoor[0];
