@@ -6,16 +6,16 @@
 
 let avatar = {
     coor: [0, 0], // in ACTUAL computer pixels
-    box: [7, 7], // 1 game pixel from left, 2 from top.
-    keys: [0, 0, 0, 0], // [A, W, D, S] 1 = pressed.
+    box: [7, 7], // 1 game pixel from left, 2 from top
+    keys: [0, 0, 0, 0], // [A, W, D, S] 1 = pressed
     action: 0, // 0-still 1-left 2-right 3-block
     dir: 1, // 0-left 1-right
     inAir: 0, // 0-grounded 1-in air
     vcoor: [0, 0], // velocity of the avatar
-    vmax: [pixel, pixel * 2], // max velocity: [x, y];
-    amax: 1 / 7 * pixel, // max acceleration: [ground, air].
-    gravity: 1 / 6 * pixel,
-    jump: 1 / 3.6 * unit, // jump speed.
+    vmax: [pixel * 1.2, 1 / 3.25 * unit], // max velocity: [x, y]
+    amax: 1 / 7 * pixel, // max acceleration
+    gravity: 1 / 5 * pixel,
+    jump: 1 / 3.25 * unit, // jump speed.
     init: function (coor) {
         this.coor = coor;
         this.dir = 1;
@@ -33,49 +33,89 @@ let avatar = {
     },
     physics: function () { // physics for the avatar.
         clear(5, this.coor);
-        if (this.inAir) this.vcoor[1] += this.gravity;
+        let key = [(!this.keys[3]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
+        
+        // [Xleft, Xright, Ytop, Ybottom]
+        let before = [Math.floor((this.coor[0] + pixel) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
+        if (!key[0]) this.vcoor[0] = Math.sign(this.vcoor[0]) * (Math.abs(this.vcoor[0]) - this.amax / (this.inAir + 1));
+        this.vcoor[0] += key[0] * this.amax / (this.inAir + 1);
+        this.vcoor[1] += this.gravity;
+        for (let i = 0; i < 2; i++) if (Math.abs(this.vcoor[i]) > this.vmax[i]) this.vcoor[i] = Math.sign(this.vcoor[i]) * this.vmax[i];
         this.coor[0] += this.vcoor[0];
         this.coor[1] += this.vcoor[1];
+        let after = [Math.floor((this.coor[0] + pixel) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
+        
+        let l = levels.levels[levels.currentLevel];
+        /* On the axis you're testing, use AFTER;
+           On the other axis, use BEFORE.
+           WAIT THIS ALLOWS DIAGONAL CLIPS OH NO */
+        
+        let wallCheck = !(after[3] >= height || after[2] < 0); // if you go through the top or bottom of the screen, don't throw errors!
+        if (before[3] < after[3]) { // DOWN - crossed into new cell
+            let onGround = false;
+            if (after[3] >= 0 && wallCheck) {
+                if (before[0] >= 0) if (l[after[3]][before[0]] == 1 || l[after[3]][before[0]] == 2) onGround = true;
+                if (before[1] < width) if (l[after[3]][before[1]] == 1 || l[after[3]][before[1]] == 2) onGround = true;
+            }
+            if (onGround) {
+                this.inAir = 0;
+                this.vcoor[1] = 0;
+                this.coor[1] = before[3] * unit;
+            } else this.inAir = 1;
+        } else if (before[2] > after[2]) { // UP - crossed into new cell
+            let hitHead = false;
+            if (after[2] < height && wallCheck) {
+                if (before[0] >= 0) if (l[after[2]][before[0]] == 1) hitHead = true;
+                if (before[1] < width) if (l[after[2]][before[1]] == 1) hitHead = true;
+            }
+            if (hitHead) {
+                this.vcoor[1] = this.gravity / -2;
+                this.coor[1] = before[3] * unit - 2.49 * pixel;
+            }
+        }
+        if (before[1] < after[1] && wallCheck) { // RIGHT - crossed into new cell
+            let hitWall = false;
+            if (after[1] >= width) hitWall = true;
+            else {
+                if (before[2] >= 0) if (l[before[2]][after[1]] == 1) hitWall = true;
+                if (before[3] < height) if (l[before[3]][after[1]] == 1) hitWall = true;
+            }
+            if (hitWall) {
+                this.vcoor[0] = 0;
+                this.coor[0] = before[1] * unit + pixel * 1.99;
+            }
+        } else if (before[0] > after[0] && wallCheck) { // LEFT - crossed into new cell
+            let hitWall = false;
+            if (after[0] < 0) hitWall = true;
+            else {
+                if (before[2] >= 0) if (l[before[2]][after[0]] == 1) hitWall = true;
+                if (before[3] < height) if (l[before[3]][after[0]] == 1) hitWall = true;
+            }
+            if (hitWall) {
+                this.vcoor[0] = 0;
+                this.coor[0] = before[0] * unit - pixel * 0.99;
+            }
+        }
 
-        let key = [(!this.keys[3]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
         if (key[0]) {
             this.dir = (key[0] + 1) / 2;
             if (key[1] >= 0) this.action = (key[0] + 1) / 2 + 1;
             else this.action = 0;
         } else this.action = 0;
         if (!this.inAir && key[1] < 0) this.action = 3;
-        if (!this.inAir && key[1] > 0) {
-            this.vcoor[1] -= this.jump;
-            this.inAir = 1;
-        }
-        // [[xleft, xright], [ytop, ybottom]]
-        let temp = [[Math.floor((this.coor[0] + pixel) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit)], [Math.floor((this.coor[1] + 2.9 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.9) * pixel) / unit)]];
-        let l = levels.levels[levels.currentLevel];
-        // check if in-air (bottom collisions)
-        if (temp[1][1] < height) { // not on the bottom of the screen
-            let onGround = false;
-            if (temp[0][0] >= 0) if (l[temp[1][1]][temp[0][0]] == 1 || l[temp[1][1]][temp[0][0]] == 2) onGround = true;
-            if (temp[0][1] < width) if (l[temp[1][1]][temp[0][1]] == 1 || l[temp[1][1]][temp[0][1]] == 2) onGround = true;
-            if (onGround && this.vcoor[1] >= 0) {
-                this.inAir = 0;
-                this.vcoor[1] = 0;
-                this.coor[1] = (temp[1][1] - 1) * unit;
-            } else this.inAir = 1;
-        } else {
-            // set timeout to die from falling in a pit.
+        if (!this.inAir && key[1] > 0) { // JUMP
+            let hitHead = false;
+            /*if (after[2] < height && after[2] > 0 && wallCheck) {
+                if (before[0] >= 0) if (l[after[2] - 1][before[0]] == 1) hitHead = true;
+                if (before[1] < width) if (l[after[2] - 1][before[1]] == 1) hitHead = true;
+            } // ISSUE: repeated jump underneath block */
+            if (!hitHead) {
+                this.vcoor[1] -= this.jump;
+                this.inAir = 1;
+            }
         }
 
-        // check if
-
-        
-        
-        if (this.action == 1 || this.action == 2) {
-            this.vcoor[0] += (this.action * 2 - 3) * this.amax / (this.inAir + 1);
-            if (Math.abs(this.vcoor[0]) > this.vmax[0]) this.vcoor[0] -= (this.action * 2 - 3) * this.amax / (this.inAir + 1);
-        } else if (!this.action) {
-            this.vcoor[0] = Math.sign(this.vcoor[0]) * (Math.abs(this.vcoor[0]) - this.amax / (this.inAir + 1));
-        }
-
+        if (!this.action && Math.abs(this.vcoor[0]) < this.vmax[0] / 4) this.coor[0] -= this.vcoor[0];
         this.draw([(this.inAir) ? 0 : stepCounter % 4, this.dir + ((this.inAir || this.action == 1 || this.action == 2) ? 2 : 0)]);
     }
 }
