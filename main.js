@@ -54,8 +54,8 @@ window.onload = function () {
 // To run actual frame-by-frame animation
 function animate() {
 	if (!paused) {
-        avatar.physics();
         frame += time;
+        avatar.physics();
         if (!(frame % Math.round(60 / stepSpeed))) {
             stepCounter++;
             step += time;
@@ -68,12 +68,11 @@ function animate() {
 // EVENTS
 
 function keyPressed(code, num) {
-    if (code > 36 && code < 41) avatar.keys[code - 37] = num;
-	else if (code === 65) avatar.keys[0] = num; // Left
-	else if (code === 87 || code === 32) avatar.keys[1] = num; // Up
-	else if (code === 68) avatar.keys[2] = num; // Right
-	else if (code === 83) avatar.keys[3] = num; // Down
-    else if ((code === 69 || code === 32) && num) swapTime();
+	if (code === 37 || code === 65) avatar.keys[0] = num; // Left
+	else if (code === 38 || code === 87) avatar.keys[1] = num; // Up
+	else if (code === 39 || code === 68) avatar.keys[2] = num; // Right
+	else if (code === 40 || code === 83) avatar.keys[3] = num; // Down
+    else if (code === 69 && num) swapTime();
 }
 
 document.addEventListener("keydown", function(event) {

@@ -1,8 +1,8 @@
 // BLOCKS, OBJECTS, LEVELS, & GRAPHICS
 
-function clear(context, coor = false) { // clears contexts
-    if (!coor) ctx[context].clearRect(0, 0, ctx[context].canvas.width, ctx[context].canvas.height);
-    else ctx[context].clearRect(coor[0] - unit / 20, coor[1] - unit / 20, unit * 1.1, unit * 1.1);
+function clear(index, coor = false) { // clears contexts
+    if (!coor) ctx[index].clearRect(0, 0, ctx[index].canvas.width, ctx[index].canvas.height);
+    else ctx[index].clearRect(coor[0] - unit / 20, coor[1] - unit / 20, unit * 1.1, unit * 1.1);
 }
 function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
     if (x >= width) return true;
