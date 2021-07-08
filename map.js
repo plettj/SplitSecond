@@ -1,5 +1,6 @@
-// BLOCKS, OBJECTS, LEVELS, & GRAPHICS
+// OBJECTS, LEVELS, & GRAPHIC HANDLING
 
+// Miscellaneous functions
 function clear(index, coor = false) { // clears contexts
     if (!coor) ctx[index].clearRect(0, 0, ctx[index].canvas.width, ctx[index].canvas.height);
     else ctx[index].clearRect(coor[0] - unit / 20, coor[1] - unit / 20, unit * 1.1, unit * 1.1);
@@ -14,9 +15,117 @@ function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
     }
     return (above == 2);
 }
+function between([a, b], num) {
+    return num >= Math.min(a, b) && num <= Math.max(a, b);
+}
 
+// OBJECTS
+
+// Ghost object constructor
+let Ghost = class {
+    constructor () {
+        this.time = time; // this ghost's native direction
+        this.life = [frame, 1800] // lifetime = [startingFrame, endingFrame]
+        this.coor1 = [Math.round(avatar.coor[0]), Math.round(avatar.coor[1])]; // life began at these pixels
+        this.coor2 = [0, 0]; // life ended at these pixels
+        this.instructions = []; // [x, y, blockFrame, dir, inAir, action]
+        this.frame = 0; // location in instructions
+        this.waiting = false; // whether it doesn't exist
+    }
+    learn () {
+        this.instructions.push([Math.round(avatar.coor[0]), Math.round(avatar.coor[1]), avatar.bFrame, avatar.dir, avatar.inAir, avatar.action]);
+    }
+    draw () {
+        if (this.frame < 0 || this.frame >= this.instructions.length) {
+            if (this.frame < 0) this.frame = 0;
+            else this.frame = this.instructions.length - 1;
+        }
+        var a = this.instructions[this.frame];
+        ctx[4].drawImage(img[2], ((a[4]) ? 0 : stepCounter % 4) * 100, (a[3] + ((a[4] || a[5] == 1 || a[5] == 2) ? 2 : 0)) * 100, 100, 100, a[0], a[1], unit, unit);
+    }
+    newFrame () {
+        if (!this.waiting) { // ghost is waiting for a call to action.
+            if (between(this.life, frame)) { // ghost exists at this time.
+                this.frame += time * this.time;
+                this.draw();
+            } else { // ghost does not exist.
+                this.waiting = true;
+            }
+        } else { // ghost DEFINITELY doesn't exist.
+            if (between(this.life, frame)) { // ghost should exist at this time.
+                this.waiting = false;
+                this.draw();
+            }
+        }
+    }
+    finish () {
+        this.frame = this.instructions.length - 1;
+        this.draw();
+        this.life[1] = frame;
+        this.coor2 = [avatar.coor[0], avatar.coor[1]];
+        this.waiting = false;
+    }
+}
+
+/*
+function Ghost() {
+    this.time = time; // this ghost's native direction
+    this.life = [0, 1800] // lifetime = [startingFrame, endingFrame]
+    this.coor1 = [0, 0]; // life began at these pixels
+    this.coor2 = [0, 0]; // life ended at these pixels
+    this.instructions = []; // [x, y, dir, blockFrame, inAir]
+    this.frame = 0; // location in instructions
+    this.waiting = false; // whether it doesn't exist
+    this.init = function () {
+        this.life[0] = frame;
+        this.time = time;
+        this.coor1 = [avatar.coor[0], avatar.coor[1]];
+    }
+    this.learn = function () {
+        this.instructions.push([Math.round(avatar.coor[0]), Math.round(avatar.coor[1]), avatar.bFrame, avatar.dir, avatar.inAir]);
+    }
+    this.draw = function (draw = true) {
+        if (this.frame < 0 || this.frame >= this.instructions.length) {
+            if (this.frame < 0) this.frame = 0;
+            else this.frame = this.instructions.length - 1;
+        }
+        var a = this.instructions[this.frame];
+        if (!draw) clear(canvases.GCctx, [a[0], a[1]]);
+        else canvases.GCctx.drawImage(avatar.img, step * 100, (a[2] + a[3] * 2) * 100, 100, 100, a[0], a[1], unit, unit);
+    }
+    this.newFrame = function () {
+        if (!this.waiting) { // ghost is waiting for a call to action.
+            if (between(this.life, frame)) { // ghost exists at this time.
+                this.draw(false);
+                this.frame += time * this.time;
+                this.draw();
+            } else { // ghost does not exist.
+                this.draw(false);
+                this.waiting = true;
+            }
+        } else { // ghost DEFINITELY doesn't exist.
+            if (between(this.life, frame)) { // ghost should exist at this time.
+                this.waiting = false;
+                this.draw();
+            }
+        }
+    }
+    this.finish = function () {
+        this.frame = this.instructions.length - 1;
+        this.draw();
+        this.life[1] = frame;
+        this.coor2 = [avatar.coor[0], avatar.coor[1]];
+        this.waiting = false;
+    }
+}
+*/
+
+// LEVELS
+
+// Levels Object
 let levels = {
     levels: [],
+    ghosts: [],
     currentLevel: 0,
     addLevel: function (values/*here I'll add parameters as additional objects are created*/) {
         this.levels.push(values);
@@ -71,12 +180,18 @@ let levels = {
         // draw the buttons and spikes and walls and doors and stuff
     },
     startLevel: function (level) {
+        time = 1;
+        frame = 0;
+        stepcounter = 0;
+        step = 0;
         this.currentLevel = level;
         this.drawLevel(level);
-        // start the specified level
+        this.ghosts = [];
+        nextGhost = new Ghost();
     }
 }
 
+// Level creation!
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -91,7 +206,6 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1],
 ]);
-
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

@@ -10,12 +10,13 @@ document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
 let paused = false;
-let accentStones = 14; // average number of blocks until an accent stone is added.
 let stepCounter = 0; // animation step digit
 let step = 0; // actual animation step
 let stepSpeed = 7; // 6 steps per second
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
+let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier)
+let nextGhost = undefined;
 
 // INITIALIZATION
 
@@ -32,6 +33,7 @@ function makeContexts(num) {
     }
 }
 makeContexts(6);
+ctx[4].globalAlpha = 0.5;
 
 // Image holder
 let img = [];
@@ -46,7 +48,7 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 
 // *** Where it all starts. ***
 window.onload = function () {
-    levels.drawLevel(0);
+    levels.startLevel(0);
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     animate();
 }
@@ -60,7 +62,13 @@ function animate() {
             stepCounter++;
             step += time;
         }
-        // Normal stuff that runs each frame goes here.
+        if (!(frame % GFuel)) { // Run the Ghosts
+            nextGhost.learn();
+            clear(4);
+            for (g in levels.ghosts) {
+                levels.ghosts[g].newFrame();
+            }
+        }
 	}
 	raf = window.requestAnimationFrame(animate);
 }
