@@ -12,7 +12,7 @@ document.body.style.setProperty("--height", height);
 let paused = false;
 let stepCounter = 0; // animation step digit
 let step = 0; // actual animation step
-let stepSpeed = 7; // 6 steps per second
+let stepSpeed = 8; // steps per second
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
 let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier)
