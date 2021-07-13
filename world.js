@@ -13,7 +13,7 @@ let avatar = {
     inAir: 0, // 0-grounded 1-in air
     bFrame: 0, // 0 and 1 are animation frames; 2 is a block
     vcoor: [0, 0], // velocity of the avatar
-    vmax: [pixel * 1.2, 1 / 3.85 * unit], // max velocity: [x, y]
+    vmax: [pixel * 0.9, 1 / 3.85 * unit], // max velocity: [x, y]
     amax: 1 / 7 * pixel, // max acceleration
     gravity: 1 / 7 * pixel,
     jump: 1 / 3.85 * unit, // jump speed.
