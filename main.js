@@ -76,11 +76,11 @@ function animate() {
 // EVENTS
 
 function keyPressed(code, num) {
-	if (code === 37 || code === 65) avatar.keys[0] = num; // Left
-	else if (code === 38 || code === 87) avatar.keys[1] = num; // Up
-	else if (code === 39 || code === 68) avatar.keys[2] = num; // Right
-	else if (code === 40 || code === 83) avatar.keys[3] = num; // Down
-    else if (code === 69 && num) swapTime();
+	if ((code === 37 || code === 65) && !avatar.complete) avatar.keys[0] = num; // Left
+	else if ((code === 38 || code === 87) && !avatar.complete) avatar.keys[1] = num; // Up
+	else if ((code === 39 || code === 68) && !avatar.complete) avatar.keys[2] = num; // Right
+	else if ((code === 40 || code === 83) && !avatar.complete) avatar.keys[3] = num; // Down
+    else if (code === 69 && num && !avatar.complete) swapTime();
 }
 
 document.addEventListener("keydown", function(event) {

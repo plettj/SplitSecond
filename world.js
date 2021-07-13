@@ -16,7 +16,8 @@ let avatar = {
     vmax: [pixel * 0.9, 1 / 3.85 * unit], // max velocity: [x, y]
     amax: 1 / 7 * pixel, // max acceleration
     gravity: 1 / 7 * pixel,
-    jump: 1 / 3.85 * unit, // jump speed.
+    jump: 1 / 3.85 * unit, // jump speed
+    complete: false,
     init: function (coor) {
         this.coor = coor;
         this.dir = 1;
@@ -84,9 +85,13 @@ let avatar = {
                 if (before[2] >= 0) if (l[before[2]][after[1]] == 1) hitWall = true;
                 if (before[3] < height) if (l[before[3]][after[1]] == 1) hitWall = true;
             }
-            if (hitWall) {
+            if (hitWall && l[before[2]][before[1]] !== 4) {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[1] * unit + pixel * 2.99;
+            } else if (hitWall && !this.complete) {
+                levels.endLevel([16, before[2]]);
+                this.complete = true;
+                this.keys = [0, 0, 1, 0];
             }
         } else if (before[0] > after[0] && wallCheck) { // LEFT - crossed into new cell
             let hitWall = false;
@@ -129,7 +134,7 @@ let avatar = {
             else this.coor[0] = centerCo[0] * unit - 1 * pixel;
         }
 
-        if (!this.action && Math.abs(this.vcoor[0]) < this.vmax[0] / 4) this.coor[0] -= this.vcoor[0];
+        if (!this.action && Math.abs(this.vcoor[0]) < this.vmax[0] / 6) this.coor[0] -= this.vcoor[0];
         this.draw([(this.inAir) ? 0 : stepCounter % 4, this.dir + ((this.inAir || this.action == 1 || this.action == 2) ? 2 : 0)]);
     }
 }
