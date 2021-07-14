@@ -81,6 +81,7 @@ canvas {
 }
 
 #Pause {
+    display: none;
     position: absolute;
     width: calc(var(--unit) * 4 / 5);
     height: calc(var(--unit) * 4 / 5);
