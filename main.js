@@ -1,10 +1,11 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-
+let coolMathGames = false;
 let width = 16; // in units
 let height = 12;
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
+if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
 let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
@@ -28,7 +29,7 @@ function makeContexts(num) {
         canvas.id = "Canvas" + i;
         canvas.width = unit * width;
         canvas.height = unit * height;
-        document.body.appendChild(canvas);
+        document.body.insertBefore(canvas, document.querySelector(".belowCanvases"));
         ctx.push(canvas.getContext('2d'));
     }
 }

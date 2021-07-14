@@ -19,6 +19,8 @@ let avatar = {
     jump: 1 / 3.85 * unit, // jump speed
     complete: false,
     init: function (coor) {
+        this.keys = [0, 0, 0, 0];
+        this.complete = false;
         this.coor = coor;
         this.dir = 1;
         this.vcoor = [0, 0];
@@ -85,10 +87,10 @@ let avatar = {
                 if (before[2] >= 0) if (l[before[2]][after[1]] == 1) hitWall = true;
                 if (before[3] < height) if (l[before[3]][after[1]] == 1) hitWall = true;
             }
-            if (hitWall && l[before[2]][before[1]] !== 4) {
+            if (hitWall && before[0] < width - 1) {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[1] * unit + pixel * 2.99;
-            } else if (hitWall && !this.complete) {
+            } else if (hitWall && !this.complete) { // Level Complete!
                 levels.endLevel([16, before[2]]);
                 this.complete = true;
                 this.keys = [0, 0, 1, 0];
