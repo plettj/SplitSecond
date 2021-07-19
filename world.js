@@ -5,14 +5,13 @@
 // AVATAR
 
 let avatar = {
-    coor: [0, 0], // in ACTUAL computer pixels
+    coor: [0, 0], // in computer pixels
     box: [6, 7], // 2 game pixels from left, 2 from top
     keys: [0, 0, 0, 0], // [A, W, D, S] 1 = pressed
     action: 0, // 0-still 1-left 2-right
     dir: 1, // 0-left 1-right
     inAir: 0, // 0-grounded 1-in air
-    bFrame: [0, 0], // [0 through 1.8 are animation frames; 2 is block, 0-outOfBlock, 1-intoBlock]
-    bTarget: [0, 0], // coordinates of block's target location, in ACTUAL computer pixels.
+    bFrame: [0, 0, 0], // [(0 through 1.8 are animation frames; 2 is block), (0-outOfBlock; 1-intoBlock), (target x, in computer pixels)]
     vcoor: [0, 0], // velocity of the avatar
     vmax: [pixel * 0.9, 1 / 3.85 * unit], // max velocity: [x, y]
     amax: 1 / 8 * pixel, // max acceleration
@@ -123,15 +122,19 @@ let avatar = {
                     this.inAir = 1;
                 }
                 this.bFrame[1] = 0;
-            } else if (key[1] < 0 || this.bFrame[1]) { // DOWN
+            } else if (key[1] < 0 && !this.bFrame[1]) { // DOWN
+                possible = before[this.dir];
+                this.bFrame[2] = possible * unit;
+                if (after[3] < height) {
+                    if (l[after[3]][possible] !== 1 && l[after[3]][possible] !== 2) this.bFrame[2] = before[this.dir * -1 + 1] * unit;
+                }
                 this.bFrame[1] = 1;
                 this.vcoor[0] = 0;
-                // MMAATTHH to find the sliding block's target:
-
-                this.target = [before[this.dir] * unit, before[3] * unit];
             }
             if (this.bFrame[0] + this.bFrame[1]) { // slide towards the target:
-                
+                if (this.coor[0] - this.bFrame[2] > this.vmax[0]) this.coor[0] -= this.vmax[0] / 1.6;
+                else if (this.coor[0] - this.bFrame[2] < -this.vmax[0]) this.coor[0] += this.vmax[0] / 1.6;
+                else this.coor[0] = this.bFrame[2];
             }
         }
         this.bFrame[0] = this.bFrame[0] + 0.15 * (this.bFrame[1] * 2 - 1);
@@ -156,10 +159,7 @@ let avatar = {
         if (this.bFrame[0]) { // adjust 'a' to draw block!
             a[0] = Math.floor(this.bFrame[0]) + ((this.bFrame[0] == 2) ? Math.floor(stepCounter % 6 / 3) : 0);
             a[1] = this.dir + 4;
-            if (this.bFrame[0] == 2) { // block has stopped at the target
-                this.coor[0] = this.target[0];
-                this.coor[1] = this.target[1];
-            }
+            if (this.bFrame[0] == 2) this.coor[0] = this.bFrame[2]; // block stops at target x.
         } else if (this.keys[0] || this.keys[2]) console.log("not working properly?");
 
         this.draw(a);
