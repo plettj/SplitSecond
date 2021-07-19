@@ -8,13 +8,14 @@ let avatar = {
     coor: [0, 0], // in ACTUAL computer pixels
     box: [6, 7], // 2 game pixels from left, 2 from top
     keys: [0, 0, 0, 0], // [A, W, D, S] 1 = pressed
-    action: 0, // 0-still 1-left 2-right 3-block
+    action: 0, // 0-still 1-left 2-right
     dir: 1, // 0-left 1-right
     inAir: 0, // 0-grounded 1-in air
-    bFrame: 0, // 0 and 1 are animation frames; 2 is a block
+    bFrame: [0, 0], // [0 through 1.8 are animation frames; 2 is block, 0-outOfBlock, 1-intoBlock]
+    bTarget: [0, 0], // coordinates of block's target location, in ACTUAL computer pixels.
     vcoor: [0, 0], // velocity of the avatar
     vmax: [pixel * 0.9, 1 / 3.85 * unit], // max velocity: [x, y]
-    amax: 1 / 7 * pixel, // max acceleration
+    amax: 1 / 8 * pixel, // max acceleration
     gravity: 1 / 7 * pixel,
     jump: 1 / 3.85 * unit, // jump speed
     complete: false,
@@ -39,7 +40,7 @@ let avatar = {
     },
     physics: function () { // physics for the avatar.
         clear(5, this.coor);
-        let key = [(!this.keys[3]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
+        let key = [((!this.keys[3] || this.keys[1]) && !this.bFrame[1]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
         
         // [Xleft, Xright, Ytop, Ybottom]
         let before = [Math.floor((this.coor[0] + pixel * 2) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
@@ -47,8 +48,10 @@ let avatar = {
         this.vcoor[0] += key[0] * this.amax / (this.inAir + 1);
         this.vcoor[1] += this.gravity;
         for (let i = 0; i < 2; i++) if (Math.abs(this.vcoor[i]) > this.vmax[i]) this.vcoor[i] = Math.sign(this.vcoor[i]) * this.vmax[i];
-        this.coor[0] += this.vcoor[0];
-        this.coor[1] += this.vcoor[1];
+        if (!this.bFrame[0]) { // if NOT in block, move horizontally.
+            this.coor[0] += this.vcoor[0];
+            this.coor[1] += this.vcoor[1];
+        }
         let after = [Math.floor((this.coor[0] + pixel * 2) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
         
         let l = levels.levels[levels.currentLevel];
@@ -108,21 +111,33 @@ let avatar = {
             }
         }
 
-        if (key[0]) {
+        if (key[0] && !this.bFrame[0]) {
             this.dir = (key[0] + 1) / 2;
             if (key[1] >= 0) this.action = (key[0] + 1) / 2 + 1;
             else this.action = 0;
-        } else this.action = 0;
-        if (!this.inAir && key[1] < 0) this.action = 3;
-        if (!this.inAir && key[1] > 0) { // JUMP
-            let hitHead = false;
-            if (!hitHead) {
-                this.vcoor[1] -= this.jump;
-                this.inAir = 1;
+        } else if (key[1] >= 0) this.action = 0;
+        if (!this.inAir) { // not IN the AIR
+            if (key[1] > 0) { // JUMP
+                if (!this.bFrame[0]) {
+                    this.vcoor[1] -= this.jump;
+                    this.inAir = 1;
+                }
+                this.bFrame[1] = 0;
+            } else if (key[1] < 0 || this.bFrame[1]) { // DOWN
+                this.bFrame[1] = 1;
+                this.vcoor[0] = 0;
+                // MMAATTHH to find the sliding block's target:
+
+                this.target = [before[this.dir] * unit, before[3] * unit];
+            }
+            if (this.bFrame[0] + this.bFrame[1]) { // slide towards the target:
+                
             }
         }
+        this.bFrame[0] = this.bFrame[0] + 0.15 * (this.bFrame[1] * 2 - 1);
+        this.bFrame[0] = (this.bFrame[0] <= 0) ? 0 : ((this.bFrame[0] >= 2) ? 2 : this.bFrame[0]);
         
-        //clear(4);
+        //clear(4); // draw the squares that indicate the collision square locations.
         //this.drawTempSquares([[before[0], before[2]], [before[1], before[2]], [before[0], before[3]], [before[1], before[3]]], "#ff1515");
         //this.drawTempSquares([[after[0], after[2]], [after[1], after[2]], [after[0], after[3]], [after[1], after[3]]], "#15ffff");
         let CLIPPED = false;
@@ -136,8 +151,18 @@ let avatar = {
             else this.coor[0] = centerCo[0] * unit - 1 * pixel;
         }
 
-        if (!this.action && Math.abs(this.vcoor[0]) < this.vmax[0] / 6) this.coor[0] -= this.vcoor[0];
-        this.draw([(this.inAir) ? 0 : stepCounter % 4, this.dir + ((this.inAir || this.action == 1 || this.action == 2) ? 2 : 0)]);
+        if (!this.action && Math.abs(this.vcoor[0]) < this.amax * 1.5) this.coor[0] -= this.vcoor[0];
+        a = [(this.inAir) ? 0 : stepCounter % 4, this.dir + ((this.inAir || this.action == 1 || this.action == 2) ? 2 : 0)];
+        if (this.bFrame[0]) { // adjust 'a' to draw block!
+            a[0] = Math.floor(this.bFrame[0]) + ((this.bFrame[0] == 2) ? Math.floor(stepCounter % 6 / 3) : 0);
+            a[1] = this.dir + 4;
+            if (this.bFrame[0] == 2) { // block has stopped at the target
+                this.coor[0] = this.target[0];
+                this.coor[1] = this.target[1];
+            }
+        } else if (this.keys[0] || this.keys[2]) console.log("not working properly?");
+
+        this.draw(a);
     }
 }
 
@@ -149,3 +174,7 @@ function swapTime() {
     levels.ghosts.push(nextGhost);
     nextGhost = new Ghost();
 }
+
+// OBSTACLES
+
+// BUTTON
