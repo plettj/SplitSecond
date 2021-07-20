@@ -1,4 +1,6 @@
-// OBJECTS, LEVELS, & GRAPHIC HANDLING
+// FUNCTIONS, LEVELS, & GRAPHIC HANDLING
+
+// FUNCTIONS
 
 // Miscellaneous functions
 function clear(index, coor = false) { // clears contexts
@@ -18,61 +20,12 @@ function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
 function between([a, b], num) {
     return num >= Math.min(a, b) && num <= Math.max(a, b);
 }
-
-// OBJECTS
-
-// Ghost object constructor
-let Ghost = class {
-    constructor () {
-        this.time = time; // this ghost's native direction
-        this.life = [frame, 1800] // lifetime = [startingFrame, endingFrame]
-        this.coor1 = [Math.round(avatar.coor[0]), Math.round(avatar.coor[1])]; // life began at these pixels
-        this.coor2 = [0, 0]; // life ended at these pixels
-        this.instructions = []; // [x, y, blockFrame, dir, inAir, action, bFrame]
-        this.frame = 0; // location in instructions
-        this.waiting = false; // whether it doesn't exist
-    }
-    learn () {
-        this.instructions.push([Math.round(avatar.coor[0]), Math.round(avatar.coor[1]), avatar.bFrame, avatar.dir, avatar.inAir, avatar.action, [avatar.bFrame[0], avatar.bFrame[1], avatar.bFrame[2]]]);
-    }
-    draw () {
-        if (this.frame < 0 || this.frame >= this.instructions.length) {
-            if (this.frame < 0) this.frame = 0;
-            else this.frame = this.instructions.length - 1;
-        }
-        
-        let f = this.instructions[this.frame];
-        let a = [(f[4]) ? 0 : stepCounter % 4, f[3] + ((f[4] || f[5] == 1 || f[5] == 2) ? 2 : 0)];
-        if (f[6][0]) { // adjust 'a' to draw block!
-            a[0] = Math.floor(f[6][0]) + ((f[6][0] == 2) ? Math.floor(stepCounter % 6 / 3) : 0);
-            a[1] = f[3] + 4;
-            if (f[6][0] == 2) ctx[4].globalAlpha = 1;
-        }
-        ctx[4].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
-        if (f[6][0] == 2) ctx[4].globalAlpha = 0.5;
-        
-    }
-    newFrame () {
-        if (!this.waiting) { // ghost is waiting for a call to action.
-            if (between(this.life, frame)) { // ghost exists at this time.
-                this.frame += time * this.time;
-                this.draw();
-            } else { // ghost does not exist.
-                this.waiting = true;
-            }
-        } else { // ghost DEFINITELY doesn't exist.
-            if (between(this.life, frame)) { // ghost should exist at this time.
-                this.waiting = false;
-                this.draw();
-            }
-        }
-    }
-    finish () {
-        this.frame = this.instructions.length - 1;
-        this.draw();
-        this.life[1] = frame;
-        this.coor2 = [avatar.coor[0], avatar.coor[1]];
-        this.waiting = false;
+function isS([x, y], nonSemi = false) { // is solid?
+    if (x < 0 || x >= width || y < 0 || y >= height) return (nonSemi && !(y < 0 || y >= height));
+    else {
+        let l = levels.levels[levels.currentLevel];
+        if (nonSemi) return (l[y][x] == 1 || l[y][x] == 1.5);
+        else return (l[y][x] >= 1 && l[y][x] <= 2);
     }
 }
 

@@ -1,9 +1,9 @@
-// AVATAR, PHYSICS, & OBSTACLES
+// AVATAR/GHOSTS, PHYSICS, & OBSTACLES
 
 
+// AVATAR/GHOSTS
 
-// AVATAR
-
+// Avatar Object
 let avatar = {
     coor: [0, 0], // in computer pixels
     box: [6, 7], // 2 game pixels from left, 2 from top
@@ -59,36 +59,22 @@ let avatar = {
            WAIT THIS ALLOWS DIAGONAL CLIPS OH NO
            Solved corner clips: if (beforeSquare = 1) get OUTTA there!*/
         
-        let wallCheck = !(after[3] >= height || after[2] < 0); // if you go through the top or bottom of the screen, don't throw errors!
         if (before[3] < after[3]) { // DOWN - crossed into new cell
-            let onGround = false;
-            if (after[3] >= 0 && wallCheck) {
-                if (before[0] >= 0) if (l[after[3]][before[0]] == 1 || l[after[3]][before[0]] == 2) onGround = true;
-                if (before[1] < width) if (l[after[3]][before[1]] == 1 || l[after[3]][before[1]] == 2) onGround = true;
-            }
+            onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]]));
             if (onGround) {
                 this.inAir = 0;
                 this.vcoor[1] = 0;
                 this.coor[1] = before[3] * unit;
             } else this.inAir = 1;
         } else if (before[2] > after[2]) { // UP - crossed into new cell
-            let hitHead = false;
-            if (after[2] < height && wallCheck) {
-                if (before[0] >= 0) if (l[after[2]][before[0]] == 1) hitHead = true;
-                if (before[1] < width) if (l[after[2]][before[1]] == 1) hitHead = true;
-            }
+            hitHead = (isS([before[0], after[2]], true) || isS([before[1], after[2]], true));
             if (hitHead) {
                 this.coor[1] -= this.vcoor[1];
                 this.vcoor[1] = this.gravity / -2;
             }
         }
-        if (before[1] < after[1] && wallCheck) { // RIGHT - crossed into new cell
-            let hitWall = false;
-            if (after[1] >= width) hitWall = true;
-            else {
-                if (before[2] >= 0) if (l[before[2]][after[1]] == 1) hitWall = true;
-                if (before[3] < height) if (l[before[3]][after[1]] == 1) hitWall = true;
-            }
+        if (before[1] < after[1]) { // RIGHT - crossed into new cell
+            hitWall = (isS([after[1], before[2]], true) || isS([after[1], before[3]], true));
             if (hitWall && before[0] < width - 1) {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[1] * unit + pixel * 2.99;
@@ -97,13 +83,8 @@ let avatar = {
                 this.complete = true;
                 this.keys = [0, 0, 1, 0];
             }
-        } else if (before[0] > after[0] && wallCheck) { // LEFT - crossed into new cell
-            let hitWall = false;
-            if (after[0] < 0) hitWall = true;
-            else {
-                if (before[2] >= 0) if (l[before[2]][after[0]] == 1) hitWall = true;
-                if (before[3] < height) if (l[before[3]][after[0]] == 1) hitWall = true;
-            }
+        } else if (before[0] > after[0]) { // LEFT - crossed into new cell
+            hitWall = (isS([after[0], before[2]], true) || isS([after[0], before[3]], true));
             if (hitWall) {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[0] * unit - pixel * 1.99;
@@ -126,7 +107,7 @@ let avatar = {
                 let possible = before[this.dir];
                 this.bFrame[2] = possible * unit;
                 if (after[3] < height) {
-                    if (l[after[3]][possible] !== 1 && l[after[3]][possible] !== 2) this.bFrame[2] = before[this.dir * -1 + 1] * unit;
+                    if (!isS([possible, after[3]])) this.bFrame[2] = before[this.dir * -1 + 1] * unit;
                 }
                 this.bFrame[1] = 1;
                 this.vcoor[0] = 0;
@@ -150,7 +131,7 @@ let avatar = {
             console.log("You've corner-clipped!!");
             //this.drawTempSquares([[Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)]], "#1515ff", 0.9);
             let centerCo = [Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
-            if (centerCo[1] >= 0 && centerCo[1] < height) if (l[centerCo[1][0]] !== 1) if (this.vcoor[0] > 0) this.coor[0] = centerCo[0] * unit + 2 * pixel;
+            if (centerCo[1] >= 0 && centerCo[1] < height) if (l[centerCo[1]][centerCo[0]] !== 1) if (this.vcoor[0] > 0) this.coor[0] = centerCo[0] * unit + 2 * pixel;
             else this.coor[0] = centerCo[0] * unit - 1 * pixel;
         }
 
@@ -162,6 +143,61 @@ let avatar = {
             if (this.bFrame[0] == 2) this.coor[0] = this.bFrame[2]; // block stops at target x.
         }
         this.draw(a);
+    }
+}
+
+// Ghost Class
+let Ghost = class {
+    constructor () {
+        this.time = time; // this ghost's native direction
+        this.life = [frame, 1800] // lifetime = [startingFrame, endingFrame]
+        this.coor1 = [Math.round(avatar.coor[0]), Math.round(avatar.coor[1])]; // life began at these pixels
+        this.coor2 = [0, 0]; // life ended at these pixels
+        this.instructions = []; // [x, y, blockFrame, dir, inAir, action, bFrame]
+        this.frame = 0; // location in instructions
+        this.waiting = false; // whether it doesn't exist
+    }
+    learn () {
+        this.instructions.push([Math.round(avatar.coor[0]), Math.round(avatar.coor[1]), avatar.bFrame, avatar.dir, avatar.inAir, avatar.action, [avatar.bFrame[0], avatar.bFrame[1], avatar.bFrame[2]]]);
+    }
+    draw () {
+        if (this.frame < 0 || this.frame >= this.instructions.length) {
+            if (this.frame < 0) this.frame = 0;
+            else this.frame = this.instructions.length - 1;
+        }
+        
+        let f = this.instructions[this.frame];
+        let a = [(f[4]) ? 0 : stepCounter % 4, f[3] + ((f[4] || f[5] == 1 || f[5] == 2) ? 2 : 0)];
+        if (f[6][0]) { // adjust 'a' to draw block!
+            a[0] = Math.floor(f[6][0]) + ((f[6][0] == 2) ? Math.floor(stepCounter % 6 / 3) : 0);
+            a[1] = f[3] + 4;
+            if (f[6][0] == 2) ctx[4].globalAlpha = 1;
+        }
+        ctx[4].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
+        if (f[6][0] == 2) ctx[4].globalAlpha = 0.5;
+        
+    }
+    newFrame () {
+        if (!this.waiting) { // ghost is waiting for a call to action.
+            if (between(this.life, frame)) { // ghost exists at this time.
+                this.frame += time * this.time;
+                this.draw();
+            } else { // ghost does not exist.
+                this.waiting = true;
+            }
+        } else { // ghost DEFINITELY doesn't exist.
+            if (between(this.life, frame)) { // ghost should exist at this time.
+                this.waiting = false;
+                this.draw();
+            }
+        }
+    }
+    finish () {
+        this.frame = this.instructions.length - 1;
+        this.draw();
+        this.life[1] = frame;
+        this.coor2 = [avatar.coor[0], avatar.coor[1]];
+        this.waiting = false;
     }
 }
 
