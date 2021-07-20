@@ -123,7 +123,7 @@ let avatar = {
                 }
                 this.bFrame[1] = 0;
             } else if (key[1] < 0 && !this.bFrame[1]) { // DOWN
-                possible = before[this.dir];
+                let possible = before[this.dir];
                 this.bFrame[2] = possible * unit;
                 if (after[3] < height) {
                     if (l[after[3]][possible] !== 1 && l[after[3]][possible] !== 2) this.bFrame[2] = before[this.dir * -1 + 1] * unit;
@@ -155,13 +155,12 @@ let avatar = {
         }
 
         if (!this.action && Math.abs(this.vcoor[0]) < this.amax * 1.5) this.coor[0] -= this.vcoor[0];
-        a = [(this.inAir) ? 0 : stepCounter % 4, this.dir + ((this.inAir || this.action == 1 || this.action == 2) ? 2 : 0)];
+        let a = [(this.inAir) ? 0 : stepCounter % 4, this.dir + ((this.inAir || this.action == 1 || this.action == 2) ? 2 : 0)];
         if (this.bFrame[0]) { // adjust 'a' to draw block!
             a[0] = Math.floor(this.bFrame[0]) + ((this.bFrame[0] == 2) ? Math.floor(stepCounter % 6 / 3) : 0);
             a[1] = this.dir + 4;
             if (this.bFrame[0] == 2) this.coor[0] = this.bFrame[2]; // block stops at target x.
-        } else if (this.keys[0] || this.keys[2]) console.log("not working properly?");
-
+        }
         this.draw(a);
     }
 }
