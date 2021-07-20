@@ -37,7 +37,7 @@ let avatar = {
         }
         //ctx[4].stroke();
     },
-    physics: function () { // physics for the avatar.
+    physics: function () { // PHYSICS
         clear(5, this.coor);
         let key = [((!this.keys[3] || this.keys[1]) && !this.bFrame[1]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
         
@@ -49,8 +49,8 @@ let avatar = {
         for (let i = 0; i < 2; i++) if (Math.abs(this.vcoor[i]) > this.vmax[i]) this.vcoor[i] = Math.sign(this.vcoor[i]) * this.vmax[i];
         if (!this.bFrame[0]) { // if NOT in block, move horizontally.
             this.coor[0] += this.vcoor[0];
-            this.coor[1] += this.vcoor[1];
         }
+        this.coor[1] += this.vcoor[1];
         let after = [Math.floor((this.coor[0] + pixel * 2) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
         
         let l = levels.levels[levels.currentLevel];
@@ -113,9 +113,10 @@ let avatar = {
                 else if (this.coor[0] - this.bFrame[2] < -this.vmax[0]) this.coor[0] += this.vmax[0] / 1.6;
                 else this.coor[0] = this.bFrame[2];
             }
-        }
+        } else if (this.bFrame[0]) this.bFrame[1] = 0;
         this.bFrame[0] = this.bFrame[0] + 0.15 * (this.bFrame[1] * 2 - 1);
         this.bFrame[0] = (this.bFrame[0] <= 0) ? 0 : ((this.bFrame[0] >= 2) ? 2 : this.bFrame[0]);
+
         
         //clear(4); // draw the squares that indicate the collision square locations.
         //this.drawTempSquares([[before[0], before[2]], [before[1], before[2]], [before[0], before[3]], [before[1], before[3]]], "#ff1515");
