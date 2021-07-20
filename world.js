@@ -54,10 +54,6 @@ let avatar = {
         let after = [Math.floor((this.coor[0] + pixel * 2) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
         
         let l = levels.levels[levels.currentLevel];
-        /* On the axis you're testing, use AFTER;
-           On the other axis, use BEFORE.
-           WAIT THIS ALLOWS DIAGONAL CLIPS OH NO
-           Solved corner clips: if (beforeSquare = 1) get OUTTA there!*/
         
         if (before[3] < after[3]) { // DOWN - crossed into new cell
             onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]]));
@@ -140,7 +136,9 @@ let avatar = {
         if (this.bFrame[0]) { // adjust 'a' to draw block!
             a[0] = Math.floor(this.bFrame[0]) + ((this.bFrame[0] == 2) ? Math.floor(stepCounter % 6 / 3) : 0);
             a[1] = this.dir + 4;
-            if (this.bFrame[0] == 2) this.coor[0] = this.bFrame[2]; // block stops at target x.
+            if (this.bFrame[0] == 2) {// block stops at target x.
+                this.coor[0] = this.bFrame[2];
+            }
         }
         this.draw(a);
     }
@@ -153,7 +151,7 @@ let Ghost = class {
         this.life = [frame, 1800] // lifetime = [startingFrame, endingFrame]
         this.coor1 = [Math.round(avatar.coor[0]), Math.round(avatar.coor[1])]; // life began at these pixels
         this.coor2 = [0, 0]; // life ended at these pixels
-        this.instructions = []; // [x, y, blockFrame, dir, inAir, action, bFrame]
+        this.instructions = []; // [x, y, blockFrame, dir, inAir, action, [blockAnimFrame, blockAnimDirection, targetX]]
         this.frame = 0; // location in instructions
         this.waiting = false; // whether it doesn't exist
     }
@@ -171,11 +169,13 @@ let Ghost = class {
         if (f[6][0]) { // adjust 'a' to draw block!
             a[0] = Math.floor(f[6][0]) + ((f[6][0] == 2) ? Math.floor(stepCounter % 6 / 3) : 0);
             a[1] = f[3] + 4;
-            if (f[6][0] == 2) ctx[4].globalAlpha = 1;
+            if (f[6][0] == 2) {
+                ctx[4].globalAlpha = 1;
+                levels.levels[levels.currentLevel][Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
+            } else levels.levels[levels.currentLevel][Math.floor(f[1] / unit)][Math.floor(f[6][2] / unit)] = 0;
         }
         ctx[4].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
         if (f[6][0] == 2) ctx[4].globalAlpha = 0.5;
-        
     }
     newFrame () {
         if (!this.waiting) { // ghost is waiting for a call to action.
