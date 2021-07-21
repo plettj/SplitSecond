@@ -9,12 +9,37 @@
         <p class="belowCanvases"></p>
         <div class="cover one"></div>
         <div class="cover two"></div>
+
         <div class="bigText">
             LEVEL <span id="nextLevel">8</span><br>
             <span class="small"><br>enters from<br>the future</span>
         </div>
-        <div id="Pause">
-            <div class="gray">
+
+        <div id="PauseMenu" class="menu" style="display: none;">
+            <div class="content">
+                
+                <!-- 
+                    Everything here will hopefully be replaced with a button/menu tileset, and they will interact
+                    with the JS variables in order to be resized and cropped properly, through the css properties
+                    (of img tags) object-fit and object-position, and when they are hovered they will update to
+                    wherever they are minus their height.
+                <div class="back"><</div>
+                <div class="title">Pause</div>
+                <div class="button levels">Levels</div>
+                <div class="button restart">Restart</div>
+                <div class="button play">Play</div>
+                <div class="link nextLevel">Next Level (link)</div>
+                -->
+            </div>
+        </div>
+        <div id="LevelsMenu" class="menu" style="display: none;">
+            <!-- Beneath the title, JS develops a list of levels -->
+            <div class="title">Levels</div>
+        </div>
+
+        
+        <div id="Pause" style="display: block;">
+            <div class="gray"></div>
         </div>
     </body>
 	<script src="main.js"></script>
