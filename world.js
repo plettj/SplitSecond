@@ -75,7 +75,7 @@ let avatar = {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[1] * unit + pixel * 2.99;
             } else if (hitWall && !this.complete) { // Level Complete!
-                levels.endLevel([16, before[2]]);
+                levels.endLevel([width, before[2]]);
                 this.complete = true;
                 this.keys = [0, 0, 1, 0];
             }
@@ -100,13 +100,34 @@ let avatar = {
                 }
                 this.bFrame[1] = 0;
             } else if (key[1] < 0 && !this.bFrame[1]) { // DOWN
-                let possible = before[this.dir];
+                /*let possible = before[this.dir];
                 this.bFrame[2] = possible * unit;
-                if (after[3] < height) {
-                    if (!isS([possible, after[3]])) this.bFrame[2] = before[this.dir * -1 + 1] * unit;
+                if (!isS([possible, after[3]])) this.bFrame[2] = before[this.dir * -1 + 1] * unit;
+                if (!isS([this.bFrame[2] / unit, after[2]])) { // only become a block if there's no block where you are
+                    this.bFrame[1] = 1;
+                    this.vcoor[0] = 0;
+                } else if (!isS([possible, after[2]]) || !isS([this.bFrame[2] / unit, after[2]])) {
+                    console.log("I just need to change the stuff to be actually correct logic that stems out of physics.");
+                }*/
+                if (!(isS([before[0], after[2]]) || isS([before[1] / unit, after[2]]))) { // not standing in DinoBlocks
+                    if (isS([before[0], after[2]])) { // left is a DinoBlock
+                        if (isS([before[1], after[3]])) { // right below is solid
+                            this.bFrame[2] = before[1] * unit;
+                            this.bFrame[1] = 1;
+                            this.vcoor[0] = 0;
+                        }
+                    } else if (isS([before[1], after[2]])) { // right is a DinoBlock
+                        if (isS([before[0], after[3]])) { // left below is solid
+                            this.bFrame[2] = before[0] * unit;
+                            this.bFrame[1] = 1;
+                            this.vcoor[0] = 0;
+                        }
+                    } else {
+                        this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
+                        this.bFrame[1] = 1;
+                        this.vcoor[0] = 0;
+                    }
                 }
-                this.bFrame[1] = 1;
-                this.vcoor[0] = 0;
             }
             if (this.bFrame[0] + this.bFrame[1]) { // slide towards the target:
                 if (this.coor[0] - this.bFrame[2] > this.vmax[0]) this.coor[0] -= this.vmax[0] / 1.6;
@@ -149,15 +170,15 @@ let avatar = {
 let Ghost = class {
     constructor () {
         this.time = time; // this ghost's native direction
-        this.life = [frame, 1800] // lifetime = [startingFrame, endingFrame]
+        this.life = [frame, 10]; // lifetime = [startingFrame, endingFrame]
         this.coor1 = [Math.round(avatar.coor[0]), Math.round(avatar.coor[1])]; // life began at these pixels
         this.coor2 = [0, 0]; // life ended at these pixels
-        this.instructions = []; // [x, y, blockFrame, dir, inAir, action, [blockAnimFrame, blockAnimDirection, targetX]]
+        this.instructions = []; // [x, y, OPENSLOT, dir, inAir, action, [blockAnimFrame, blockAnimDirection, targetX]]
         this.frame = 0; // location in instructions
         this.waiting = false; // whether it doesn't exist
     }
     learn () {
-        this.instructions.push([Math.round(avatar.coor[0]), Math.round(avatar.coor[1]), avatar.bFrame, avatar.dir, avatar.inAir, avatar.action, [avatar.bFrame[0], avatar.bFrame[1], avatar.bFrame[2]]]);
+        this.instructions.push([Math.round(avatar.coor[0]), Math.round(avatar.coor[1]), 0, avatar.dir, avatar.inAir, avatar.action, [avatar.bFrame[0], avatar.bFrame[1], avatar.bFrame[2]]]);
     }
     draw () {
         if (this.frame < 0 || this.frame >= this.instructions.length) {
@@ -173,19 +194,17 @@ let Ghost = class {
             if (f[6][0] == 2) {
                 ctx[4].globalAlpha = 1;
                 levels.levels[levels.currentLevel][Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
-            } else levels.levels[levels.currentLevel][Math.floor(f[1] / unit)][Math.floor(f[6][2] / unit)] = 0;
+            }
         }
         ctx[4].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
         if (f[6][0] == 2) ctx[4].globalAlpha = 0.5;
     }
-    newFrame () {
-        if (!this.waiting) { // ghost is waiting for a call to action.
+    newFrame () { // runs every frame
+        if (!this.waiting) { // ghost isn't waiting
             if (between(this.life, frame)) { // ghost exists at this time.
                 this.frame += time * this.time;
                 this.draw();
-            } else { // ghost does not exist.
-                this.waiting = true;
-            }
+            } else this.waiting = true;
         } else { // ghost DEFINITELY doesn't exist.
             if (between(this.life, frame)) { // ghost should exist at this time.
                 this.waiting = false;
@@ -214,3 +233,4 @@ function swapTime() {
 // OBSTACLES
 
 // BUTTON
+

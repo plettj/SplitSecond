@@ -63,12 +63,13 @@ function animate() {
             stepCounter++;
             step += time;
         }
-        if (!(frame % GFuel)) { // Run the Ghosts
+        if (!(frame % GFuel)) { // Run the Ghosts + Update the Level
             nextGhost.learn();
             clear(4);
             for (g in levels.ghosts) {
                 levels.ghosts[g].newFrame();
             }
+            levels.update();
         }
 	}
 	raf = window.requestAnimationFrame(animate);
