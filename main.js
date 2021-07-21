@@ -1,37 +1,40 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-
+let coolMathGames = false;
 let width = 16; // in units
 let height = 12;
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
+if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
 let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
 let paused = false;
-let accentStones = 14; // average number of blocks until an accent stone is added.
 let stepCounter = 0; // animation step digit
 let step = 0; // actual animation step
-let stepSpeed = 7; // 6 steps per second
+let stepSpeed = 8; // steps per second
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
+let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier)
+let nextGhost = undefined;
 
 // INITIALIZATION
 
 // Canvas holder
-let ctx = []; // [0-background, 1-moon, 2-meteors, 3-hills, 4-blocks, 5-, 6-, 7-avatar]
+let ctx = []; // [0-background, 1-blocks, 2-objects, 3-ghosts, 4-ghostBlocks, 5-avatar]
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
         canvas.id = "Canvas" + i;
         canvas.width = unit * width;
         canvas.height = unit * height;
-        document.body.appendChild(canvas);
+        document.body.insertBefore(canvas, document.querySelector(".belowCanvases"));
         ctx.push(canvas.getContext('2d'));
     }
 }
-makeContexts(8);
+makeContexts(6);
+ctx[4].globalAlpha = 0.5;
 
 // Image holder
 let img = [];
@@ -42,29 +45,32 @@ function makeImages(srcs) {
         img.push(image);
     }
 }
-makeImages(["BlockTileset.png", "AvatarTileset.png", "Background.png", "Moon.png", "Hills.png", "MeteorTileset.png"]);
+makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 
 // *** Where it all starts. ***
 window.onload = function () {
-    levels.drawLevel(0);
-    background.addMeteor(6, 0);
-    background.addMeteor(9, 160);
-    background.addMeteor(13, 50);
-    background.update(false);
+    levels.startLevel(3);
+    ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     animate();
 }
 
 // To run actual frame-by-frame animation
 function animate() {
 	if (!paused) {
-        avatar.physics();
         frame += time;
+        avatar.physics();
         if (!(frame % Math.round(60 / stepSpeed))) {
             stepCounter++;
             step += time;
-            background.update();
         }
-        // Normal stuff that runs each frame goes here.
+        if (!(frame % GFuel)) { // Run the Ghosts + Update the Level
+            nextGhost.learn();
+            clear(4);
+            for (g in levels.ghosts) {
+                levels.ghosts[g].newFrame();
+            }
+            levels.update();
+        }
 	}
 	raf = window.requestAnimationFrame(animate);
 }
@@ -72,12 +78,11 @@ function animate() {
 // EVENTS
 
 function keyPressed(code, num) {
-    if (code > 36 && code < 41) avatar.keys[code - 37] = num;
-	else if (code === 65) avatar.keys[0] = num; // Left
-	else if (code === 87 || code === 32) avatar.keys[1] = num; // Up
-	else if (code === 68) avatar.keys[2] = num; // Right
-	else if (code === 83) avatar.keys[3] = num; // Down
-    else if ((code === 69 || code === 32) && num) swapTime();
+	if ((code === 37 || code === 65) && !avatar.complete) avatar.keys[0] = num; // Left
+	else if ((code === 38 || code === 87) && !avatar.complete) avatar.keys[1] = num; // Up
+	else if ((code === 39 || code === 68) && !avatar.complete) avatar.keys[2] = num; // Right
+	else if ((code === 40 || code === 83) && !avatar.complete) avatar.keys[3] = num; // Down
+    else if (code === 69 && num && !avatar.complete) swapTime();
 }
 
 document.addEventListener("keydown", function(event) {

@@ -2,8 +2,17 @@
     margin: 0;
 }
 
+@font-face {
+    font-family: VCR_OSD; src: url('fonts/VCR_OSD_MONO_1.001.ttf');
+    font-family: Arcology; src: url('fonts/Arcology.ttf');
+}
+
 body {
-    background-color: #444444;
+    background-color: #343538;
+    --x: 1;
+    --y: 1;
+    overflow: hidden;
+    font-family: Arcology;
 }
 
 canvas {
@@ -11,4 +20,76 @@ canvas {
     left: calc((100% - var(--unit) * var(--width)) / 2);
     top: calc((100% - var(--unit) * var(--height)) / 2);
     background-color: rgba(0, 0, 0, 0);
+    /* filter: grayscale(100%); */
+}
+
+.cover {
+    position: absolute;
+    width: calc(var(--unit) * var(--width));
+    height: calc(var(--unit) * var(--height));
+    left: calc((100% - var(--unit) * var(--width)) / 2);
+    top: calc((100% - var(--unit) * var(--height)) / 2);
+    background-color: rgba(0, 0, 0, 0);
+}
+.cover.one {
+    transition: backdrop-filter 0.4s ease-in-out;
+    transition-delay: 0.4s;
+}
+.cover.two {
+    transition: backdrop-filter 0.8s ease-in-out;
+}
+.cover.one.on {
+    -webkit-backdrop-filter: grayscale(100%);
+    backdrop-filter: grayscale(100%);
+}
+.cover.two.on {
+    -webkit-backdrop-filter: blur(calc(var(--unit) / 10));
+    backdrop-filter: blur(calc(var(--unit) / 10));
+}
+
+@keyframes textFly {
+    from {
+        top: calc(var(--unit) * -4);
+    }
+    to {
+        top: 100%;
+    }
+}
+
+.bigText {
+    position: absolute;
+    font-size: calc(var(--unit) * 1.5);
+    text-align: center;
+    width: 100%;
+    top: calc(var(--unit) * -4);
+    color: black;
+    display: none;
+}
+.small {
+    font-size: calc(var(--unit) / 2);
+    -webkit-text-stroke-width: 0;
+}
+#nextLevel {
+    -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: calc(var(--unit) / 15);
+    -webkit-text-stroke-color: black;
+}
+
+.bigText.on {
+    display: block;
+    animation: textFly 1.4s cubic-bezier(.19,1.15,.96,-0.03) 0.8s; 
+}
+
+#Pause {
+    display: none;
+    position: absolute;
+    width: calc(var(--unit) * 4 / 5);
+    height: calc(var(--unit) * 4 / 5);
+    background-color: rgb(0, 0, 0);
+    top: calc((100% - var(--unit) * (var(--height) - 0.2)) / 2);
+    right: calc((100% - var(--unit) * (var(--width) - 0.2)) / 2);
+}
+#Pause:hover {
+    background-color: rgba(70, 70, 70);
+    cursor: pointer;
 }
