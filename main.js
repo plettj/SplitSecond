@@ -49,7 +49,7 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 
 // *** Where it all starts. ***
 window.onload = function () {
-    levels.startLevel(0);
+    levels.startLevel(3);
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     animate();
 }
