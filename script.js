@@ -41,6 +41,7 @@ function fade(direction, type = "Next Level") {
                 document.body.querySelector("#Pause").style.display = "none";
                 document.body.querySelectorAll(".cover").forEach(function (e) {e.classList.add("on");});
                 document.body.querySelector(".restart").style.display = "block";
+                document.body.querySelector("#PauseTitle").textContent = "Paused";
                 paused = true;
                 dom.displayed = 0;
             } else {
@@ -73,13 +74,25 @@ function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
 }
 
-function menuBack() {
+function menuBack(everything = false) {
     // here I'll have the logic for which menu you ought to be taken to
-    fade('out', 'Levels Menu');
-    fade('out', 'Pause Menu');
+    if (!everything && document.body.querySelector("#PauseTitle").textContent !== "Paused" && dom.displayed !== 1) {
+        fade("in", "Levels Menu");
+    } else {
+        fade('out', 'Levels Menu');
+        fade('out', 'Pause Menu');
+    }
 }
 
 function restart() {
     fade('out', 'Pause Menu');
     levels.startLevel(levels.currentLevel);
+}
+
+function tryLevel(level) {
+    levels.startLevel(level - 1);
+    menuBack();
+    fade("in", "Pause Menu");
+    document.body.querySelector(".restart").style.display = "none";
+    document.body.querySelector("#PauseTitle").textContent = "Level " + level;
 }
