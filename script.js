@@ -23,7 +23,7 @@ let dom = {
     },
     key: function (code) {
         if (code == 80 || code == 13) { // P or [enter]
-            if (this.displayed == 0) menuBack(); // Play button
+            if (this.displayed == 0) menuBack(true); // Play button
             else if (code == 80) fade('in', 'Pause Menu'); // Pause button
         } else if (code == 82) { // R
             if (this.displayed !== 1 && document.body.querySelector(".restart").style.display == "block") restart();

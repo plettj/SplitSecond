@@ -75,7 +75,7 @@ let avatar = {
             if (hitWall && before[0] < width - 1) {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[1] * unit + pixel * 2.99;
-            } else if (hitWall && !this.complete) { // Level Complete!
+            } else if (hitWall && !this.complete && before[2] >= 0 && before[0] < height) { // Level Complete!
                 levels.endLevel([width, before[2]]);
                 this.complete = true;
                 this.keys = [0, 0, 1, 0];
