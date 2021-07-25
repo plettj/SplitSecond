@@ -49,9 +49,10 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 
 // *** Where it all starts. ***
 window.onload = function () {
-    levels.startLevel(3);
+    levels.startLevel(0);
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     animate();
+    setTimeout(visible, 300); // length of menu animation
 }
 
 // To run actual frame-by-frame animation

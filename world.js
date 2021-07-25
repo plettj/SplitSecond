@@ -100,16 +100,7 @@ let avatar = {
                 }
                 this.bFrame[1] = 0;
             } else if (key[1] < 0 && !this.bFrame[1]) { // DOWN
-                /*let possible = before[this.dir];
-                this.bFrame[2] = possible * unit;
-                if (!isS([possible, after[3]])) this.bFrame[2] = before[this.dir * -1 + 1] * unit;
-                if (!isS([this.bFrame[2] / unit, after[2]])) { // only become a block if there's no block where you are
-                    this.bFrame[1] = 1;
-                    this.vcoor[0] = 0;
-                } else if (!isS([possible, after[2]]) || !isS([this.bFrame[2] / unit, after[2]])) {
-                    console.log("I just need to change the stuff to be actually correct logic that stems out of physics.");
-                }*/
-                if (!(isS([before[0], after[2]]) || isS([before[1] / unit, after[2]]))) { // not standing in DinoBlocks
+                if (!(isS([before[0], after[2]]) || isS([before[1] / unit, after[2]])) && before[2] >= 0) { // not standing in DinoBlocks
                     if (isS([before[0], after[2]])) { // left is a DinoBlock
                         if (isS([before[1], after[3]])) { // right below is solid
                             this.bFrame[2] = before[1] * unit;
@@ -142,14 +133,17 @@ let avatar = {
         //clear(4); // draw the squares that indicate the collision square locations.
         //this.drawTempSquares([[before[0], before[2]], [before[1], before[2]], [before[0], before[3]], [before[1], before[3]]], "#ff1515");
         //this.drawTempSquares([[after[0], after[2]], [after[1], after[2]], [after[0], after[3]], [after[1], after[3]]], "#15ffff");
-        let CLIPPED = false;
-        if (before[2] >= 0 && before[2] < height) if (l[before[2]][before[0]] == 1 || l[before[2]][before[1]] == 1) CLIPPED = true;
-        if (before[3] >= 0 && before[3] < height) if (l[before[3]][before[0]] == 1 || l[before[3]][before[1]] == 1) CLIPPED = true;
-        if (CLIPPED) {
+        
+        //let CLIPPED = XOR([isS([before[0], before[2]], true, false), isS([before[1], before[2]], true, false), isS([before[0], before[3]], true, false), isS([before[1], before[3]], true, false)]);
+        
+        //let CLIPPED = false;
+        //if (before[2] >= 0 && before[2] < height) if (l[before[2]][before[0]] == 1 || l[before[2]][before[1]] == 1) CLIPPED = true;
+        //if (before[3] >= 0 && before[3] < height) if (l[before[3]][before[0]] == 1 || l[before[3]][before[1]] == 1) CLIPPED = true;
+        if (XOR([isS([before[0], before[2]], true, false), isS([before[1], before[2]], true, false), isS([before[0], before[3]], true, false), isS([before[1], before[3]], true, false)])) {
             console.log("You've corner-clipped!!");
             //this.drawTempSquares([[Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)]], "#1515ff", 0.9);
             let centerCo = [Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
-            if (centerCo[1] >= 0 && centerCo[1] < height) if (l[centerCo[1]][centerCo[0]] !== 1) if (this.vcoor[0] > 0) this.coor[0] = centerCo[0] * unit + 2 * pixel;
+            if (!isS([centerCo[0], centerCo[1]], true)) if (this.vcoor[0] > 0) this.coor[0] = centerCo[0] * unit + 2 * pixel;
             else this.coor[0] = centerCo[0] * unit - 1 * pixel;
         }
 

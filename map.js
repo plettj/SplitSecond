@@ -20,15 +20,17 @@ function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
 function between([a, b], num) {
     return num >= Math.min(a, b) && num <= Math.max(a, b);
 }
-function isS([x, y], nonSemi = false) { // is solid?
-    if (x < 0 || x >= width || y < 0 || y >= height) return (nonSemi && !(y < 0 || y >= height));
+function isS([x, y], nonSemi = false, edge = true) { // is solid?
+    if (x < 0 || x >= width || y < 0 || y >= height) return (nonSemi && !(y < 0 || y >= height) && edge);
     else {
         let l = levels.levels[levels.currentLevel];
         if (nonSemi) return (l[y][x] == 1 || l[y][x] == 1.5);
         else return (l[y][x] >= 1 && l[y][x] <= 2);
     }
 }
-
+function XOR(values) { // returns true if exactly one of the values is true
+    return values.reduce((a, x) => x ? a + 1 : a, 0) == 1;
+}
 // LEVELS
 
 // Levels Object
@@ -105,8 +107,8 @@ let levels = {
         // run the closing animation
         fade("in");
         // setTimeout for when to start the next level
-        setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 2100);
-        setTimeout(fade, 2200);
+        setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
+        setTimeout(fade, 1700);
     },
     update: function () {
         // Check if anything should go from 1.5 to 0:
@@ -137,14 +139,14 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]);
 levels.addLevel([
