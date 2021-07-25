@@ -26,7 +26,7 @@ let dom = {
             if (this.displayed == 0) menuBack(true); // Play button
             else if (code == 80) fade('in', 'Pause Menu'); // Pause button
         } else if (code == 82) { // R
-            if (this.displayed !== 1 && document.body.querySelector(".restart").style.display == "block") restart();
+            if (this.displayed !== 1) restart();
         } else if (code == 76) { // L
             if (this.displayed == 0) fade('in', 'Levels Menu');
         }

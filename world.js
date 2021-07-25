@@ -20,6 +20,7 @@ let avatar = {
     complete: false,
     init: function (coor) {
         this.keys = [0, 0, 0, 0];
+        this.bFrame = [0, 0, 0];
         this.complete = false;
         this.coor = coor;
         this.dir = 1;
@@ -57,7 +58,7 @@ let avatar = {
         let l = levels.levels[levels.currentLevel];
         
         if (before[3] < after[3]) { // DOWN - crossed into new cell
-            onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]]));
+            onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]])) && !this.complete;
             if (onGround) {
                 this.inAir = 0;
                 this.vcoor[1] = 0;
@@ -71,17 +72,17 @@ let avatar = {
             }
         }
         if (before[1] < after[1]) { // RIGHT - crossed into new cell
-            hitWall = (isS([after[1], before[2]], true) || isS([after[1], before[3]], true));
+            hitWall = (isS([after[1], before[2]], true, true) || isS([after[1], before[3]], true, true));
             if (hitWall && before[0] < width - 1) {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[1] * unit + pixel * 2.99;
-            } else if (hitWall && !this.complete && before[2] >= 0 && before[0] < height) { // Level Complete!
+            } else if (!this.complete && before[2] >= 0 && before[1] >= width - 1) { // Level Complete!
                 levels.endLevel([width, before[2]]);
                 this.complete = true;
                 this.keys = [0, 0, 1, 0];
             }
         } else if (before[0] > after[0]) { // LEFT - crossed into new cell
-            hitWall = (isS([after[0], before[2]], true) || isS([after[0], before[3]], true));
+            hitWall = (isS([after[0], before[2]], true, true) || isS([after[0], before[3]], true, true));
             if (hitWall) {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[0] * unit - pixel * 1.99;
@@ -101,14 +102,14 @@ let avatar = {
                 }
                 this.bFrame[1] = 0;
             } else if (key[1] < 0 && !this.bFrame[1]) { // DOWN
-                if (!(isS([before[0], after[2]]) || isS([before[1] / unit, after[2]])) && before[2] >= 0) { // not standing in DinoBlocks
-                    if (isS([before[0], after[2]])) { // left is a DinoBlock
+                if (!(isS([before[0], after[2]], true) || isS([before[1] / unit, after[2]], true)) && before[2] >= 0) { // not standing in DinoBlocks
+                    if (isS([before[0], after[2]], true)) { // left is a DinoBlock
                         if (isS([before[1], after[3]])) { // right below is solid
                             this.bFrame[2] = before[1] * unit;
                             this.bFrame[1] = 1;
                             this.vcoor[0] = 0;
                         }
-                    } else if (isS([before[1], after[2]])) { // right is a DinoBlock
+                    } else if (isS([before[1], after[2]], true)) { // right is a DinoBlock
                         if (isS([before[0], after[3]])) { // left below is solid
                             this.bFrame[2] = before[0] * unit;
                             this.bFrame[1] = 1;
@@ -119,6 +120,11 @@ let avatar = {
                         this.bFrame[1] = 1;
                         this.vcoor[0] = 0;
                     }
+                } else {
+                    // comment out this code if I want to disable [down] when inside other blocks
+                    this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
+                    this.bFrame[1] = 1;
+                    this.vcoor[0] = 0;
                 }
             }
             if (this.bFrame[0] + this.bFrame[1]) { // slide towards the target:
@@ -141,9 +147,11 @@ let avatar = {
         //if (before[2] >= 0 && before[2] < height) if (l[before[2]][before[0]] == 1 || l[before[2]][before[1]] == 1) CLIPPED = true;
         //if (before[3] >= 0 && before[3] < height) if (l[before[3]][before[0]] == 1 || l[before[3]][before[1]] == 1) CLIPPED = true;
         if (XOR([isS([before[0], before[2]], true, false), isS([before[1], before[2]], true, false), isS([before[0], before[3]], true, false), isS([before[1], before[3]], true, false)])) {
-            console.log("You've corner-clipped!!");
+            console.log("You've corner-clipped!! (NEEDS TO BE REPROGRAMMED)");
             //this.drawTempSquares([[Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)]], "#1515ff", 0.9);
             let centerCo = [Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
+            //if (this.vcoor[0] > 0 && isS([centerCo[0], centerCo[1]], true)) this.coor[0] = centerCo[0] * unit - 1 * pixel;
+            //else this.coor[0] = centerCo[0] * unit + 2 * pixel
             if (!isS([centerCo[0], centerCo[1]], true)) if (this.vcoor[0] > 0) this.coor[0] = centerCo[0] * unit + 2 * pixel;
             else this.coor[0] = centerCo[0] * unit - 1 * pixel;
         }
