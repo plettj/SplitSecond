@@ -19,14 +19,30 @@
             <div class="content">
                 <div class="back" onclick="menuBack()"><</div>
                 <div class="title">Paused</div>
-                <div class="button levels" onclick="fade('out', 'Levels Menu')"><span>[L]</span> Levels</div>
-                <div class="button restart"><span>[R]</span> Restart</div>
+                <div class="button levels" onclick="fade('in', 'Levels Menu')"><span>[L]</span> Levels</div>
+                <div class="button restart" onclick="restart()"><span>[R]</span> Restart</div>
                 <div class="button play" onclick="menuBack()"><span>[P]</span> Play</div>
                 <div class="link nextLevel">Next Level (link)</div>
             </div>
         </div>
-        <div id="LevelsMenu" class="menu" style="display: none;">
-            <div class="title">Levels</div>
+        <div id="LevelsMenu" class="menu off" style="visibility: hidden;">
+            <div class="content">
+                <div class="back" onclick="menuBack()"><</div>
+                <div class="title">Levels</div>
+                <table id="Select">
+                    <tr>
+                        <td onclick='levels.startLevel(0); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>1</td>
+                        <td onclick='levels.startLevel(1); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>2</td>
+                        <td onclick='levels.startLevel(2); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>3</td>
+                        <td onclick='levels.startLevel(3); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>4</td>
+                    </tr>
+                    <tr><td onclick='levels.startLevel(4); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>5</td>
+                        <td onclick='levels.startLevel(5); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>6</td>
+                        <td onclick='levels.startLevel(6); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>7</td>
+                        <td onclick='levels.startLevel(7); menuBack(); fade("in", "Pause Menu"); document.body.querySelector(".restart").style.display = "none";'>8</td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
         

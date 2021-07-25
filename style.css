@@ -128,10 +128,10 @@ canvas {
     height: calc(var(--unit) * (var(--height) - 0.6));
 }
 .menu.on {
-    animation: menuFly 0.4s cubic-bezier(.4,1,.6,1) 0s 1 both;
+    animation: menuFly 0.4s cubic-bezier(.4, 1, .6, 1) 0s 1 both;
 }
 .menu.off {
-    animation: menuFlyOut 0.3s cubic-bezier(.31,.68,.46,.83) 0s 1 none;
+    animation: menuFlyOut 0.3s cubic-bezier(.31, .68, .46, .83) 0s 1 none;
     top: 100%;
 }
 
@@ -155,7 +155,7 @@ canvas {
     cursor: pointer;
 }
 .button {
-    font-size: calc(var(--unit) / 2);
+    font-size: calc(var(--unit) * 0.5);
     line-height: calc(var(--unit) * 0.7);
     margin: auto;
     margin-top: calc(var(--unit));

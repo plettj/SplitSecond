@@ -24,8 +24,9 @@ let avatar = {
         this.coor = coor;
         this.dir = 1;
         this.vcoor = [0, 0];
+        this.draw();
     },
-    draw: function (a) { // a: [xOnTileset, yOnTileset]
+    draw: function (a = [1, this.dir]) { // a: [xOnTileset, yOnTileset]
         ctx[5].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
     },
     drawTempSquares: function (squares, colour, opacity = 0.3) {
@@ -175,6 +176,7 @@ let Ghost = class {
         this.instructions.push([Math.round(avatar.coor[0]), Math.round(avatar.coor[1]), 0, avatar.dir, avatar.inAir, avatar.action, [avatar.bFrame[0], avatar.bFrame[1], avatar.bFrame[2]]]);
     }
     draw () {
+        if (this.instructions.length == 0) return;
         if (this.frame < 0 || this.frame >= this.instructions.length) {
             if (this.frame < 0) this.frame = 0;
             else this.frame = this.instructions.length - 1;

@@ -94,10 +94,12 @@ let levels = {
         // draw the buttons and spikes and walls and doors and stuff
     },
     startLevel: function (level) {
+        if (level >= this.levels.length) level = this.levels.length - 1;
         time = 1;
         frame = 0;
         stepcounter = 0;
         step = 0;
+        clear(5);
         this.currentLevel = level;
         this.drawLevel(level);
         this.ghosts = [];
@@ -105,10 +107,10 @@ let levels = {
     },
     endLevel: function ([x, y]) {
         // run the closing animation
-        fade("in");
+        dom.newLevel(true);
         // setTimeout for when to start the next level
         setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
-        setTimeout(fade, 1700);
+        setTimeout(dom.newLevel, 1700);
     },
     update: function () {
         // Check if anything should go from 1.5 to 0:
@@ -146,7 +148,7 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]);
 levels.addLevel([
