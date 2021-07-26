@@ -24,6 +24,7 @@ function isS([x, y], nonSemi = false, hor = false) { // is solid?
     if (x < 0 || x >= width || y < 0 || y >= height) {
         if (hor && (y < 0 || y >= height) && (x < 0 || x >= width)) return true;
         else if (hor && (x < 0 || x >= width)) return true;
+        //else if (!hor && (x < 0 || x >= width)) 
         if (x < 0 || x >= width) x = (x < 0) ? 0 : width - 1;
         if (y < 0 || y >= height) y = (y < 0) ? 0 : height - 1;
     }
@@ -32,7 +33,11 @@ function isS([x, y], nonSemi = false, hor = false) { // is solid?
     else return (l[y][x] >= 1 && l[y][x] <= 2);
 }
 function XOR(values) { // returns true if exactly one of the values is true
-    return values.reduce((a, x) => x ? a + 1 : a, 0) == 1;
+    if (values.reduce((a, x) => x ? a + 1 : a, 0) == 1) {
+        for (i = 0; i < values.length; i++) {
+            if (values[i]) return i;
+        }
+    } else return -1; // not exactly 1 of them is true
 }
 // LEVELS
 
@@ -108,7 +113,7 @@ let levels = {
         this.ghosts = [];
         nextGhost = new Ghost();
     },
-    endLevel: function ([x, y]) {
+    endLevel: function () {
         // run the closing animation
         dom.newLevel(true);
         // setTimeout for when to start the next level

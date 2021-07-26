@@ -6,7 +6,9 @@ let dom = {
     covers: document.body.querySelectorAll(".cover"),
     levelNum: document.body.querySelector("#NextLevel"),
     levelText: document.body.querySelector(".bigText"),
+    pauseTitle: document.body.querySelector("#PauseTitle"),
     pauseButton: document.body.querySelector("#Pause"),
+    restartButton: document.body.querySelector(".restart"),
     menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu")],
     displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-LevelTransition
     newLevel: function (next = false) {
@@ -14,85 +16,81 @@ let dom = {
             dom.levelNum.textContent = levels.currentLevel + 2;
             dom.covers.forEach(function (e) {e.classList.add("on");});
             dom.levelText.classList.add("on");
+            dom.pauseButton.style.display = "none";
             dom.displayed = 2;
         } else {
             dom.covers.forEach(function (e) {e.classList.remove("on");});
             dom.levelText.classList.remove("on");
+            dom.pauseButton.style.display = "block";
             dom.displayed = -1;
         }
     },
     key: function (code) {
         if (code == 80 || code == 13) { // P or [enter]
-            if (this.displayed == 0) menuBack(true); // Play button
-            else if (code == 80) fade('in', 'Pause Menu'); // Pause button
+            if (this.displayed == 0) dom.back(true); // Play button
+            else if (code == 80) dom.pause(); // Pause button
         } else if (code == 82) { // R
-            if (this.displayed !== 1) restart();
+            if (this.displayed !== 1) dom.restart();
         } else if (code == 76) { // L
-            if (this.displayed == 0) fade('in', 'Levels Menu');
+            if (this.displayed == 0) dom.levels();
         }
+    },
+    pause: function (pause = true) {
+        if (pause) {
+            dom.menus[0].classList.remove("off");
+            dom.menus[0].classList.add("on");
+            dom.pauseButton.style.display = "none";
+            dom.covers.forEach(function (e) {e.classList.add("on");});
+            dom.restartButton.style.display = "block";
+            dom.pauseTitle.textContent = "Paused";
+            paused = true;
+            dom.displayed = 0;
+        } else { // close pause menu
+            dom.menus[0].classList.remove("on");
+            dom.menus[0].classList.add("off");
+            dom.pauseButton.style.display = "block";
+            dom.covers.forEach(function (e) {e.classList.remove("on");});
+            paused = false;
+            dom.displayed = -1;
+        }
+    },
+    levels: function (enter = true) {
+        if (enter) {
+            dom.menus[1].classList.remove("off");
+            dom.menus[1].classList.add("on");
+            dom.menus[0].classList.remove("on");
+            dom.menus[0].classList.add("off");
+            dom.displayed = 1;
+        } else { // close levels menu
+            dom.menus[1].classList.remove("on");
+            dom.menus[1].classList.add("off");
+            dom.menus[0].classList.remove("off");
+            dom.menus[0].classList.add("on");
+            dom.displayed = -1;
+        }
+    },
+    back: function (fully = false) {
+        if (!fully && dom.displayed !== 1 && dom.pauseTitle.textContent !== "Paused") { // level inspect menu
+            dom.levels();
+        } else {
+            dom.levels(false);
+            dom.pause(false);
+        }
+    },
+    restart: function () {
+        dom.back(true);
+        levels.startLevel(levels.currentLevel);
+    },
+    tryLevel: function (level) {
+        levels.startLevel(level - 1);
+        dom.back();
+        dom.pause();
+        dom.restartButton.style.display = "none";
+        dom.pauseTitle.textContent = "Level " + level;
     }
 }
-function fade(direction, type = "Next Level") {
-    switch (type) {
-        case "Pause Menu":
-            if (direction == "in") {
-                document.body.querySelector("#PauseMenu").classList.remove("off");
-                document.body.querySelector("#PauseMenu").classList.add("on");
-                document.body.querySelector("#Pause").style.display = "none";
-                document.body.querySelectorAll(".cover").forEach(function (e) {e.classList.add("on");});
-                document.body.querySelector(".restart").style.display = "block";
-                document.body.querySelector("#PauseTitle").textContent = "Paused";
-                paused = true;
-                dom.displayed = 0;
-            } else {
-                document.body.querySelector("#PauseMenu").classList.remove("on");
-                document.body.querySelector("#PauseMenu").classList.add("off");
-                document.body.querySelector("#Pause").style.display = "block";
-                document.body.querySelectorAll(".cover").forEach(function (e) {e.classList.remove("on");});
-                paused = false;
-                dom.displayed = -1;
-            }
-            break;
-        case "Levels Menu":
-            if (direction == "in") {
-                document.body.querySelector("#LevelsMenu").classList.remove("off");
-                document.body.querySelector("#LevelsMenu").classList.add("on");
-                document.body.querySelector("#PauseMenu").classList.remove("on");
-                document.body.querySelector("#PauseMenu").classList.add("off");
-                dom.displayed = 1;
-            } else {
-                document.body.querySelector("#LevelsMenu").classList.remove("on");
-                document.body.querySelector("#LevelsMenu").classList.add("off");
-                document.body.querySelector("#PauseMenu").classList.remove("off");
-                document.body.querySelector("#PauseMenu").classList.add("on");
-                dom.displayed = -1;
-            }
-            break;
-    }
-}
+
+
 function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
-}
-
-function menuBack(everything = false) {
-    // here I'll have the logic for which menu you ought to be taken to
-    if (!everything && document.body.querySelector("#PauseTitle").textContent !== "Paused" && dom.displayed !== 1) {
-        fade("in", "Levels Menu");
-    } else {
-        fade('out', 'Levels Menu');
-        fade('out', 'Pause Menu');
-    }
-}
-
-function restart() {
-    fade('out', 'Pause Menu');
-    levels.startLevel(levels.currentLevel);
-}
-
-function tryLevel(level) {
-    levels.startLevel(level - 1);
-    menuBack();
-    fade("in", "Pause Menu");
-    document.body.querySelector(".restart").style.display = "none";
-    document.body.querySelector("#PauseTitle").textContent = "Level " + level;
 }

@@ -37,7 +37,6 @@ let avatar = {
         for (let i = 0; i < squares.length; i++) {
             ctx[4].fillRect(squares[i][0] * unit, squares[i][1] * unit, unit, unit);
         }
-        //ctx[4].stroke();
     },
     physics: function () { // PHYSICS
         clear(5, this.coor);
@@ -58,7 +57,7 @@ let avatar = {
         let l = levels.levels[levels.currentLevel];
         
         if (before[3] < after[3]) { // DOWN - crossed into new cell
-            onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]])) && !this.complete;
+            onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]]));
             if (onGround) {
                 this.inAir = 0;
                 this.vcoor[1] = 0;
@@ -77,7 +76,7 @@ let avatar = {
                 this.vcoor[0] = 0;
                 this.coor[0] = before[1] * unit + pixel * 2.99;
             } else if (!this.complete && before[2] >= 0 && before[1] >= width - 1) { // Level Complete!
-                levels.endLevel([width, before[2]]);
+                levels.endLevel();
                 this.complete = true;
                 this.keys = [0, 0, 1, 0];
             }
@@ -146,14 +145,22 @@ let avatar = {
         //let CLIPPED = false;
         //if (before[2] >= 0 && before[2] < height) if (l[before[2]][before[0]] == 1 || l[before[2]][before[1]] == 1) CLIPPED = true;
         //if (before[3] >= 0 && before[3] < height) if (l[before[3]][before[0]] == 1 || l[before[3]][before[1]] == 1) CLIPPED = true;
-        if (XOR([isS([before[0], before[2]], true, false), isS([before[1], before[2]], true, false), isS([before[0], before[3]], true, false), isS([before[1], before[3]], true, false)])) {
-            console.log("You've corner-clipped!! (NEEDS TO BE REPROGRAMMED)");
+
+        // -1: no clip. 
+        let spots = [[before[0], before[2]], [before[1], before[2]], [before[0], before[3]], [before[1], before[3]]];
+        let clipped = XOR([isS(spots[0], true, false), isS(spots[1], true, false), isS(spots[2], true, false), isS(spots[3], true, false)]);
+        if (clipped !== -1) {
+            console.log("You've corner-clipped!");
             //this.drawTempSquares([[Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)]], "#1515ff", 0.9);
             let centerCo = [Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
             //if (this.vcoor[0] > 0 && isS([centerCo[0], centerCo[1]], true)) this.coor[0] = centerCo[0] * unit - 1 * pixel;
             //else this.coor[0] = centerCo[0] * unit + 2 * pixel
-            if (!isS([centerCo[0], centerCo[1]], true)) if (this.vcoor[0] > 0) this.coor[0] = centerCo[0] * unit + 2 * pixel;
-            else this.coor[0] = centerCo[0] * unit - 1 * pixel;
+            
+            if (clipped < 2) { // upwards clip
+                this.coor[1] = centerCo[1] * unit - 2 * pixel;
+            } else { // downwards clip
+                this.coor[1] = centerCo[1] * unit - unit;
+            }
         }
 
         if (!this.action && Math.abs(this.vcoor[0]) < this.amax * 1.5) this.coor[0] -= this.vcoor[0];

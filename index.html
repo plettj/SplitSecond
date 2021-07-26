@@ -17,46 +17,46 @@
 
         <div id="PauseMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="back" onclick="menuBack()"><</div>
+                <div class="back" onclick="dom.back()"><</div>
                 <div class="title" id="PauseTitle">Paused</div>
-                <div class="button levels" onclick="fade('in', 'Levels Menu')"><span>[L]</span> Levels</div>
-                <div class="button restart" onclick="restart()"><span>[R]</span> Restart</div>
-                <div class="button play" onclick="menuBack(true)"><span>[P]</span> Play</div>
+                <div class="button levels" onclick="dom.levels();"><span>[L]</span> Levels</div>
+                <div class="button restart" onclick="dom.restart()"><span>[R]</span> Restart</div>
+                <div class="button play" onclick="dom.back(true)"><span>[P]</span> Play</div>
                 <div class="link nextLevel">Next Level (link)</div>
             </div>
         </div>
         <div id="LevelsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="back" onclick="menuBack()"><</div>
+                <div class="back" onclick="dom.back()"><</div>
                 <div class="title">Levels</div>
                 <table id="Select">
                     <tr>
-                        <td onclick="tryLevel(1)">1</td>
-                        <td onclick="tryLevel(2)">2</td>
-                        <td onclick="tryLevel(3)">3</td>
-                        <td onclick="tryLevel(4)">4</td>
+                        <td onclick="dom.tryLevel(1)">1</td>
+                        <td onclick="dom.tryLevel(2)">2</td>
+                        <td onclick="dom.tryLevel(3)">3</td>
+                        <td onclick="dom.tryLevel(4)">4</td>
                     </tr>
                     <tr>
-                        <td onclick="tryLevel(5)">5</td>
-                        <td onclick="tryLevel(6)">6</td>
-                        <td onclick="tryLevel(7)">7</td>
-                        <td onclick="tryLevel(8)">8</td>
+                        <td onclick="dom.tryLevel(5)">5</td>
+                        <td onclick="dom.tryLevel(6)">6</td>
+                        <td onclick="dom.tryLevel(7)">7</td>
+                        <td onclick="dom.tryLevel(8)">8</td>
                     </tr>
                     <tr>
-                        <td onclick="tryLevel(9)">9</td>
-                        <td onclick="tryLevel(10)">10</td>
-                        <td onclick="tryLevel(11)">11</td>
-                        <td onclick="tryLevel(12)">12</td>
+                        <td onclick="dom.tryLevel(9)">9</td>
+                        <td onclick="dom.tryLevel(10)">10</td>
+                        <td onclick="dom.tryLevel(11)">11</td>
+                        <td onclick="dom.tryLevel(12)">12</td>
                     </tr>
                     <tr>
-                        <td onclick="tryLevel(13)">13</td>
+                        <td onclick="dom.tryLevel(13)">13</td>
                     </tr>
                 </table>
             </div>
         </div>
 
         
-        <div id="Pause" style="display: block;" onclick="fade('in', 'Pause Menu')">
+        <div id="Pause" style="display: block;" onclick="dom.pause();">
             <div class="gray"></div>
         </div>
     </body>
