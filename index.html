@@ -17,6 +17,7 @@
 
         <div id="PauseMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
+                <div class="settings" onclick="dom.settings()">+</div>
                 <div class="back" onclick="dom.back()"><</div>
                 <div class="title" id="PauseTitle">Paused</div>
                 <div class="button levels" onclick="dom.levels();"><span>[L]</span> Levels</div>
@@ -25,8 +26,16 @@
                 <div class="link nextLevel">Next Level (link)</div>
             </div>
         </div>
+        <div id="SettingsMenu" class="menu off" style="visibility: hidden;">
+            <div class="content">
+                <div class="back" onclick="dom.settings(false)"><</div>
+                <div class="title">Settings</div>
+                <div class="button">Eventually there will be some settings here.</div>
+            </div>
+        </div>
         <div id="LevelsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
+                <div class="settings" onclick="dom.settings()">+</div>
                 <div class="back" onclick="dom.back()"><</div>
                 <div class="title">Levels</div>
                 <table id="Select">

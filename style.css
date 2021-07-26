@@ -140,6 +140,21 @@ canvas {
     text-align: center;
     margin-top: calc(var(--unit) * 1 / 5);
 }
+
+.settings {
+    position: absolute;
+    left: calc(var(--unit) * 3 / 10);
+    top: calc(var(--unit) * 3 / 10);
+    width: calc(var(--unit) * 4 / 5);
+    height: calc(var(--unit) * 4 / 5);
+    line-height: calc(var(--unit) * 4 / 5);
+    text-align: center;
+    font-size: calc(var(--unit) * 3.5 / 5);
+}
+.settings:hover {
+    width: calc(var(--unit) * 1);
+    cursor: pointer;
+}
 .back {
     position: absolute;
     right: calc(var(--unit) * 3 / 10);
@@ -154,6 +169,7 @@ canvas {
     width: calc(var(--unit) * 1);
     cursor: pointer;
 }
+
 .button {
     font-size: calc(var(--unit) * 0.5);
     line-height: calc(var(--unit) * 0.7);
@@ -165,6 +181,7 @@ canvas {
 .button:hover {
     height: calc(var(--unit) * 0.8);
     margin-top: calc(var(--unit) * 0.9);
+    cursor: pointer;
 }
 .button.levels {
     margin-top: calc(var(--unit) * 2.5);

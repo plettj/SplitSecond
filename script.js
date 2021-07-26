@@ -9,15 +9,15 @@ let dom = {
     pauseTitle: document.body.querySelector("#PauseTitle"),
     pauseButton: document.body.querySelector("#Pause"),
     restartButton: document.body.querySelector(".restart"),
-    menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu")],
-    displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-LevelTransition
+    menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu"), document.body.querySelector("#SettingsMenu")],
+    displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-SettingsMenu 3-LevelTransition
     newLevel: function (next = false) {
         if (next) {
             dom.levelNum.textContent = levels.currentLevel + 2;
             dom.covers.forEach(function (e) {e.classList.add("on");});
             dom.levelText.classList.add("on");
             dom.pauseButton.style.display = "none";
-            dom.displayed = 2;
+            dom.displayed = 3;
         } else {
             dom.covers.forEach(function (e) {e.classList.remove("on");});
             dom.levelText.classList.remove("on");
@@ -67,6 +67,20 @@ let dom = {
             dom.menus[0].classList.remove("off");
             dom.menus[0].classList.add("on");
             dom.displayed = -1;
+        }
+    },
+    settings: function (enter = true) {
+        if (enter) {
+            dom.menus[2].classList.remove("off");
+            dom.menus[2].classList.add("on");
+            dom.levels(false);
+            dom.menus[0].classList.remove("on");
+            dom.menus[0].classList.add("off");
+            dom.displayed = 2;
+        } else { // close levels menu
+            dom.menus[2].classList.remove("on");
+            dom.menus[2].classList.add("off");
+            dom.back();
         }
     },
     back: function (fully = false) {
