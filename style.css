@@ -15,6 +15,7 @@ body {
     --y: 1;
     overflow: hidden;
     font-family: Arcology;
+    color: rgb(75, 75, 75);
 }
 
 canvas {
@@ -51,7 +52,7 @@ canvas {
 
 @keyframes textFly {
     from {
-        top: calc(var(--unit) * -4);
+        top: calc(var(--unit) * -5);
     } to {
         top: 100%;
     }
@@ -76,23 +77,26 @@ canvas {
     font-size: calc(var(--unit) * 1.5);
     text-align: center;
     width: 100%;
-    top: calc(var(--unit) * -4);
+    top: calc(var(--unit) * -5);
     color: black;
     display: none;
 }
 .small {
     font-size: calc(var(--unit) / 2);
+    margin: auto;
+    margin-top: calc(var(--unit) * 1);
+    text-overflow: initial;
     -webkit-text-stroke-width: 0;
+    width: calc(var(--unit) * 6);
 }
 #NextLevel {
     -webkit-text-fill-color: white; /* Will override color (regardless of order) */
     -webkit-text-stroke-width: calc(var(--unit) / 15);
     -webkit-text-stroke-color: black;
 }
-
 .bigText.on {
     display: block;
-    animation: textFly 1.2s cubic-bezier(.2, 1, .8, 0) 0.4s; 
+    animation: textFly 1.2s cubic-bezier(.2, 1, .8, 0) 0.4s;
 }
 
 #Pause {
@@ -103,18 +107,9 @@ canvas {
     right: calc((100% - var(--unit) * (var(--width) - 0.6)) / 2);
     background-image: url("images/Pause.png");
     background-size: var(--unit);
-}
-#Pause .gray {
-    margin-top: calc(var(--unit) / 10);
-    margin-left: calc(var(--unit) / 10);
-    width: calc(var(--unit) * 4 / 5);
-    height: calc(var(--unit) * 4 / 5);
-    backdrop-filter: grayscale(100%);
-    -webkit-backdrop-filter: grayscale(100%);
-    background-color: rgba(30, 30, 30, 0.1);
+    cursor: pointer;
 }
 #Pause:hover {
-    cursor: pointer;
     background-position-y: bottom;
     height: calc(var(--unit) * 11 / 10);
     top: calc((100% - var(--unit) * (var(--height) - 0.4)) / 2);
@@ -138,6 +133,7 @@ canvas {
 .title {
     font-size: var(--unit);
     text-align: center;
+    color: black;
     margin-top: calc(var(--unit) * 1 / 5);
 }
 
@@ -149,14 +145,16 @@ canvas {
     height: calc(var(--unit) * 4 / 5);
     line-height: calc(var(--unit) * 4 / 5);
     text-align: center;
+    color: black;
     font-size: calc(var(--unit) * 3.5 / 5);
+    cursor: pointer;
 }
 .settings:hover {
     width: calc(var(--unit) * 1);
-    cursor: pointer;
 }
 .back {
     position: absolute;
+    color: black;
     right: calc(var(--unit) * 3 / 10);
     top: calc(var(--unit) * 3 / 10);
     width: calc(var(--unit) * 4 / 5);
@@ -164,10 +162,15 @@ canvas {
     line-height: calc(var(--unit) * 4 / 5);
     text-align: center;
     font-size: calc(var(--unit) * 3.5 / 5);
+    cursor: pointer;
 }
 .back:hover {
-    width: calc(var(--unit) * 1);
-    cursor: pointer;
+    width: var(--unit);
+}
+.back.up:hover {
+    width: calc(var(--unit) * 4 / 5);
+    height: calc(var(--unit) * 9 / 10);
+    top: calc(var(--unit) * 2 / 10);
 }
 
 .button {
@@ -175,18 +178,23 @@ canvas {
     line-height: calc(var(--unit) * 0.7);
     margin: auto;
     margin-top: calc(var(--unit));
-    width: calc(var(--unit) * 5);
+    width: calc(var(--unit) * 3.5);
     height: calc(var(--unit) * 0.7);
+    cursor: pointer;
 }
 .button:hover {
     height: calc(var(--unit) * 0.8);
     margin-top: calc(var(--unit) * 0.9);
-    cursor: pointer;
 }
-.button.levels {
+.button:focus {
+    padding-left: calc(var(--unit) * 0.4);
+    color: black;
+    outline: none;
+}
+.button.play {
     margin-top: calc(var(--unit) * 2.5);
 }
-.button.levels:hover {
+.button.play:hover {
     margin-top: calc(var(--unit) * 2.4);
 }
 .button span {
@@ -195,9 +203,36 @@ canvas {
     line-height: calc(var(--unit) / 3);
     letter-spacing: calc(var(--unit) / -10);
 }
-.link {
-    float: left;
-    margin: auto;
-    color: blue;
-    visibility: hidden;
+
+#Cursor {
+    position: absolute;
+    left: var(--cx);
+    top: var(--cy);
+    width: var(--cw);
+    height: var(--ch);
+    display: var(--cd);
+}
+#Cursor .line {
+    position: absolute;
+    width: 100%;
+    height: var(--cp);
+    background-color: black;
+}
+#Cursor .side {
+    position: absolute;
+    width: var(--cp);
+    height: calc(var(--cp) * 2);
+    background-color: black;
+}
+#Cursor .top {
+    top: 0;
+}
+#Cursor .bottom {
+    bottom: 0;
+}
+#Cursor .left {
+    left: 0;
+}
+#Cursor .right {
+    right: 0;
 }

@@ -1,8 +1,10 @@
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="utf-8">
         <title>Dino Destroyerrrrr!</title>
 	    <link rel="stylesheet" href="style.css">
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
     </head>
     <body>
         <!-- Canvases are created with JavaScript -->
@@ -11,63 +13,68 @@
         <div class="cover two"></div>
 
         <div class="bigText">
-            LEVEL <span id="NextLevel">8</span><br>
-            <span class="small"><br>enters from<br>the future</span>
+            LEVEL <span id="NextLevel">88</span><br>
+            <div class="small">enters from the future</div>
         </div>
 
         <div id="PauseMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="settings" onclick="dom.settings()">+</div>
-                <div class="back" onclick="dom.back()"><</div>
-                <div class="title" id="PauseTitle">Paused</div>
-                <div class="button levels" onclick="dom.levels();"><span>[L]</span> Levels</div>
-                <div class="button restart" onclick="dom.restart()"><span>[R]</span> Restart</div>
-                <div class="button play" onclick="dom.back(true)"><span>[P]</span> Play</div>
-                <div class="link nextLevel">Next Level (link)</div>
+                <!--<div class="back up" onclick="dom.play();">X</div>-->
+                <div class="title" id="PauseTitle">Level <span id="CurrLevel">88</span></div>
+                <div class="button play" onclick="dom.play();" tabindex="0">Resume</div>
+                <div class="button restart" onclick="dom.restart();" tabindex="0">Restart</div>
+                <div class="button levels" onclick="dom.newMenu();" tabindex="0">Levels</div>
             </div>
         </div>
         <div id="SettingsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="back" onclick="dom.settings(false)"><</div>
+                <div class="back" onclick="dom.back();"><</div>
                 <div class="title">Settings</div>
-                <div class="button">Eventually there will be some settings here.</div>
+                <div class="button" id="settingsfocustemp" tabindex="0">Eventually there will be some settings here.</div>
             </div>
         </div>
         <div id="LevelsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="settings" onclick="dom.settings()">+</div>
-                <div class="back" onclick="dom.back()"><</div>
+                <div class="settings" onclick="dom.newMenu(2);">+</div>
+                <div class="back" onclick="dom.back(true);"><</div>
                 <div class="title">Levels</div>
                 <table id="Select">
                     <tr>
-                        <td onclick="dom.tryLevel(1)">1</td>
-                        <td onclick="dom.tryLevel(2)">2</td>
-                        <td onclick="dom.tryLevel(3)">3</td>
-                        <td onclick="dom.tryLevel(4)">4</td>
+                        <td onclick="dom.play(1);" tabindex="0">1</td>
+                        <td onclick="dom.play(2);" tabindex="0">2</td>
+                        <td onclick="dom.play(3);" tabindex="0">3</td>
+                        <td onclick="dom.play(4);" tabindex="0">4</td>
                     </tr>
                     <tr>
-                        <td onclick="dom.tryLevel(5)">5</td>
-                        <td onclick="dom.tryLevel(6)">6</td>
-                        <td onclick="dom.tryLevel(7)">7</td>
-                        <td onclick="dom.tryLevel(8)">8</td>
+                        <td onclick="dom.play(5);" tabindex="0">5</td>
+                        <td onclick="dom.play(6);" tabindex="0">6</td>
+                        <td onclick="dom.play(7);" tabindex="0">7</td>
+                        <td onclick="dom.play(8);" tabindex="0">8</td>
                     </tr>
                     <tr>
-                        <td onclick="dom.tryLevel(9)">9</td>
-                        <td onclick="dom.tryLevel(10)">10</td>
-                        <td onclick="dom.tryLevel(11)">11</td>
-                        <td onclick="dom.tryLevel(12)">12</td>
+                        <td id="doeswork" onclick="dom.play(9);" tabindex="0">9</td>
+                        <td onclick="dom.play(10);" tabindex="0">10</td>
+                        <td onclick="dom.play(11);" tabindex="0">11</td>
+                        <td onclick="dom.play(12);" tabindex="0">12</td>
                     </tr>
                     <tr>
-                        <td onclick="dom.tryLevel(13)">13</td>
+                        <td onclick="dom.play(13);" tabindex="0">13</td>
                     </tr>
                 </table>
             </div>
         </div>
 
-        
-        <div id="Pause" style="display: block;" onclick="dom.pause();">
-            <div class="gray"></div>
+        <div id="Pause" style="display: block;" onclick="dom.newMenu(0);"></div>
+        <!--
+        <div id="Cursor" onmouseover="cursor.over()" onclick="cursor.click()">
+            <div class="line top"></div>
+            <div class="side top left"></div>
+            <div class="side top right"></div>
+            <div class="line bottom"></div>
+            <div class="side bottom left"></div>
+            <div class="side bottom right"></div>
         </div>
+        -->
     </body>
 	<script src="main.js"></script>
 	<script src="map.js"></script>
