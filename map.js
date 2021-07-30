@@ -49,8 +49,11 @@ let levels = {
     addLevel: function (values/*here I'll add parameters as additional objects are created*/) {
         this.levels.push(values);
     },
-    drawLevel: function (level) { // draw the specified level
-        clear(1);
+    drawLevel: function (level, simple = false) { // draw the specified level
+        let c = (simple) ? ctx.length - 1 : 1; // canvas index
+        let m = (simple) ? unit * 0.32 : unit; // size multiplier
+        console.log(c);
+        clear(c);
         let l = this.levels[level];
         let semiShape = [0, []]; // [(1-open {=} 2-line {+}), [x's of no {=}]];
         for (let y = 0; y < height; y++) {
@@ -69,9 +72,9 @@ let levels = {
                             } else option = (Math.floor(Math.random() * 2)) * 3;
                             if (option == 1) semiNext[1].push(x);
                             if (semiShape[0]) option = option % 3;
-                            ctx[1].drawImage(img[0], option * 100, 500 + semiShape[0] * 100, 100, 100, x * unit, y * unit, unit, unit);
+                            ctx[c].drawImage(img[0], option * 100, 500 + semiShape[0] * 100, 100, 100, x * m, y * m, m, m);
                             semiShape[0] = option % 3; // % 3 turns option {-} into 0 (good!)
-                            if (y < height - 1) if (l[y + 1][x] % 3 !== 0) ctx[1].drawImage(img[0], 400, 400, 100, 100, x * unit, y * unit, unit, unit);
+                            if (y < height - 1) if (l[y + 1][x] % 3 !== 0) ctx[c].drawImage(img[0], 400, 400, 100, 100, x * m, y * m, m, m);
                         }
                         break;
                     case 1: // normal block
@@ -80,20 +83,20 @@ let levels = {
                         if (x > 0) if (l[y][x - 1] !== 1) blocks[1] = 1;
                         if (y > 0) if (l[y - 1][x] !== 1) blocks[2] = 1;
                         if (y < height - 1) if (l[y + 1][x] !== 1) blocks[3] = 1;
-                        ctx[1].drawImage(img[0], (blocks[1] + 2 * blocks[0]) * 100, (blocks[2] + 2 * blocks[3]) * 100, 100, 100, x * unit, y * unit, unit, unit);
-                        if (x > 0 && y > 0) if (!blocks[1] && !blocks[2] && l[y - 1][x - 1] !== 1) ctx[1].drawImage(img[0], 400, 0, 100, 100, x * unit, y * unit, unit, unit);
-                        if (x < width - 1 && y > 0) if (!blocks[0] && !blocks[2] && l[y - 1][x + 1] !== 1) ctx[1].drawImage(img[0], 400, 100, 100, 100, x * unit, y * unit, unit, unit);
-                        if (x < width - 1 && y < height - 1) if (!blocks[0] && !blocks[3] && l[y + 1][x + 1] !== 1) ctx[1].drawImage(img[0], 400, 200, 100, 100, x * unit, y * unit, unit, unit);
-                        if (x > 0 && y < height - 1) if (!blocks[1] && !blocks[3] && l[y + 1][x - 1] !== 1) ctx[1].drawImage(img[0], 400, 300, 100, 100, x * unit, y * unit, unit, unit);
+                        ctx[c].drawImage(img[0], (blocks[1] + 2 * blocks[0]) * 100, (blocks[2] + 2 * blocks[3]) * 100, 100, 100, x * m, y * m, m, m);
+                        if (x > 0 && y > 0) if (!blocks[1] && !blocks[2] && l[y - 1][x - 1] !== 1) ctx[c].drawImage(img[0], 400, 0, 100, 100, x * m, y * m, m, m);
+                        if (x < width - 1 && y > 0) if (!blocks[0] && !blocks[2] && l[y - 1][x + 1] !== 1) ctx[c].drawImage(img[0], 400, 100, 100, 100, x * m, y * m, m, m);
+                        if (x < width - 1 && y < height - 1) if (!blocks[0] && !blocks[3] && l[y + 1][x + 1] !== 1) ctx[c].drawImage(img[0], 400, 200, 100, 100, x * m, y * m, m, m);
+                        if (x > 0 && y < height - 1) if (!blocks[1] && !blocks[3] && l[y + 1][x - 1] !== 1) ctx[c].drawImage(img[0], 400, 300, 100, 100, x * m, y * m, m, m);
                         break;
                     case 2: // semisolid block
                         let blocks2 = [0, 0]; // [right, left]; 1 means not there.
                         if (x < width - 1) if (l[y][x + 1] !== 2) blocks2[0] = 1;
                         if (x > 0) if (l[y][x - 1] !== 2) blocks2[1] = 1;
-                        ctx[1].drawImage(img[0], (blocks2[1] + 2 * blocks2[0]) * 100, 400, 100, 100, x * unit, y * unit, unit, unit);
+                        ctx[c].drawImage(img[0], (blocks2[1] + 2 * blocks2[0]) * 100, 400, 100, 100, x * m, y * m, m, m);
                         break;
                     case 3: // avatar location
-                        avatar.init([x * unit, y * unit]);
+                        if (!simple) avatar.init([x * unit, y * unit]);
                         break;
                 }
             }

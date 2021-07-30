@@ -19,7 +19,6 @@
 
         <div id="PauseMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <!--<div class="back up" onclick="dom.play();">X</div>-->
                 <div class="title" id="PauseTitle">Level <span id="CurrLevel">88</span></div>
                 <div class="button play" onclick="dom.play();" tabindex="0">Resume</div>
                 <div class="button restart" onclick="dom.restart();" tabindex="0">Restart</div>
@@ -28,15 +27,15 @@
         </div>
         <div id="SettingsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="back" onclick="dom.back();"><</div>
+                <div class="back" onclick="dom.back();"></div>
                 <div class="title">Settings</div>
                 <div class="button" id="settingsfocustemp" tabindex="0">Eventually there will be some settings here.</div>
             </div>
         </div>
         <div id="LevelsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="settings" onclick="dom.newMenu(2);">+</div>
-                <div class="back" onclick="dom.back(true);"><</div>
+                <div class="settings" onclick="dom.newMenu(2);"></div>
+                <div class="back" onclick="dom.back(true);"></div>
                 <div class="title">Levels</div>
                 <table id="Select">
                     <tr>
@@ -61,6 +60,24 @@
                         <td onclick="dom.play(13);" tabindex="0">13</td>
                     </tr>
                 </table>
+                <div id="Level">
+                    <div id="LNumber" class="lsize">5</div>
+                    <canvas id="LCanvas" class="lsize"></canvas>
+                    <div id="LBanner" class="lsize">
+                        <div class="banner orange"><div class="unbanner">B</div></div>
+                    </div>
+                    <table id="LRequ">
+                        <tr>
+                            <td class="tall green"><span class="green">A</span></td>
+                            <td>Finish in under 8 seconds. This sentence is longer than before.</td>
+                        </tr>
+                        <tr>
+                            <td class="tall orange"><span class="orange">B</span></td>
+                            <td>Finish in under 14 seconds. This is an additional sentence.</td>
+                        </tr>
+                    </table>
+                    <div id="LHint" class="button" tabindex="0">Hint</div>
+                </div>
             </div>
         </div>
 

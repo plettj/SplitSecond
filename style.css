@@ -13,6 +13,8 @@ body {
     background-color: #343538;
     --x: 1;
     --y: 1;
+    --orange: #db7623;
+    --green: #2db530;
     overflow: hidden;
     font-family: Arcology;
     color: rgb(75, 75, 75);
@@ -141,36 +143,28 @@ canvas {
     position: absolute;
     left: calc(var(--unit) * 3 / 10);
     top: calc(var(--unit) * 3 / 10);
-    width: calc(var(--unit) * 4 / 5);
-    height: calc(var(--unit) * 4 / 5);
-    line-height: calc(var(--unit) * 4 / 5);
-    text-align: center;
-    color: black;
-    font-size: calc(var(--unit) * 3.5 / 5);
+    width: calc(var(--unit) * 9 / 10);
+    height: calc(var(--unit) * 9 / 10);
+    background-image: url("images/Buttons.png");
+    background-size: calc(var(--unit) * 9 / 5);
     cursor: pointer;
 }
 .settings:hover {
-    width: calc(var(--unit) * 1);
+    background-position-x: calc(var(--unit) / 10);
 }
 .back {
     position: absolute;
-    color: black;
-    right: calc(var(--unit) * 3 / 10);
-    top: calc(var(--unit) * 3 / 10);
-    width: calc(var(--unit) * 4 / 5);
-    height: calc(var(--unit) * 4 / 5);
-    line-height: calc(var(--unit) * 4 / 5);
-    text-align: center;
-    font-size: calc(var(--unit) * 3.5 / 5);
+    right: calc(var(--unit) * 0.3);
+    top: calc(var(--unit) * 0.3);
+    width: calc(var(--unit) * 0.9);
+    height: calc(var(--unit) * 0.9);
+    background-image: url("images/Buttons.png");
+    background-size: calc(var(--unit) * 9 / 5);
+    background-position-x: right;
     cursor: pointer;
 }
 .back:hover {
-    width: var(--unit);
-}
-.back.up:hover {
-    width: calc(var(--unit) * 4 / 5);
-    height: calc(var(--unit) * 9 / 10);
-    top: calc(var(--unit) * 2 / 10);
+    background-position-x: calc(var(--unit) * 0.8);
 }
 
 .button {
@@ -181,6 +175,7 @@ canvas {
     width: calc(var(--unit) * 3.5);
     height: calc(var(--unit) * 0.7);
     cursor: pointer;
+    color:rgb(75, 75, 75);
 }
 .button:hover {
     height: calc(var(--unit) * 0.8);
@@ -204,6 +199,108 @@ canvas {
     letter-spacing: calc(var(--unit) / -10);
 }
 
+#Level {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    /*border-left: calc(var(--unit) * 0.1) solid black;*/
+    width: calc(var(--unit) * 5.5);
+    height: calc(var(--unit) * (var(--height) - 2.6));
+    padding: 0 calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.4); /*Top Right Down Left*/
+    color: black;
+}
+.lsize {
+    position: absolute;
+    left: calc(var(--unit) * 0.4);
+    top: 0;
+    width: calc(var(--unit) * var(--width) * 0.32);
+    height: calc(var(--unit) * var(--height) * 0.32);
+}
+#LNumber {
+    color:black;
+    text-align: center;
+    font-size: calc(var(--unit) * 2);
+    line-height: calc(var(--unit) * var(--height) * 0.3);
+}
+#LBanner {
+    overflow: hidden;
+}
+#Hint {
+    background-color: rgba(0, 255, 0, 0.3);
+}
+
+#LRequ {
+    margin-top: calc(var(--unit) * (var(--height) + 1.5) * 0.32);
+    width: calc(var(--unit) * var(--width) * 0.32);
+    font-size: calc(var(--unit) / 5);
+}
+#LRequ td {
+    height: calc(var(--unit) * 1.2);
+}
+#LRequ td.tall {
+    font-size: calc(var(--unit) * 0.5);
+    padding-right: calc(var(--unit) * 0.15);
+}
+#Level .button {
+    width: 100%;
+    margin-top: calc(var(--unit) * 0.2);
+    font-size: calc(var(--unit) * 0.5);
+}
+#Level .button:hover {
+    height: calc(var(--unit) * 0.8);
+    margin-top: calc(var(--unit) * 0.1);
+}
+
+
+div.banner {
+    position: absolute;
+    left: calc(50% - var(--unit) * 0.7);
+    transform: rotate(45deg);
+    height: calc(var(--unit) * 0.5);
+    border-top: calc(var(--unit) * 0.1) solid black;
+    border-bottom: calc(var(--unit) * 0.1) solid black;
+    width: 100%;
+}
+div.banner.orange {
+    border-color: var(--orange);
+}
+div.banner.green {
+    border-color: var(--green);
+}
+div.unbanner {
+    width: 0;
+    margin: auto;
+    padding-left: calc(var(--unit) * 0.5);
+    text-align: center;
+    font-size: calc(var(--unit) * 0.4);
+    line-height: calc(var(--unit) * 1.07);
+    transform: rotate(315deg);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.orange {
+    color: var(--orange);
+}
+.green {
+    color: var(--green);
+}
+
+/*
 #Cursor {
     position: absolute;
     left: var(--cx);
@@ -236,3 +333,4 @@ canvas {
 #Cursor .right {
     right: 0;
 }
+*/

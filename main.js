@@ -22,7 +22,7 @@ let nextGhost = undefined;
 // INITIALIZATION
 
 // Canvas holder
-let ctx = []; // [0-background, 1-blocks, 2-objects, 3-ghosts, 4-ghostBlocks, 5-avatar]
+let ctx = []; // [0-background, 1-blocks, 2-objects, 3-ghosts, 4-ghostBlocks, 5-avatar, :last:-LCanvas]
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
@@ -32,6 +32,10 @@ function makeContexts(num) {
         document.body.insertBefore(canvas, document.querySelector(".belowCanvases"));
         ctx.push(canvas.getContext('2d'));
     }
+    let miniC = document.body.querySelector("#LCanvas");
+    miniC.width = unit * width * 0.32;
+    miniC.height = unit * height * 0.32;
+    ctx.push(miniC.getContext('2d'));
 }
 makeContexts(6);
 ctx[4].globalAlpha = 0.5;
@@ -50,6 +54,7 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 // *** Where it all starts. ***
 window.onload = function () {
     levels.startLevel(0);
+    levels.drawLevel(4, true);
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     animate();
     setTimeout(visible, 300); // length of menu animation
@@ -97,11 +102,10 @@ document.addEventListener("keydown", function(event) {
 document.addEventListener("keyup", function(event) {
 	keyPressed(event.keyCode, 0);
 });
-document.body.querySelectorAll(".menu").forEach(function (menu) {
-    menu.addEventListener("mousedown", function (e) {
-        e.preventDefault();
-        return false;
-    });
+
+document.addEventListener("mousedown", function (e) { // stops blurring
+    e.preventDefault();
+    return false;
 });
 
 document.addEventListener('contextmenu', event => event.preventDefault());
