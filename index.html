@@ -34,64 +34,82 @@
         </div>
         <div id="LevelsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="settings" onclick="dom.newMenu(2);"></div>
-                <div class="back" onclick="dom.back(true);"></div>
+                <div class="settings" onclick="dom.newMenu(2);" style="visibility: hidden;"></div>
+                <div class="back" onclick="dom.back(true);" tabindex="0"></div>
                 <div class="title">Levels</div>
-                <table id="Select">
-                    <tr>
-                        <td onclick="dom.play(1);" tabindex="0">1</td>
-                        <td onclick="dom.play(2);" tabindex="0">2</td>
-                        <td onclick="dom.play(3);" tabindex="0">3</td>
-                        <td onclick="dom.play(4);" tabindex="0">4</td>
-                    </tr>
-                    <tr>
-                        <td onclick="dom.play(5);" tabindex="0">5</td>
-                        <td onclick="dom.play(6);" tabindex="0">6</td>
-                        <td onclick="dom.play(7);" tabindex="0">7</td>
-                        <td onclick="dom.play(8);" tabindex="0">8</td>
-                    </tr>
-                    <tr>
-                        <td id="doeswork" onclick="dom.play(9);" tabindex="0">9</td>
-                        <td onclick="dom.play(10);" tabindex="0">10</td>
-                        <td onclick="dom.play(11);" tabindex="0">11</td>
-                        <td onclick="dom.play(12);" tabindex="0">12</td>
-                    </tr>
-                    <tr>
-                        <td onclick="dom.play(13);" tabindex="0">13</td>
-                    </tr>
-                </table>
+                <div class="scroll">
+                    <table id="Select">
+                        <tr>
+                            <td onclick="dom.play(1);" tabindex="0">1<div class="bar"></div></td>
+                            <td onclick="dom.play(2);" tabindex="0">2<div class="bar"></div></td>
+                            <td onclick="dom.play(3);" tabindex="0">3<div class="bar"></div></td>
+                            <td onclick="dom.play(4);" tabindex="0">4<div class="bar"></div></td>
+                        </tr>
+                        <tr>
+                            <td onclick="dom.play(5);" tabindex="0">5<div class="bar"></div></td>
+                            <td onclick="dom.play(6);" tabindex="0">6<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(7);" tabindex="0">7<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(8);" tabindex="0">8<div class="bar"></div></td>
+                        </tr>
+                        <tr>
+                            <td class="locked" onclick="dom.play(9);" tabindex="0">9</td>
+                            <td class="locked" onclick="dom.play(10);" tabindex="0">10</td>
+                            <td class="locked" onclick="dom.play(11);" tabindex="0">11</td>
+                            <td class="locked" onclick="dom.play(12);" tabindex="0">12</td>
+                        </tr>
+                        <tr>
+                            <td class="locked" onclick="dom.play(13);" tabindex="0">13</td>
+                            <td class="locked" onclick="dom.play(14);" tabindex="0">14</td>
+                            <td class="locked" onclick="dom.play(15);" tabindex="0">15</td>
+                            <td class="locked" onclick="dom.play(16);" tabindex="0">16</td>
+                        </tr>
+                        <tr>
+                            <td class="locked" onclick="dom.play(17);" tabindex="0">17</td>
+                            <td class="locked" onclick="dom.play(18);" tabindex="0">18</td>
+                            <td class="locked" onclick="dom.play(19);" tabindex="0">19</td>
+                            <td class="locked" onclick="dom.play(20);" tabindex="0">20</td>
+                        </tr>
+                        <tr>
+                            <td class="locked" onclick="dom.play(21);" tabindex="0">21</td>
+                            <td class="locked" onclick="dom.play(22);" tabindex="0">22</td>
+                            <td class="locked" onclick="dom.play(23);" tabindex="0">23</td>
+                            <td class="locked" onclick="dom.play(24);" tabindex="0">24</td>
+                        </tr>
+                        <tr>
+                            <td class="locked" onclick="dom.play(25);" tabindex="0">25</td>
+                            <td class="locked" onclick="dom.play(26);" tabindex="0">26</td>
+                            <td class="locked" onclick="dom.play(27);" tabindex="0">27</td>
+                            <td class="locked" onclick="dom.play(28);" tabindex="0">28</td>
+                        </tr>
+                        <tr>
+                            <td class="locked" onclick="dom.play(29);" tabindex="0">29</td>
+                        </tr>
+                    </table>
+                </div>
                 <div id="Level">
-                    <div id="LNumber" class="lsize">5</div>
+                    <div id="LNumber" class="lsize">28</div>
                     <canvas id="LCanvas" class="lsize"></canvas>
+                    <!--
                     <div id="LBanner" class="lsize">
                         <div class="banner orange"><div class="unbanner">B</div></div>
                     </div>
                     <table id="LRequ">
                         <tr>
                             <td class="tall green"><span class="green">A</span></td>
-                            <td>Finish in under 8 seconds. This sentence is longer than before.</td>
+                            <td>Finish in under 8 seconds.</td>
                         </tr>
                         <tr>
                             <td class="tall orange"><span class="orange">B</span></td>
-                            <td>Finish in under 14 seconds. This is an additional sentence.</td>
+                            <td>Finish in under 14 seconds.</td>
                         </tr>
                     </table>
                     <div id="LHint" class="button" tabindex="0">Hint</div>
+                    -->
                 </div>
             </div>
         </div>
 
         <div id="Pause" style="display: block;" onclick="dom.newMenu(0);"></div>
-        <!--
-        <div id="Cursor" onmouseover="cursor.over()" onclick="cursor.click()">
-            <div class="line top"></div>
-            <div class="side top left"></div>
-            <div class="side top right"></div>
-            <div class="line bottom"></div>
-            <div class="side bottom left"></div>
-            <div class="side bottom right"></div>
-        </div>
-        -->
     </body>
 	<script src="main.js"></script>
 	<script src="map.js"></script>

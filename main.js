@@ -96,8 +96,9 @@ function keyPressed(code, num) {
 }
 
 document.addEventListener("keydown", function(event) {
-    if (event.keyCode == 9) event.preventDefault();
-    else keyPressed(event.keyCode, 1);
+    let k = event.keyCode;
+    if (k == 9 || k == 38 || k == 40) event.preventDefault();
+    keyPressed(k, 1);
 });
 document.addEventListener("keyup", function(event) {
 	keyPressed(event.keyCode, 0);

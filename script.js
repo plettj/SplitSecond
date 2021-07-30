@@ -10,7 +10,7 @@ let dom = {
     pauseNum: document.body.querySelector("#CurrLevel"),
     pauseButton: document.body.querySelector("#Pause"),
     menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu"), document.body.querySelector("#SettingsMenu")],
-    focuses: [document.body.querySelector(".play"), document.body.querySelector("td"), document.body.querySelector("#settingsfocustemp")],
+    focuses: [document.body.querySelector(".play"), document.body.querySelector("#LevelsMenu .content .back"), document.body.querySelector("#settingsfocustemp")],
     displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-SettingsMenu 3-LevelTransition
     newMenu: function (menu = 1) {
         //cursor.move("away");
@@ -84,6 +84,26 @@ let dom = {
         } else if (code == 37 || code == 65) { // left
             if (dom.displayed == 1) {
                 // let's deal with the level select menu later.
+                if (element.classList.contains("back")) {
+                    document.body.querySelector("#Select td:last-child").focus();
+                    console.log("Should be focussing on " + document.body.querySelector("#Select td:last-child"));
+                    dom.updateSide();
+                }
+                if (element.previousElementSibling != null) {
+                    if (element.previousElementSibling.matches("[tabindex='0']:not(.locked)")) {
+                        element.previousElementSibling.focus();
+                        dom.updateSide();
+                        return;
+                    }
+                }
+                if (element.parentElement.querySelector(":scope > [tabindex='0']:not(.locked):last-child") != null) {
+                    element.parentElement.querySelector(":scope > [tabindex='0']:not(.locked):last-child").focus();
+                    dom.updateSide();
+                } else {
+                    let list = element.parentElement.querySelectorAll(":scope > [tabindex='0']:not(.locked)");
+                    list[list.length - 1].focus();
+                    dom.updateSide();
+                }
             }
         } else if (code == 38 || code == 87) { // Up
             if (dom.displayed == 0 || dom.displayed == 2) {
@@ -105,7 +125,17 @@ let dom = {
             }
         } else if (code == 32 || code == 13) { // [Space] or [Enter]
             element.click();
+        } else if (code == 8) { // [Backspace]
+            if (dom.displayed == 1 || dom.displayed == 2) { // Levels or Settings
+                dom.back(dom.displayed == 1);
+            }
         }
+        // watch out! sometimes I return from this function.
+
+    },
+    updateSide: function () {
+        let l = parseInt(document.body.querySelector(":focus").textContent) - 1;
+        if (typeof(l) !== "number") return;
     },
     restart: function () {
         dom.play();
@@ -116,53 +146,3 @@ let dom = {
 function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
 }
-
-/*
-let cursor = {
-    pixel: pixel / 1.5,
-    dom: document.body.querySelector("#Cursor"),
-    cover: "",
-    showing: false,
-    move: function (element) {
-        if (element === "away") {
-            document.body.style.setProperty("--cd", "none");
-            this.showing = false;
-        } else {
-            setTimeout(function () {
-                document.body.style.setProperty("--cd", "block");
-                document.body.style.setProperty("--cx", (window.scrollX + element.getBoundingClientRect().left - cursor.pixel) + "px");
-                document.body.style.setProperty("--cy", (window.scrollY + element.getBoundingClientRect().top - cursor.pixel * 2) + "px");
-                document.body.style.setProperty("--cw", (element.clientWidth + cursor.pixel * 4) + "px"); // these 4's should be changed to 2's if spacing is too large.
-                document.body.style.setProperty("--ch", (element.clientHeight + cursor.pixel * 4) + "px");
-                cursor.cover = element;
-                if (!cursor.showing) {
-                    cursor.showing = true;
-                    cursor.update(0);
-                }
-            }, 400);
-        }
-    },
-    update: function (frame) {
-        if (!this.showing) return;
-        if (frame) {
-            document.body.style.setProperty("--cy", (window.scrollY + cursor.cover.getBoundingClientRect().top - this.pixel) + "px");
-            document.body.style.setProperty("--ch", (cursor.cover.clientHeight + this.pixel * 2) + "px");
-        } else {
-            document.body.style.setProperty("--cy", (window.scrollY + cursor.cover.getBoundingClientRect().top - this.pixel * 2) + "px");
-            document.body.style.setProperty("--ch", (cursor.cover.clientHeight + this.pixel * 4) + "px");
-        }
-        console.log("Cursor frame!");
-        setTimeout(function () {cursor.update(frame * -1 + 1);}, 550);
-    },
-    over: function () {
-        console.log("hovered over the cursor.");
-    },
-    click: function () {
-        console.log("clicked on the cursor.");
-    }
-}
-
-document.body.style.setProperty("--cp", cursor.pixel + "px");
-cursor.move("away");
-*/
-
