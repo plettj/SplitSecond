@@ -119,7 +119,7 @@ let avatar = {
                         this.bFrame[1] = 1;
                         this.vcoor[0] = 0;
                     }
-                } else {
+                } else if (before[2] >= 0) { // not above the screen
                     // comment out this code if I want to disable [down] when inside other blocks
                     this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
                     this.bFrame[1] = 1;

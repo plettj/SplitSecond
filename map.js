@@ -21,16 +21,18 @@ function between([a, b], num) {
     return num >= Math.min(a, b) && num <= Math.max(a, b);
 }
 function isS([x, y], nonSemi = false, hor = false) { // is solid?
+    let outside = false;
     if (x < 0 || x >= width || y < 0 || y >= height) {
         if (hor && (y < 0 || y >= height) && (x < 0 || x >= width)) return true;
         else if (hor && (x < 0 || x >= width)) return true;
         //else if (!hor && (x < 0 || x >= width)) 
         if (x < 0 || x >= width) x = (x < 0) ? 0 : width - 1;
         if (y < 0 || y >= height) y = (y < 0) ? 0 : height - 1;
+        outside = true;
     }
     let l = levels.levels[levels.currentLevel];
-    if (nonSemi) return (l[y][x] == 1 || l[y][x] == 1.5);
-    else return (l[y][x] >= 1 && l[y][x] <= 2);
+    if (nonSemi) return (l[y][x] == 1 || (l[y][x] == 1.5 && !outside));
+    else return (l[y][x] >= 1 && l[y][x] <= 2 && (l[y][x] != 1.5 || !outside));
 }
 function XOR(values) { // returns true if exactly one of the values is true
     if (values.reduce((a, x) => x ? a + 1 : a, 0) == 1) {
@@ -39,6 +41,7 @@ function XOR(values) { // returns true if exactly one of the values is true
         }
     } else return -1; // not exactly 1 of them is true
 }
+
 // LEVELS
 
 // Levels Object
@@ -73,7 +76,7 @@ let levels = {
                             if (semiShape[0]) option = option % 3;
                             ctx[c].drawImage(img[0], option * 100, 500 + semiShape[0] * 100, 100, 100, x * m, y * m, m, m);
                             semiShape[0] = option % 3; // % 3 turns option {-} into 0 (good!)
-                            if (y < height - 1) if (l[y + 1][x] % 3 !== 0) ctx[c].drawImage(img[0], 400, 400, 100, 100, x * m, y * m, m, m);
+                            if (y < height - 1) if (l[y + 1][x] % 3 !== 0) ctx[c].drawImage(img[0], 400, 400, 100, 100, x * m, y * m, m, m); // feet
                         }
                         break;
                     case 1: // normal block
@@ -93,6 +96,7 @@ let levels = {
                         if (x < width - 1) if (l[y][x + 1] !== 2) blocks2[0] = 1;
                         if (x > 0) if (l[y][x - 1] !== 2) blocks2[1] = 1;
                         ctx[c].drawImage(img[0], (blocks2[1] + 2 * blocks2[0]) * 100, 400, 100, 100, x * m, y * m, m, m);
+                        if (y < height - 1) if (l[y + 1][x] % 3 !== 0) ctx[c].drawImage(img[0], 400, 400, 100, 100, x * m, y * m, m, m); // feet
                         break;
                     case 3: // avatar location
                         if (!simple) avatar.init([x * unit, y * unit]);
@@ -146,6 +150,13 @@ let levels = {
         }
     }
 }
+
+// Score object
+let score = {
+    
+}
+
+// LEVELS
 
 // Level creation!
 levels.addLevel([
@@ -291,15 +302,15 @@ levels.addLevel([
 levels.addLevel([
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [0, 1, 0, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-    [0, 1, 0, 1, 2, 2, 2, 2, 2, 0, 2, 2, 2, 0, 1, 1],
+    [0, 1, 0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 0, 0, 1, 1],
     [0, 1, 0, 1, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [0, 1, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 0, 1],
+    [0, 1, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [0, 1, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-    [0, 1, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1],
-    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
+    [0, 1, 0, 1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 0, 1],
+    [0, 1, 0, 1, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 1, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 1],
+    [3, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ]);
 levels.addLevel([

@@ -54,7 +54,8 @@ let dom = {
         });
     },
     play: function (level) {
-        if (level == undefined) level = levels.currentLevel;
+        if (level > levels.levels.length) return;
+        else if (level == undefined) level = levels.currentLevel;
         else if (level - 1 !== levels.currentLevel) levels.startLevel(level - 1);
         dom.close();
         dom.pauseButton.style.display = "block"; // PAUSE TRANSITION ANIMATION FIX
@@ -79,8 +80,10 @@ let dom = {
     key: function (code) {
         let element = document.body.querySelector(":focus");
         if (code == 82 && dom.displayed == -1) { // R
+            console.log("R!");
             levels.startLevel(levels.currentLevel);
         } else if (code == 80 && dom.displayed == -1) { // P
+            console.log("P!");
             dom.newMenu(0);
         } else if (code == 37 || code == 65) { // left
             if (dom.displayed == 1) {
