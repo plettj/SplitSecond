@@ -100,29 +100,38 @@ let avatar = {
                     this.inAir = 1;
                 }
                 this.bFrame[1] = 0;
+                levels.scores[2][1] = 0;
             } else if (key[1] < 0 && !this.bFrame[1]) { // DOWN
                 if (!(isS([before[0], after[2]], true) || isS([before[1] / unit, after[2]], true)) && before[2] >= 0) { // not standing in DinoBlocks
                     if (isS([before[0], after[2]], true)) { // left is a DinoBlock
                         if (isS([before[1], after[3]])) { // right below is solid
                             this.bFrame[2] = before[1] * unit;
                             this.bFrame[1] = 1;
+                            if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                            levels.scores[2][1] = 1;
                             this.vcoor[0] = 0;
                         }
                     } else if (isS([before[1], after[2]], true)) { // right is a DinoBlock
                         if (isS([before[0], after[3]])) { // left below is solid
                             this.bFrame[2] = before[0] * unit;
                             this.bFrame[1] = 1;
+                            if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                            levels.scores[2][1] = 1;
                             this.vcoor[0] = 0;
                         }
                     } else {
                         this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
                         this.bFrame[1] = 1;
+                        if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                        levels.scores[2][1] = 1;
                         this.vcoor[0] = 0;
                     }
                 } else if (before[2] >= 0) { // not above the screen
                     // comment out this code if I want to disable [down] when inside other blocks
                     this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
                     this.bFrame[1] = 1;
+                    if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                    levels.scores[2][1] = 1;
                     this.vcoor[0] = 0;
                 }
             }
@@ -131,7 +140,10 @@ let avatar = {
                 else if (this.coor[0] - this.bFrame[2] < -this.vmax[0]) this.coor[0] += this.vmax[0] / 1.6;
                 else this.coor[0] = this.bFrame[2];
             }
-        } else if (this.bFrame[0]) this.bFrame[1] = 0;
+        } else if (this.bFrame[0]) {
+            this.bFrame[1] = 0;
+            levels.scores[2][1] = 0;
+        }
         this.bFrame[0] = this.bFrame[0] + 0.15 * (this.bFrame[1] * 2 - 1);
         this.bFrame[0] = (this.bFrame[0] <= 0) ? 0 : ((this.bFrame[0] >= 2) ? 2 : this.bFrame[0]);
 
@@ -236,6 +248,7 @@ let Ghost = class {
 
 function swapTime() {
     time *= -1;
+    levels.scores[1]++;
     nextGhost.finish();
     levels.ghosts.push(nextGhost);
     nextGhost = new Ghost();

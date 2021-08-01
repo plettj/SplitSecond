@@ -80,10 +80,8 @@ let dom = {
     key: function (code) {
         let element = document.body.querySelector(":focus");
         if (code == 82 && dom.displayed == -1) { // R
-            console.log("R!");
             levels.startLevel(levels.currentLevel);
         } else if (code == 80 && dom.displayed == -1) { // P
-            console.log("P!");
             dom.newMenu(0);
         } else if (code == 37 || code == 65) { // left
             if (dom.displayed == 1) {

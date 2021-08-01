@@ -48,6 +48,7 @@ function XOR(values) { // returns true if exactly one of the values is true
 let levels = {
     levels: [],
     ghosts: [],
+    scores: [[0, 0], 0, [0, 0]], // [[lowest, highest (time)], swaps, [blocks, alreadyCounted]] - live recording of the current level's score.
     currentLevel: 0,
     addLevel: function (values/*here I'll add parameters as additional objects are created*/) {
         this.levels.push(values);
@@ -116,12 +117,20 @@ let levels = {
         step = 0;
         clear(5);
         this.currentLevel = level;
+        this.scores = [[0, 0], 0, [0, 0]];
         this.drawLevel(level);
         this.ghosts = [];
         nextGhost = new Ghost();
     },
     endLevel: function () {
         // run the closing animation
+        let info = score.calculate(this.currentLevel, [Math.abs(this.scores[0][1] - this.scores[0][0]), this.scores[1], this.scores[2][0]]);
+        
+        //console.log("Total Time: " + Math.abs(this.scores[0][1] - this.scores[0][0]) + ", Time-Swaps: " + this.scores[1] + ", Dino-Blocks: " + this.scores[2][0] + ", Rank: " + info[0] + ".");
+        //console.log(info);
+        console.log("Ty " + info[2][0] + ", Sy " + info[2][1] + ", By " + info[2][2]);
+        console.log("Tg " + score.goals[this.currentLevel][0] + ", Sg " + score.goals[this.currentLevel][1] + ", Bg " + score.goals[this.currentLevel][2]);
+        console.log("RANK: " + info[0]);
         dom.newLevel(true);
         // setTimeout for when to start the next level
         setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
@@ -148,12 +157,75 @@ let levels = {
                 }
             }
         }
+    },
+    updateTime: function () { // updates the score based on the total time
+        this.scores[0][0] = (frame < this.scores[0][0]) ? frame : this.scores[0][0];
+        this.scores[0][1] = (frame > this.scores[0][1]) ? frame : this.scores[0][1];
     }
 }
 
 // Score object
 let score = {
-    
+    goals: [
+        [80, 0, 0],
+        [215, 0, 0],
+        [150, 0, 0],
+        [150, 160, 80],
+        [215, 0, 0],
+        [250, 160, 80],
+        [250, 160, 80],
+        [450, 800, 320],
+        [170, 640, 320],
+        [800, 1600, 800],
+        [1000, 2000, 1200],
+        [1600, 0, 0],
+        [4000, 16000, 8000]
+    ],
+    golds: [], // array of the addition of 'goals'
+    scores: [], // same format as 'goals', but it's this player's information.
+    messages: [ // 0-Gold 1-Silver 2-Bronze
+        [
+            "If you hope to improve your score, focussing on taking <strong>less in-game time</strong> may be the best choice.",
+            "To improve your score any further, it might be best to focus on doing <strong>less time-swaps</strong>.",
+            "You've achieved <span class='gold'>Gold</span>, but if you hope to improve this score further, you may want to use <strong>less dino-blocks</strong>."
+        ],
+        [
+            "To reach <span class='gold'>Gold</span>, focussing on taking <strong>less in-game time</strong> to solve this level might be best.",
+            "If <span class='silver'>Silver</span> isn't enough for you, you may want to try doing <strong>less time-swaps</strong> to improve your rank.",
+            "If you're wondering how to achieve the <span class='gold'>Gold</span> rank, using <strong>less dino-blocks</strong> might help you the most."
+        ],
+        [
+            "You're at <span class='bronze'>Bronze</span>, but to get to <span class='silver'>Silver</span>, you should try to complete this level in <strong>less in-game time</strong>.",
+            "The best way to improve your rank to <span class='silver'>Silver</span> will be to try doing <strong>less time-swaps</strong>.",
+            "To reach <span class='silver'>Silver</span>, your best bet will be to try to use <strong>less dino-blocks</strong>."
+        ]
+    ],
+    init: function () {
+        levels.levels.forEach((l) => {
+            score.scores.push([0, 0, 0]);
+        });
+        let t = this;
+        t.goals.forEach((nums) => {
+            t.golds.push(nums.reduce((a, b) => a + b, 0));
+        });
+        console.log(t.golds);
+    },
+    calculate: function (level, [frames, swaps, blocks]) {
+        // The below code needs to be super calibrated!
+        let s = [Math.floor(frames / 60 * 25), swaps * 160, blocks * 80];
+        this.scores[level] = s;
+        // The below code can be adjusted if certain things become more important
+        let differences = [
+            s[0] / this.goals[level][0],
+            s[1] / this.goals[level][1],
+            s[2] / this.goals[level][2]
+        ];
+        let total = differences.reduce((a, b) => a + b, 0);
+        // The below code can be adjusted if the ranks feel improperly assigned
+        let rank = (total <= 1) ? 0 : ((total <= 1.8) ? 1 : 2);
+        let biggest = differences.indexOf(Math.max(...differences));
+        return [rank, this.messages[rank][biggest], s];
+    }
 }
 
 // LEVELS

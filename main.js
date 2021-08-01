@@ -53,6 +53,7 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 
 // *** Where it all starts. ***
 window.onload = function () {
+    score.init();
     levels.startLevel(0);
     levels.drawLevel(0, true);
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
@@ -65,6 +66,7 @@ function animate() {
 	if (!paused) {
         frame += time;
         avatar.physics();
+        levels.updateTime();
         if (!(frame % Math.round(60 / stepSpeed))) {
             stepCounter++;
             step += time;
