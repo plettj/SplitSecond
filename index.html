@@ -27,62 +27,62 @@
         </div>
         <div id="SettingsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="back" onclick="dom.back();"></div>
+                <div class="back" onclick="dom.back();" tabindex="0"></div>
                 <div class="title">Settings</div>
-                <div class="button" id="settingsfocustemp" tabindex="0">Eventually there will be some settings here.</div>
+                <div class="button" id="settingsfocustemp" tabindex="0">None yet.</div>
             </div>
         </div>
         <div id="LevelsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="settings" onclick="dom.newMenu(2);" style="visibility: hidden;"></div>
+                <div class="settings" onclick="/*dom.newMenu(2);*/" tabindex="0"></div>
                 <div class="back" onclick="dom.back(true);" tabindex="0"></div>
                 <div class="title">Levels</div>
                 <div class="scroll">
                     <table id="Select">
                         <tr>
-                            <td onclick="dom.play(1);" tabindex="0">1<div class="bar"></div></td>
-                            <td onclick="dom.play(2);" tabindex="0">2<div class="bar"></div></td>
-                            <td onclick="dom.play(3);" tabindex="0">3<div class="bar"></div></td>
-                            <td onclick="dom.play(4);" tabindex="0">4<div class="bar"></div></td>
+                            <td onclick="dom.play(1);" onmouseover="dom.updateSide(this, true);" tabindex="0">1<div class="bar"></div></td>
+                            <td onclick="dom.play(2);" onmouseover="dom.updateSide(this, true);" tabindex="0">2<div class="bar"></div></td>
+                            <td onclick="dom.play(3);" onmouseover="dom.updateSide(this, true);" tabindex="0">3<div class="bar"></div></td>
+                            <td onclick="dom.play(4);" onmouseover="dom.updateSide(this, true);" tabindex="0">4<div class="bar"></div></td>
                         </tr>
                         <tr>
-                            <td onclick="dom.play(5);" tabindex="0">5<div class="bar"></div></td>
-                            <td onclick="dom.play(6);" tabindex="0">6<div class="bar"></div></td>
-                            <td class="locked" onclick="dom.play(7);" tabindex="0">7<div class="bar"></div></td>
-                            <td class="locked" onclick="dom.play(8);" tabindex="0">8<div class="bar"></div></td>
+                            <td onclick="dom.play(5);" onmouseover="dom.updateSide(this, true);" tabindex="0">5<div class="bar"></div></td>
+                            <td onclick="dom.play(6);" onmouseover="dom.updateSide(this, true);" tabindex="0">6<div class="bar"></div></td>
+                            <td onclick="dom.play(7);" onmouseover="dom.updateSide(this, true);" tabindex="0">7<div class="bar"></div></td>
+                            <td onclick="dom.play(8);" onmouseover="dom.updateSide(this, true);" tabindex="0">8<div class="bar"></div></td>
                         </tr>
                         <tr>
-                            <td class="locked" onclick="dom.play(9);" tabindex="0">9</td>
-                            <td class="locked" onclick="dom.play(10);" tabindex="0">10</td>
-                            <td class="locked" onclick="dom.play(11);" tabindex="0">11</td>
-                            <td class="locked" onclick="dom.play(12);" tabindex="0">12</td>
+                            <td onclick="dom.play(9);" onmouseover="dom.updateSide(this, true);" tabindex="0">9<div class="bar"></div></td>
+                            <td onclick="dom.play(10);" onmouseover="dom.updateSide(this, true);" tabindex="0">10<div class="bar"></div></td>
+                            <td onclick="dom.play(11);" onmouseover="dom.updateSide(this, true);" tabindex="0">11<div class="bar"></div></td>
+                            <td onclick="dom.play(12);" onmouseover="dom.updateSide(this, true);" tabindex="0">12<div class="bar"></div></td>
                         </tr>
                         <tr>
-                            <td class="locked" onclick="dom.play(13);" tabindex="0">13</td>
-                            <td class="locked" onclick="dom.play(14);" tabindex="0">14</td>
-                            <td class="locked" onclick="dom.play(15);" tabindex="0">15</td>
-                            <td class="locked" onclick="dom.play(16);" tabindex="0">16</td>
+                            <td onclick="dom.play(13);" onmouseover="dom.updateSide(this, true);" tabindex="0">13<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(14);" onmouseover="dom.updateSide(this, true);" tabindex="0">14<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(15);" onmouseover="dom.updateSide(this, true);" tabindex="0">15<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(16);" onmouseover="dom.updateSide(this, true);" tabindex="0">16<div class="bar"></div></td>
                         </tr>
                         <tr>
-                            <td class="locked" onclick="dom.play(17);" tabindex="0">17</td>
-                            <td class="locked" onclick="dom.play(18);" tabindex="0">18</td>
-                            <td class="locked" onclick="dom.play(19);" tabindex="0">19</td>
-                            <td class="locked" onclick="dom.play(20);" tabindex="0">20</td>
+                            <td class="locked" onclick="dom.play(17);" onmouseover="dom.updateSide(this, true);" tabindex="0">17<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(18);" onmouseover="dom.updateSide(this, true);" tabindex="0">18<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(19);" onmouseover="dom.updateSide(this, true);" tabindex="0">19<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(20);" onmouseover="dom.updateSide(this, true);" tabindex="0">20<div class="bar"></div></td>
                         </tr>
                         <tr>
-                            <td class="locked" onclick="dom.play(21);" tabindex="0">21</td>
-                            <td class="locked" onclick="dom.play(22);" tabindex="0">22</td>
-                            <td class="locked" onclick="dom.play(23);" tabindex="0">23</td>
-                            <td class="locked" onclick="dom.play(24);" tabindex="0">24</td>
+                            <td class="locked" onclick="dom.play(21);" onmouseover="dom.updateSide(this, true);" tabindex="0">21<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(22);" onmouseover="dom.updateSide(this, true);" tabindex="0">22<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(23);" onmouseover="dom.updateSide(this, true);" tabindex="0">23<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(24);" onmouseover="dom.updateSide(this, true);" tabindex="0">24<div class="bar"></div></td>
                         </tr>
                         <tr>
-                            <td class="locked" onclick="dom.play(25);" tabindex="0">25</td>
-                            <td class="locked" onclick="dom.play(26);" tabindex="0">26</td>
-                            <td class="locked" onclick="dom.play(27);" tabindex="0">27</td>
-                            <td class="locked" onclick="dom.play(28);" tabindex="0">28</td>
+                            <td class="locked" onclick="dom.play(25);" onmouseover="dom.updateSide(this, true);" tabindex="0">25<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(26);" onmouseover="dom.updateSide(this, true);" tabindex="0">26<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(27);" onmouseover="dom.updateSide(this, true);" tabindex="0">27<div class="bar"></div></td>
+                            <td class="locked" onclick="dom.play(28);" onmouseover="dom.updateSide(this, true);" tabindex="0">28<div class="bar"></div></td>
                         </tr>
                         <tr>
-                            <td class="locked" onclick="dom.play(29);" tabindex="0">29</td>
+                            <td class="locked" onclick="dom.play(29);" onmouseover="dom.updateSide(this, true);" tabindex="0">29<div class="bar"></div></td>
                         </tr>
                     </table>
                 </div>

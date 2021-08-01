@@ -44,12 +44,13 @@ canvas {
     transition: backdrop-filter 0.4s ease-in-out;
 }
 .cover.one.on {
+    /*display: none; Not sure if I want greyscale; I think I do. */
     -webkit-backdrop-filter: grayscale(100%);
     backdrop-filter: grayscale(100%);
 }
 .cover.two.on {
-    -webkit-backdrop-filter: blur(calc(var(--unit) / 10));
-    backdrop-filter: blur(calc(var(--unit) / 10));
+    -webkit-backdrop-filter: blur(calc(var(--unit) / 5));
+    backdrop-filter: blur(calc(var(--unit) / 5));
 }
 
 @keyframes textFly {
@@ -149,9 +150,8 @@ canvas {
     background-size: calc(var(--unit) * 9 / 5);
     cursor: pointer;
 }
-.settings:hover,.settings:focus {
+.settings:hover {
     background-position-x: calc(var(--unit) / 10);
-    outline: none;
 }
 .back {
     position: absolute;
@@ -167,7 +167,7 @@ canvas {
 .back:hover {
     background-position-x: calc(var(--unit) * 0.8);
 }
-.back:focus {
+.back:focus,.settings:focus {
     border-bottom: calc(var(--unit) * 0.06) solid black;
     outline: none;
 }
@@ -222,14 +222,14 @@ canvas {
     height: calc(var(--unit) * var(--height) * 0.353);
 }
 #LNumber {
-    color:rgba(0, 0, 0, 0.3);
+    color:rgba(0, 0, 0, 0.45);
     text-align: center;
     font-size: calc(var(--unit) * 2.4);
     line-height: calc(var(--unit) * var(--height) * 0.33);
 }
 #LCanvas {
     background-color: rgba(0, 0, 0, 0.1);
-    /*outline: calc(var(--unit) * 0.05) solid black;*/
+    /*filter: grayscale(100%) contrast(180%) brightness(80%);*/
 }
 
 .scroll {

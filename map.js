@@ -52,7 +52,6 @@ let levels = {
     drawLevel: function (level, simple = false) { // draw the specified level
         let c = (simple) ? ctx.length - 1 : 1; // canvas index
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
-        console.log(c);
         clear(c);
         let l = this.levels[level];
         let semiShape = [0, []]; // [(1-open {=} 2-line {+}), [x's of no {=}]];
@@ -97,6 +96,7 @@ let levels = {
                         break;
                     case 3: // avatar location
                         if (!simple) avatar.init([x * unit, y * unit]);
+                        else ctx[c].drawImage(img[2], 1 * 100, 1 * 100, 100, 100, Math.round(x * m), Math.round(y * m), m, m);
                         break;
                 }
             }
@@ -230,7 +230,7 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
     [0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0],
     [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
 ]);
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
