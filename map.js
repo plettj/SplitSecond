@@ -124,13 +124,17 @@ let levels = {
     },
     endLevel: function () {
         // run the closing animation
-        let info = score.calculate(this.currentLevel, [Math.abs(this.scores[0][1] - this.scores[0][0]), this.scores[1], this.scores[2][0]]);
+        let info = score.calculate(this.currentLevel, [Math.floor(Math.abs(this.scores[0][1] - this.scores[0][0]) / 60), this.scores[1], this.scores[2][0]]);
         
         //console.log("Total Time: " + Math.abs(this.scores[0][1] - this.scores[0][0]) + ", Time-Swaps: " + this.scores[1] + ", Dino-Blocks: " + this.scores[2][0] + ", Rank: " + info[0] + ".");
         //console.log(info);
+        /*
         console.log("Ty " + info[2][0] + ", Sy " + info[2][1] + ", By " + info[2][2]);
-        console.log("Tg " + score.goals[this.currentLevel][0] + ", Sg " + score.goals[this.currentLevel][1] + ", Bg " + score.goals[this.currentLevel][2]);
-        console.log("RANK: " + info[0]);
+        console.log("Tg " + score.goals[this.currentLevel][0][0] + ", Sg " + score.goals[this.currentLevel][0][1] + ", Bg " + score.goals[this.currentLevel][0][2]);
+        */
+        //console.log("Score: [" + info[2][0] + ", " + info[2][1] + ", " + info[2][2] + "]");
+        //console.log("Gold: [" + score.goals[this.currentLevel][0][0] + ", " + score.goals[this.currentLevel][0][1] + ", " + score.goals[this.currentLevel][0][2] + "]");
+        //console.log("RANK: " + info[0]);
         dom.newLevel(true);
         // setTimeout for when to start the next level
         setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
@@ -167,21 +171,21 @@ let levels = {
 // Score object
 let score = {
     goals: [
-        [80, 0, 0],
-        [215, 0, 0],
-        [150, 0, 0],
-        [150, 160, 80],
-        [215, 0, 0],
-        [250, 160, 80],
-        [250, 160, 80],
-        [450, 800, 320],
-        [170, 640, 320],
-        [800, 1600, 800],
-        [1000, 2000, 1200],
-        [1600, 0, 0],
-        [4000, 16000, 8000]
+        [[1, 0, 0], [3, 0, 0]],
+        [[4, 0, 0], [9, 0, 0]],
+        [[2, 0, 0], [8, 0, 0]],
+        [[2, 1, 1], [13, 1, 1]],
+        [[4, 0, 0], [15, 1, 1]],
+        [[3, 1, 1], [16, 2, 2]],
+        [[7, 1, 1], [20, 1, 1]],
+        [[15, 4, 4], [30, 7, 5]],
+        [[4, 4, 4], [20, 7, 7]],
+        [[26, 6, 9], [50, 12, 11]],
+        [[40, 12, 13], [100, 20, 18]],
+        [[30, 0, 0], [60, 2, 2]],
+        [[400, 70, 55], [1000, 130, 85]]
     ],
-    golds: [], // array of the addition of 'goals'
+    ranks: [], // array of the addition of 'goals'
     scores: [], // same format as 'goals', but it's this player's information.
     messages: [ // 0-Gold 1-Silver 2-Bronze
         [
@@ -201,30 +205,38 @@ let score = {
         ]
     ],
     init: function () {
+        for (let i = 0; i < score.goals.length; i++) { // calibrate the 'goals'
+            score.goals[i][0] = this.calibrate(score.goals[i][0]);
+            score.goals[i][1] = this.calibrate(score.goals[i][1]);
+        }
         levels.levels.forEach((l) => {
-            score.scores.push([0, 0, 0]);
+            score.scores.push([2, [0, 0, 0]]);
         });
         let t = this;
         t.goals.forEach((nums) => {
-            t.golds.push(nums.reduce((a, b) => a + b, 0));
+            t.ranks.push([nums[0].reduce((a, b) => a + b, 0), nums[1].reduce((a, b) => a + b, 0)]);
         });
-        console.log(t.golds);
+        console.log(t.goals);
     },
-    calculate: function (level, [frames, swaps, blocks]) {
+    calculate: function (level, [seconds, swaps, blocks]) {
         // The below code needs to be super calibrated!
-        let s = [Math.floor(frames / 60 * 25), swaps * 160, blocks * 80];
-        this.scores[level] = s;
-        // The below code can be adjusted if certain things become more important
-        let differences = [
-            s[0] / this.goals[level][0],
-            s[1] / this.goals[level][1],
-            s[2] / this.goals[level][2]
-        ];
-        let total = differences.reduce((a, b) => a + b, 0);
+        let s = this.calibrate([seconds, swaps, blocks]);
+        let total = s.reduce((a, b) => a + b, 0);
         // The below code can be adjusted if the ranks feel improperly assigned
-        let rank = (total <= 1) ? 0 : ((total <= 1.8) ? 1 : 2);
-        let biggest = differences.indexOf(Math.max(...differences));
+        let rank = (total <= this.ranks[level][0]) ? 0 : ((total <= this.ranks[level][1]) ? 1 : 2);
+        // The below code can be adjusted if certain things become more important
+        let diff = [
+            s[0] / this.goals[level][(rank > 0) ? rank - 1 : 0][0],
+            s[1] / this.goals[level][(rank > 0) ? rank - 1 : 0][1],
+            s[2] / this.goals[level][(rank > 0) ? rank - 1 : 0][2]
+        ];
+        let biggest = diff.indexOf(Math.max(...diff));
+        this.scores[level] = [rank, s];
+        console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
         return [rank, this.messages[rank][biggest], s];
+    },
+    calibrate: function ([seconds, swaps, blocks]) {
+        return [seconds * 25, swaps * 160, blocks * 80];
     }
 }
 
