@@ -292,7 +292,18 @@ canvas {
     */
     width: 100%;
     margin-top: calc(var(--unit) * -0.1);
-    background-color: black;
+}
+.bar {
+    background-image: linear-gradient(-0.125turn, black, grey, black);
+}
+.bar.bronze {
+    background-image: linear-gradient(0.125turn, orange, brown, orange, rgb(255, 200, 200), orange);
+}
+.bar.silver {
+    background-image: linear-gradient(0.125turn, lightgrey, grey, lightgrey, white, lightgrey);
+}
+.bar.gold {
+    background-image: linear-gradient(0.125turn, yellow, rgb(160, 160, 20), yellow, white, yellow);
 }
 
 

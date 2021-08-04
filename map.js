@@ -185,8 +185,8 @@ let score = {
         [[30, 0, 0], [60, 2, 2]],
         [[400, 70, 55], [1000, 130, 85]]
     ],
-    ranks: [], // array of the addition of 'goals'
-    scores: [], // same format as 'goals', but it's this player's information.
+    ranks: [], // array of the addition of 'goals'.
+    scores: [], // [rank, [0, 0, 0]] player's information per level.
     messages: [ // 0-Gold 1-Silver 2-Bronze
         [
             "If you hope to improve your score, focussing on taking <strong>less in-game time</strong> may be the best choice.",
@@ -210,21 +210,19 @@ let score = {
             score.goals[i][1] = this.calibrate(score.goals[i][1]);
         }
         levels.levels.forEach((l) => {
-            score.scores.push([2, [0, 0, 0]]);
+            score.scores.push([3, [0, 0, 0]]);
         });
         let t = this;
         t.goals.forEach((nums) => {
             t.ranks.push([nums[0].reduce((a, b) => a + b, 0), nums[1].reduce((a, b) => a + b, 0)]);
         });
         console.log(t.goals);
+        initializeLevels();
     },
-    calculate: function (level, [seconds, swaps, blocks]) {
-        // The below code needs to be super calibrated!
+    calculate: function (level, [seconds, swaps, blocks], complete=true) {
         let s = this.calibrate([seconds, swaps, blocks]);
         let total = s.reduce((a, b) => a + b, 0);
-        // The below code can be adjusted if the ranks feel improperly assigned
         let rank = (total <= this.ranks[level][0]) ? 0 : ((total <= this.ranks[level][1]) ? 1 : 2);
-        // The below code can be adjusted if certain things become more important
         let diff = [
             s[0] / this.goals[level][(rank > 0) ? rank - 1 : 0][0],
             s[1] / this.goals[level][(rank > 0) ? rank - 1 : 0][1],
@@ -233,10 +231,24 @@ let score = {
         let biggest = diff.indexOf(Math.max(...diff));
         this.scores[level] = [rank, s];
         console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
+        if (complete) this.unlock(level + 1);
         return [rank, this.messages[rank][biggest], s];
     },
     calibrate: function ([seconds, swaps, blocks]) {
+        // The below code needs to be super calibrated!
         return [seconds * 25, swaps * 160, blocks * 80];
+    },
+    unlock: function (newLevel) {
+        // unlock the level in the html.
+        console.log("Unlocking Level " + (newLevel + 1));
+        let td = document.querySelector("tr #td" + (newLevel + 1));
+        td.classList.remove("locked");
+        td.setAttribute("onclick", "dom.play(" + (newLevel + 1) + ");");
+        // update the bar for the previous level
+        let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
+        if (this.scores[newLevel - 1][0] == 2) bar.classList.add("bronze");
+        else if (this.scores[newLevel - 1][0] == 1) bar.classList.add("silver");
+        else if (this.scores[newLevel - 1][0] == 0) bar.classList.add("gold");
     }
 }
 

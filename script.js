@@ -193,6 +193,37 @@ let dom = {
     },
 }
 
+// This function relies on score.scores being up-to-date ([0, 0, 0] = uncomplete)
+function initializeLevels() {
+    let currRow = document.createElement("tr");
+    for (let s = 0; s < score.scores.length; s++) {
+        if (!(s % 4)) { // first in a row
+            currRow = document.createElement("tr");
+        }
+        let td = document.createElement("td");
+        let bar = document.createElement("div");
+        bar.classList.add("bar");
+        if (score.scores[s][1][0] + score.scores[s][1][1] + score.scores[s][1][2] <= 0 && s !== 0) {
+            td.classList.add("locked");
+        } else {
+            td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");
+            let rank = score.scores[s][0];
+            if (rank == 2) bar.classList.add("bronze");
+            else if (rank == 1) bar.classList.add("silver");
+            else if (rank == 0) bar.classList.add("gold");
+        }
+        td.setAttribute("onmouseenter", "dom.updateSide(this, true);");
+        td.setAttribute("tabindex", "0");
+        td.textContent = (s + 1);
+        td.id = "td" + (s + 1);
+        td.appendChild(bar);
+        currRow.appendChild(td);
+        if (!((s + 1) % 4) || s + 1 >= score.scores.length) { // last in a row
+            document.querySelector("#Select").appendChild(currRow);
+        }
+    }
+}
+
 function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
 }
