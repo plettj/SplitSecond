@@ -203,7 +203,7 @@ function initializeLevels() {
         let td = document.createElement("td");
         let bar = document.createElement("div");
         bar.classList.add("bar");
-        if (score.scores[s][1][0] + score.scores[s][1][1] + score.scores[s][1][2] <= 0 && s !== 0) {
+        if (score.scores[s][1][0] + score.scores[s][1][1] + score.scores[s][1][2] <= 0 && s !== 0 && !allUnlocked) {
             td.classList.add("locked");
         } else {
             td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");

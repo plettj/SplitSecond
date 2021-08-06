@@ -2,6 +2,7 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = false;
+let allUnlocked = true;
 let width = 16; // in units
 let height = 12;
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
@@ -59,6 +60,7 @@ window.onload = function () {
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     animate();
     setTimeout(visible, 300); // length of menu animation
+    window.scrollTo(0, 0);
 }
 
 // To run actual frame-by-frame animation
@@ -80,6 +82,7 @@ function animate() {
             levels.update();
         }
 	}
+    console.log(Math.floor(frame / 60));
 	raf = window.requestAnimationFrame(animate);
 }
 

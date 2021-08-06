@@ -62,7 +62,13 @@ let avatar = {
                 this.inAir = 0;
                 this.vcoor[1] = 0;
                 this.coor[1] = before[3] * unit;
-            } else this.inAir = 1;
+            } else {
+                this.inAir = 1;
+                if (before[2] > height + 2) {
+                    levels.startLevel(levels.currentLevel);
+                    return;
+                }
+            }
         } else if (before[2] > after[2]) { // UP - crossed into new cell
             hitHead = (isS([before[0], after[2]], true) || isS([before[1], after[2]], true));
             if (hitHead) {
