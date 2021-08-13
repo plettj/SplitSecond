@@ -41,6 +41,9 @@ function XOR(values) { // returns true if exactly one of the values is true
         }
     } else return -1; // not exactly 1 of them is true
 }
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 // LEVELS
 
@@ -174,6 +177,7 @@ let score = {
     goals: [], // calibrated from the 2nd parameter of 'levels.addLevel()'.
     ranks: [], // array of the addition of 'goals'.
     scores: [], // [rank, [0, 0, 0]] player's information per level.
+    translate: ["gold", "silver", "bronze", ""], // translate rank (0-3) to text ("gold", etc)
     messages: [ // 0-Gold 1-Silver 2-Bronze
         [
             "If you hope to improve your score, focussing on taking <strong>less in-game time</strong> may be the best choice.",
@@ -232,9 +236,7 @@ let score = {
         td.setAttribute("onclick", "dom.play(" + (newLevel + 1) + ");");
         // update the bar for the previous level
         let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
-        if (this.scores[newLevel - 1][0] == 2) bar.classList.add("bronze");
-        else if (this.scores[newLevel - 1][0] == 1) bar.classList.add("silver");
-        else if (this.scores[newLevel - 1][0] == 0) bar.classList.add("gold");
+        bar.classList.add(score.translate[this.scores[newLevel - 1][0]]);
     }
 }
 

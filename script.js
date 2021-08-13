@@ -191,6 +191,13 @@ let dom = {
             document.body.querySelector("#LNumber").textContent = (l + 1);
             levels.drawLevel(l, true);
             // update the side menu.
+            [document.body.querySelector("#LRankHolder"), ...(document.body.querySelectorAll(".line"))].forEach(function (elem) {
+                elem.classList.remove("bronze", "silver", "gold");
+                if (score.scores[l][0] < 3) elem.classList.add(score.translate[score.scores[l][0]]);
+            });
+            if (score.scores[l][0] == 3) document.body.querySelector("#LRank").textContent = "Unsolved";
+            else document.body.querySelector("#LRank").textContent = capitalize(score.translate[score.scores[l][0]]);
+
             dom.preview = l;
         }
     },
