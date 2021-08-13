@@ -196,23 +196,27 @@ let dom = {
     },
     scrollToRow: function (row, direction) { // direction --> 0-GOAWAY, 1-Up, -1-Down
         if (!direction) return false;
-        let scroll = document.body.querySelector(".scroll");
-        let y = scroll.scrollTop;
-        let domRow = document.body.querySelectorAll("tr")[row];
-        let y2 = domRow.offsetTop - Math.round(unit * 0.15);
-        //console.log("Scroll: " + y);
-        //console.log("Go  To: " + y2);
+        let menuScroll = document.body.querySelector(".scroll").scrollTop;
+        let elemScroll = document.body.querySelectorAll("tr")[row].offsetTop - Math.round(unit * 0.15);
         let willScroll = false;
         if (direction == 1) { // Up
-
+            if (elemScroll - menuScroll < unit * 1) {
+                if (row > 1) elemScroll -= unit * 2.2; // not the second row
+                else elemScroll = 0;
+                willScroll = true;
+            }
         } else { // Down
-            console.log((y - y2) / unit);
-            if (y - y2 > unit * 4) {
-                y2 += unit * 2.2;
+            if (elemScroll - menuScroll > unit * 6) {
+                if (row + 2 < levels.levels.length / 4) elemScroll -= unit * (4.4 + 0.7); // not the second-last row
                 willScroll = true;
             }
         }
-        if (willScroll) document.body.querySelector(".scroll").scrollTo(0, y2);
+        if (willScroll) {
+            document.body.querySelector(".scroll").scroll({
+                top: elemScroll,
+                behavior: "smooth"
+            });
+        }
     },
     restart: function () {
         dom.play();
