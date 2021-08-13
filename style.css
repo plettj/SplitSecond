@@ -6,8 +6,16 @@
 }
 
 @font-face {
-    font-family: VCR_OSD; src: url('fonts/VCR_OSD_MONO_1.001.ttf');
     font-family: Arcology; src: url('fonts/Arcology.ttf');
+}
+@font-face {
+    font-family: VCR_OSD; src: url('fonts/VCR_OSD_MONO_1.001.ttf');
+}
+@font-face {
+    font-family: D_D; src: url('fonts/DisposableDroidBB.ttf');
+}
+@font-face {
+    font-family: D_D_I; src: url('fonts/DisposableDroidBB_ital.ttf');
 }
 
 body {
@@ -359,6 +367,17 @@ canvas {
     width: calc(var(--unit) * 1.25);
 }
 
+#LMessage {
+    margin-left: calc(var(--unit) * -0.03);
+    width: calc(var(--unit) * var(--width) * 0.353);
+    height: calc(var(--unit) * 0.9);
+    font-size: calc(var(--unit) * 0.35);
+    padding: calc(var(--unit) * 0.1) 0 calc(var(--unit) * 0.3) 0;
+    font-family: D_D;
+}
+#LMessage span.ital {
+    font-family: D_D_I;
+}
 
 
 

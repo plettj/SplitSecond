@@ -176,23 +176,28 @@ let levels = {
 let score = {
     goals: [], // calibrated from the 2nd parameter of 'levels.addLevel()'.
     ranks: [], // array of the addition of 'goals'.
-    scores: [], // [rank, [0, 0, 0]] player's information per level.
+    scores: [], // [rank, [0, 0, 0], message] player's information per level.
     translate: ["gold", "silver", "bronze", ""], // translate rank (0-3) to text ("gold", etc)
     messages: [ // 0-Gold 1-Silver 2-Bronze
+        /*[
+            "If you hope to improve your score, focussing on taking <span class='ital'>less in-game time</span> may be the best choice.",
+            "To improve your score any further, it might be best to focus on doing <span class='ital'>less time-swaps</span>.",
+            "You've achieved <span class='gold'>Gold</span>, but if you hope to improve this score further, you may want to use <span class='ital'>less dino-blocks</span>."
+        ],*/
         [
-            "If you hope to improve your score, focussing on taking <strong>less in-game time</strong> may be the best choice.",
-            "To improve your score any further, it might be best to focus on doing <strong>less time-swaps</strong>.",
-            "You've achieved <span class='gold'>Gold</span>, but if you hope to improve this score further, you may want to use <strong>less dino-blocks</strong>."
+            "You've achieved Gold, wonderous warrior.",
+            "You've achieved Gold, fantastic fighter.",
+            "You've achieved Gold, super solver."
         ],
         [
-            "To reach <span class='gold'>Gold</span>, focussing on taking <strong>less in-game time</strong> to solve this level might be best.",
-            "If <span class='silver'>Silver</span> isn't enough for you, you may want to try doing <strong>less time-swaps</strong> to improve your rank.",
-            "If you're wondering how to achieve the <span class='gold'>Gold</span> rank, using <strong>less dino-blocks</strong> might help you the most."
+            "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
+            "If <span class='silver'>Silver</span> isn't enough for you, you may want to try doing <span class='ital'>less time-swaps</span> to improve your rank.",
+            "If you're wondering how to achieve the <span class='gold'>Gold</span> rank, using <span class='ital'>less dino-blocks</span> might help you the most."
         ],
         [
-            "You're at <span class='bronze'>Bronze</span>, but to get to <span class='silver'>Silver</span>, you should try to complete this level in <strong>less in-game time</strong>.",
-            "The best way to improve your rank to <span class='silver'>Silver</span> will be to try doing <strong>less time-swaps</strong>.",
-            "To reach <span class='silver'>Silver</span>, your best bet will be to try to use <strong>less dino-blocks</strong>."
+            "You're at <span class='bronze'>Bronze</span>, but to get to <span class='silver'>Silver</span>, you should try to complete this level in <span class='ital'>less in-game time</span>.",
+            "The best way to improve your rank to <span class='silver'>Silver</span> will be to try doing <span class='ital'>less time-swaps</span>.",
+            "To reach <span class='silver'>Silver</span>, your best bet will be to try to use <span class='ital'>less dino-blocks</span>."
         ]
     ],
     init: function () {
@@ -201,7 +206,7 @@ let score = {
             score.goals[i][1] = this.calibrate(score.goals[i][1]);
         }
         levels.levels.forEach((l) => {
-            score.scores.push([3, [0, 0, 0]]);
+            score.scores.push([3, [0, 0, 0], "This level has not been completed."]);
         });
         let t = this;
         t.goals.forEach((nums) => {
@@ -219,7 +224,8 @@ let score = {
             s[2] / this.goals[level][(rank > 0) ? rank - 1 : 0][2]
         ];
         let biggest = diff.indexOf(Math.max(...diff));
-        this.scores[level] = [rank, s];
+        biggest = (biggest == -1) ? Math.floor(Math.random() * 3) : biggest;
+        this.scores[level] = [rank, s, this.messages[rank][biggest]];
         console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
         if (complete) this.unlock(level + 1);
         return [rank, this.messages[rank][biggest], s];

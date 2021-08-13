@@ -196,7 +196,8 @@ let dom = {
                 if (score.scores[l][0] < 3) elem.classList.add(score.translate[score.scores[l][0]]);
             });
             if (score.scores[l][0] == 3) document.body.querySelector("#LRank").textContent = "Unsolved";
-            else document.body.querySelector("#LRank").textContent = capitalize(score.translate[score.scores[l][0]]);
+            else document.body.querySelector("#LRank").innerHTML = capitalize(score.translate[score.scores[l][0]]);
+            document.body.querySelector("#LMessage").innerHTML = score.scores[l][2];
 
             dom.preview = l;
         }
