@@ -2,7 +2,7 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = false;
-let allUnlocked = true;
+let beginningLevel = 1;
 let width = 16; // in units
 let height = 12;
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
@@ -52,50 +52,67 @@ function makeImages(srcs) {
 }
 makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
 
-// *** Where it all starts. ***
+// *** Where it all starts ***
 window.onload = function () {
     score.init();
-    levels.startLevel(0);
-    levels.drawLevel(0, true);
+    levels.startLevel(beginningLevel);
+    levels.drawLevel(beginningLevel, true);
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
-    animate();
-    setTimeout(visible, 300); // length of menu animation
+    startAnimating(60); // 60 fps
+    setTimeout(visible, 300); // should be the length of menu animation
     window.scrollTo(0, 0);
 }
 
 // To run actual frame-by-frame animation
+var stop = false;
+var frameCount = 0;
+var fps, fpsInterval, startTime, now, then, elapsed;
+
+function startAnimating(fps) {
+    fpsInterval = 1000 / fps;
+    then = Date.now();
+    startTime = then;
+    animate();
+}
+
 function animate() {
-	if (!paused) {
-        frame += time;
-        avatar.physics();
-        levels.updateTime();
-        if (!(frame % Math.round(60 / stepSpeed))) {
-            stepCounter++;
-            step += time;
-        }
-        if (!(frame % GFuel)) { // Run the Ghosts + Update the Level
-            nextGhost.learn();
-            clear(4);
-            for (g in levels.ghosts) {
-                levels.ghosts[g].newFrame();
+    requestAnimationFrame(animate);
+    now = Date.now();
+    elapsed = now - then;
+    // if enough time has elapsed, draw the next frame
+    if (elapsed > fpsInterval) {
+        then = now - (elapsed % fpsInterval);
+        // actual looping code below!
+        if (!paused) {
+            frame += time;
+            avatar.physics();
+            levels.updateTime();
+            if (!(frame % Math.round(60 / stepSpeed))) {
+                stepCounter++;
+                step += time;
             }
-            levels.update();
+            if (!(frame % GFuel)) { // Run the Ghosts + Update the Level
+                nextGhost.learn();
+                clear(4);
+                for (g in levels.ghosts) {
+                    levels.ghosts[g].newFrame();
+                }
+                levels.update();
+            }
         }
-	}
-    console.log(Math.floor(frame / 60));
-	raf = window.requestAnimationFrame(animate);
+    }
 }
 
 // EVENTS
 
 function keyPressed(code, num) {
-    if (!paused) {
+    if (!paused || !num) {
         if ((code == 37 || code == 65) && !avatar.complete) avatar.keys[0] = num; // Left
         else if ((code == 38 || code == 87) && !avatar.complete) avatar.keys[1] = num; // Up
         else if ((code == 39 || code == 68) && !avatar.complete) avatar.keys[2] = num; // Right
         else if ((code == 40 || code == 83) && !avatar.complete) avatar.keys[3] = num; // Down
         else if ((code == 69 || code == 32) && num && !avatar.complete) swapTime(); // E or [Space]
-        else if ((code == 80 || code == 82) && num) dom.key(code); // P or R
+        else if ((code == 80 || code == 82 || code == 27) && num) dom.key(code); // P or R or [Esc]
     } else if (num) { // keydown on menus
         dom.key(code);
     }

@@ -165,7 +165,7 @@ canvas {
     cursor: pointer;
 }
 .back:hover {
-    background-position-x: calc(var(--unit) * 0.8);
+    background-position-x: calc(var(--unit) * 0.81);
 }
 .back:focus,.settings:focus {
     border-bottom: calc(var(--unit) * 0.06) solid black;
@@ -271,10 +271,6 @@ canvas {
 }
 #Select td.locked {
     color: rgba(0, 0, 0, 0.5);
-}
-#Select td:not(.locked):hover {
-    color: white;
-    background-color: rgba(0, 0, 0, 0.45);
 }
 #Select td:not(.locked):focus {
     color: white;
