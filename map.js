@@ -185,9 +185,9 @@ let score = {
             "You've achieved <span class='gold'>Gold</span>, but if you hope to improve this score further, you may want to use <span class='ital'>less dino-blocks</span>."
         ],*/
         [
-            "You've achieved Gold, wonderous warrior.",
-            "You've achieved Gold, fantastic fighter.",
-            "You've achieved Gold, super solver."
+            "You've achieved Gold, wonderous warrior!",
+            "You've achieved Gold, fantastic fighter!",
+            "You've achieved Gold, super solver!"
         ],
         [
             "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
@@ -225,10 +225,12 @@ let score = {
         ];
         let biggest = diff.indexOf(Math.max(...diff));
         biggest = (biggest == -1) ? Math.floor(Math.random() * 3) : biggest;
-        this.scores[level] = [rank, s, this.messages[rank][biggest]];
-        console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
-        if (complete) this.unlock(level + 1);
-        return [rank, this.messages[rank][biggest], s];
+        if (this.scores[level][0] > rank) {
+            this.scores[level] = [rank, s, this.messages[rank][biggest]];
+            console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
+            if (complete) this.unlock(level + 1);
+            return [rank, this.messages[rank][biggest], s];
+        } else return [rank, this.scores[level][2], s];
     },
     calibrate: function ([seconds, swaps, blocks]) {
         // The below code needs to be super calibrated!
