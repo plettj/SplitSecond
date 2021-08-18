@@ -22,17 +22,18 @@ body {
     background-color: #343538;
     --x: 1;
     --y: 1;
-    --g1: yellow;
-    --g2: rgb(160, 160, 20);
-    --g3: rgb(255, 255, 210);
-    --s1: #bbbbbb;
-    --s2: #666666;
-    --s3: #f1f1f1;
-    --b1: orange;
-    --b2: brown;
-    --b3: rgb(255, 200, 200);
-    --u1: black;
-    --u2: grey;
+    --g1: #f0ec2e;
+    --g2: #b5a926;
+    --g3: #f7fac8;
+    --s1: #b6baba;
+    --s2: #8c8d8f;
+    --s3: #e6e8e7;
+    --b1: #f07026;
+    --b2: #96461e;
+    --b3: #f5d7b3;
+    --u1: #000000;
+    --u2: #000000; /* for a slight gradient on the unsolved levels */
+
     overflow: hidden;
     font-family: Arcology;
     color: rgb(75, 75, 75);
@@ -263,7 +264,7 @@ canvas {
     width: calc(var(--unit) * 0.15);
 }
 .scroll::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(0, 0, 0, 0.1);
 }
 .scroll::-webkit-scrollbar-thumb {
     background: black;
@@ -315,7 +316,7 @@ canvas {
 }
 
 #LRankHolder {
-    margin-top: calc(var(--unit) * (var(--height) * 0.353 + 0.05));
+    margin-top: calc(var(--unit) * (var(--height) * 0.353 + 0.2));
     margin-left: calc(var(--unit) * -0.03);
     width: calc(var(--unit) * var(--width) * 0.353);
     font-size: calc(var(--unit) * 0.35);
@@ -375,78 +376,90 @@ canvas {
     padding: calc(var(--unit) * 0.1) 0 calc(var(--unit) * 0.3) 0;
     font-family: D_D;
 }
+#LMessage span {
+    -webkit-text-fill-color: black;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
 #LMessage span.ital {
     font-family: D_D_I;
+    -webkit-text-stroke-width: 0px;
 }
-
-
-
-
-
-
-
-
-
-/*
-.orange {
-    color: var(--orange);
+#LMessage span.gold {
+    -webkit-text-fill-color: var(--g1);
 }
-.green {
-    color: var(--green);
+#LMessage span.silver {
+    -webkit-text-fill-color: var(--s2);
 }
-
-#LBanner {
-    overflow: hidden;
+#LMessage span.bronze {
+    -webkit-text-fill-color: var(--b1);
 }
-#Hint {
-    background-color: rgba(0, 255, 0, 0.3);
+#ProgressBack {
+    background-color: rgba(0, 0, 0, 0.1);
+    height: calc(var(--unit) * 0.15);
+    width: calc(var(--unit) * var(--width) * 0.35);
+    margin: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.5) 0;
+    position: relative;
 }
-
-#LRequ {
-    margin-top: calc(var(--unit) * (var(--height) + 1.5) * 0.32);
-    width: calc(var(--unit) * var(--width) * 0.32);
-    font-size: calc(var(--unit) / 5);
+#ProgressFill {
+    height: 100%;
+    width: 3.5%;
+    margin: 0;
+    transition-duration: 0.3s;
+    background-image: linear-gradient(0.125turn, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.45) calc(100% - var(--unit) * 0.15), transparent calc(100% - var(--unit) * 0.15));
 }
-#LRequ td {
-    height: calc(var(--unit) * 1.2);
-}
-#LRequ td.tall {
-    font-size: calc(var(--unit) * 0.5);
-    padding-right: calc(var(--unit) * 0.15);
-}
-#Level .button {
-    width: 100%;
-    margin-top: calc(var(--unit) * 0.2);
-    font-size: calc(var(--unit) * 0.5);
-}
-#Level .button:hover {
-    height: calc(var(--unit) * 0.8);
-    margin-top: calc(var(--unit) * 0.1);
-}
-
-
-div.banner {
+.progressMedal {
     position: absolute;
-    left: calc(50% - var(--unit) * 0.7);
-    transform: rotate(45deg);
-    height: calc(var(--unit) * 0.5);
-    border-top: calc(var(--unit) * 0.1) solid black;
-    border-bottom: calc(var(--unit) * 0.1) solid black;
-    width: 100%;
+    width: calc(var(--unit) * 0.45);
+    height: calc(var(--unit) * 0.45);
+    top: calc(var(--unit) * -0.15);
+    background-image: url("images/Medals.png");
+    background-size: cover;
+    transition-duration: 0.1s;
 }
-div.banner.orange {
-    border-color: var(--orange);
+.progressMedal.bronze {
+    left: 0%;
 }
-div.banner.green {
-    border-color: var(--green);
+.progressMedal.silver {
+    left: 0%;
+    background-position: 50%;
 }
-div.unbanner {
-    width: 0;
-    margin: auto;
-    padding-left: calc(var(--unit) * 0.5);
-    text-align: center;
-    font-size: calc(var(--unit) * 0.4);
-    line-height: calc(var(--unit) * 1.07);
-    transform: rotate(315deg);
+.progressMedal.gold {
+    right: -1%;
+    background-position: 100%;
 }
-*/
+
+#Scores {
+    font-family: D_D;
+    font-size: calc(var(--unit) * 0.45);
+    margin: calc(var(--unit) * 0.7) 0 calc(var(--unit) * 0.5) 0;
+    border-collapse: collapse;
+    width: calc(var(--unit) * var(--width) * 0.35);
+}
+#Scores:not(.on) {
+    display: none;
+}
+#Scores td {
+    margin: calc(var(--unit) * 0.5) 0 0 0;
+}
+#Scores td:first-child {
+    width: 60%;
+}
+#Scores td:last-child {
+    text-align: right;
+    width: 40%;
+    font-family: VCR_OSD;
+    font-size: calc(var(--unit) * 0.45);
+    -webkit-text-fill-color: black;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+}
+#Scores td.gold {
+    -webkit-text-fill-color: var(--g1);
+}
+#Scores td.silver {
+    -webkit-text-fill-color: var(--s2);
+}
+#Scores td.bronze {
+    -webkit-text-fill-color: var(--b1);
+}

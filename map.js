@@ -179,15 +179,12 @@ let score = {
     scores: [], // [rank, [0, 0, 0], message] player's information per level.
     translate: ["gold", "silver", "bronze", ""], // translate rank (0-3) to text ("gold", etc)
     messages: [ // 0-Gold 1-Silver 2-Bronze
-        /*[
-            "If you hope to improve your score, focussing on taking <span class='ital'>less in-game time</span> may be the best choice.",
-            "To improve your score any further, it might be best to focus on doing <span class='ital'>less time-swaps</span>.",
-            "You've achieved <span class='gold'>Gold</span>, but if you hope to improve this score further, you may want to use <span class='ital'>less dino-blocks</span>."
-        ],*/
         [
-            "You've achieved Gold, wonderous warrior!",
-            "You've achieved Gold, fantastic fighter!",
-            "You've achieved Gold, super solver!"
+            "You've achieved <span class='gold'>Gold</span>, wondrous warrior!",
+            "You've achieved <span class='gold'>Gold</span>, fantastic fighter!",
+            "You've achieved <span class='gold'>Gold</span>, super solver!",
+            "Your rank is <span class='gold'>Gold</span>. Nothing left to achieve.",
+            "Getting <span class='gold'>Gold</span> feels great, doesn't it?"
         ],
         [
             "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
@@ -219,22 +216,30 @@ let score = {
         let total = s.reduce((a, b) => a + b, 0);
         let rank = (total <= this.ranks[level][0]) ? 0 : ((total <= this.ranks[level][1]) ? 1 : 2);
         let diff = [
-            s[0] / this.goals[level][(rank > 0) ? rank - 1 : 0][0],
-            s[1] / this.goals[level][(rank > 0) ? rank - 1 : 0][1],
-            s[2] / this.goals[level][(rank > 0) ? rank - 1 : 0][2]
+            s[0] / (this.goals[level][(rank > 0) ? rank - 1 : 0][0] + 1),
+            s[1] / (this.goals[level][(rank > 0) ? rank - 1 : 0][1] + 1),
+            s[2] / (this.goals[level][(rank > 0) ? rank - 1 : 0][2] + 1)
         ];
+        console.log(diff);
         let biggest = diff.indexOf(Math.max(...diff));
         biggest = (biggest == -1) ? Math.floor(Math.random() * 3) : biggest;
-        if (this.scores[level][0] > rank) {
-            this.scores[level] = [rank, s, this.messages[rank][biggest]];
+        let previousBest = this.scores[level][1].reduce((a, b) => a + b, 0);
+        if (previousBest >= total || previousBest == 0) {
+            this.scores[level] = [rank, s, this.messages[rank][(rank > 0) ? biggest : Math.floor(Math.random() * (this.messages[0].length - 1))]];
             console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
             if (complete) this.unlock(level + 1);
             return [rank, this.messages[rank][biggest], s];
-        } else return [rank, this.scores[level][2], s];
+        } else return [rank, this.scores[level][1], s];
     },
     calibrate: function ([seconds, swaps, blocks]) {
         // The below code needs to be super calibrated!
-        return [seconds * 25, swaps * 160, blocks * 80];
+        return [seconds * 40, swaps * 135, blocks * 75];
+    },
+    displayScore: function (values, alreadyCalibrated) {
+        let value = (!alreadyCalibrated) ? this.calibrate(values).reduce((a, b) => a + b, 0) : values.reduce((a, b) => a + b, 0);
+        // take 'value' and put it between 100 and 1000; 1000 is the max score.
+        let newValue = Math.floor(1073.5 - ((value * 920) / (value + 920)));
+        return newValue;
     },
     unlock: function (newLevel) {
         // unlock the level in the html.
@@ -265,7 +270,7 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[1, 0, 0], [3, 0, 0]]
+[[2, 0, 0], [3, 0, 0]]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -297,7 +302,7 @@ levels.addLevel([
     [3, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[2, 0, 0], [8, 0, 0]]
+[[2, 0, 0], [9, 0, 0]]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

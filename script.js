@@ -9,6 +9,10 @@ let dom = {
     pauseTitle: document.body.querySelector("#PauseTitle"),
     pauseNum: document.body.querySelector("#CurrLevel"),
     pauseButton: document.body.querySelector("#Pause"),
+    progressFill: document.body.querySelector("#ProgressFill"),
+    bestScore: document.body.querySelector("#BestScore"),
+    nextScore: document.body.querySelector("#NextScore"),
+    medals: [document.body.querySelector(".progressMedal.gold"), document.body.querySelector(".progressMedal.silver"), document.body.querySelector(".progressMedal.bronze")],
     menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu"), document.body.querySelector("#SettingsMenu")],
     focuses: [document.body.querySelector(".play"), "Dynamically chooses the current level.", document.body.querySelector("#settingsfocustemp")],
     displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-SettingsMenu 3-LevelTransition
@@ -197,6 +201,7 @@ let dom = {
             });
             if (score.scores[l][0] == 3) document.body.querySelector("#LRank").textContent = "Unsolved";
             else document.body.querySelector("#LRank").innerHTML = capitalize(score.translate[score.scores[l][0]]);
+            dom.scoreInfo(l);
             document.body.querySelector("#LMessage").innerHTML = score.scores[l][2];
 
             dom.preview = l;
@@ -225,6 +230,38 @@ let dom = {
                 behavior: "smooth"
             });
         }
+    },
+    scoreInfo: function (level) {
+        let rank = score.scores[level][0];
+        let displays = [score.displayScore(score.goals[level][0], true), score.displayScore(score.goals[level][1], true)]; // [gold, silver]
+        dom.medals[1].style.left = "calc(" + Math.ceil(displays[1] / displays[0] * 100) + "% - var(--unit) * 0.45)";
+        dom.medals[2].style.left = "calc(" + Math.ceil(100 / displays[0] * 100) + "% - var(--unit) * 0.45)";
+        if (rank == 3) {
+            dom.progressFill.style.width = "3.5%";
+            document.body.querySelector("#Scores").classList.remove("on");
+            return;
+        } else {
+            let nextMedal = (rank < 2) ? 0 : 1;
+            let yours = score.displayScore(score.scores[level][1], true);
+            let goal = score.displayScore(score.goals[level][nextMedal], true);
+            if (rank == 0) {
+                dom.progressFill.style.width = "100%";
+                document.querySelector("#NextScoreTitle").textContent = "Gold's score:";
+            } else {
+                dom.progressFill.style.width = Math.floor(yours / displays[0] * 100 - 2) + "%";
+            }
+            dom.bestScore.textContent = yours;
+            dom.nextScore.textContent = goal;
+            score.translate.forEach(function (name) {
+                if (name !== "") {
+                    dom.bestScore.classList.remove(name);
+                    dom.nextScore.classList.remove(name);
+                }
+            });
+            dom.bestScore.classList.add(score.translate[rank]);
+            dom.nextScore.classList.add(score.translate[(rank > 0) ? rank - 1 : 0]);
+        }
+        document.body.querySelector("#Scores").classList.add("on");
     },
     restart: function () {
         dom.play();

@@ -13,13 +13,13 @@
         <div class="cover two"></div>
 
         <div class="bigText">
-            LEVEL <span id="NextLevel">88</span><br>
+            LEVEL <span id="NextLevel">2</span><br>
             <div class="small">enters from the future</div>
         </div>
 
         <main id="PauseMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="title" id="PauseTitle">Level <span id="CurrLevel">88</span></div>
+                <div class="title" id="PauseTitle">Level <span id="CurrLevel">1</span></div>
                 <div class="button play" onclick="dom.play();" tabindex="0">Resume</div>
                 <div class="button restart" onclick="dom.restart();" tabindex="0">Restart</div>
                 <div class="button levels" onclick="dom.newMenu();" tabindex="0">Levels</div>
@@ -43,29 +43,29 @@
                     </table>
                 </section>
                 <section id="Level">
-                    <div id="LNumber" class="lsize">28</div>
+                    <div id="LNumber" class="lsize">1</div>
                     <canvas id="LCanvas" class="lsize"></canvas>
-                    <!--
-                    <div id="LBanner" class="lsize">
-                        <div class="banner orange"><div class="unbanner">B</div></div>
-                    </div>
-                    <table id="LRequ">
-                        <tr>
-                            <td class="tall green"><span class="green">A</span></td>
-                            <td>Finish in under 8 seconds.</td>
-                        </tr>
-                        <tr>
-                            <td class="tall orange"><span class="orange">B</span></td>
-                            <td>Finish in under 14 seconds.</td>
-                        </tr>
-                    </table>
-                    <div id="LHint" class="button" tabindex="0">Hint</div>
-                    -->
                     <div id="LRankHolder">
                         <aside class="line left"></aside>
                         <span id="LRank">Unsolved</span>
                         <aside class="line right"></aside>
                     </div>
+                    <div id="ProgressBack">
+                        <div id="ProgressFill" class="silver"></div>
+                        <div class="progressMedal bronze"></div>
+                        <div class="progressMedal silver"></div>
+                        <div class="progressMedal gold"></div>
+                    </div>
+                    <table id="Scores">
+                        <tr>
+                            <td>Your best score:</td>
+                            <td id="BestScore" class="silver">421</td>
+                        </tr>
+                        <tr>
+                            <td id="NextScoreTitle">Next medal:</td>
+                            <td id="NextScore" class="gold">999</td>
+                        </tr>
+                    </table>
                     <div id="LMessage">This level has not been completed.</div>
                 </section>
             </div>

@@ -20,6 +20,11 @@ let frame = 0; // CORE OPERATION: going up when forward, down when backward!
 let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier)
 let nextGhost = undefined;
 
+
+setTimeout(function () {
+    document.body.querySelector("#ProgressFill").classList.remove("silver");
+    document.body.querySelector("#ProgressFill").classList.add("gold");
+}, 3000);
 // INITIALIZATION
 
 // Canvas holder
