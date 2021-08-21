@@ -432,7 +432,7 @@ canvas {
 #Scores {
     font-family: D_D;
     font-size: calc(var(--unit) * 0.45);
-    margin: calc(var(--unit) * 0.7) 0 calc(var(--unit) * 0.5) 0;
+    margin: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 1.2) 0;
     border-collapse: collapse;
     width: calc(var(--unit) * var(--width) * 0.35);
 }

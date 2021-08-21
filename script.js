@@ -249,6 +249,7 @@ let dom = {
                 document.querySelector("#NextScoreTitle").textContent = "Gold's score:";
             } else {
                 dom.progressFill.style.width = Math.floor(yours / displays[0] * 100 - 2) + "%";
+                document.querySelector("#NextScoreTitle").textContent = "Next medal:";
             }
             dom.bestScore.textContent = yours;
             dom.nextScore.textContent = goal;

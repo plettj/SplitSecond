@@ -2,7 +2,7 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = false;
-let beginningLevel = 0;
+let beginningLevel = 6;
 let width = 16; // in units
 let height = 12;
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
@@ -28,7 +28,7 @@ setTimeout(function () {
 // INITIALIZATION
 
 // Canvas holder
-let ctx = []; // [0-background, 1-blocks, 2-objects, 3-ghosts, 4-ghostBlocks, 5-avatar, :last:-LCanvas]
+let ctx = []; // [0-background, 1-blocks, 2-objects, 3-ghosts, 4-ghostBlocks, 5-avatar, ---  :last:-LCanvas]
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
@@ -55,7 +55,7 @@ function makeImages(srcs) {
         img.push(image);
     }
 }
-makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png"]);
+makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png", "Objects.png"]);
 
 // *** Where it all starts ***
 window.onload = function () {

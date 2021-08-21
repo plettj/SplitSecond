@@ -78,13 +78,13 @@ let avatar = {
         }
         if (before[1] < after[1]) { // RIGHT - crossed into new cell
             hitWall = (isS([after[1], before[2]], true, true) || isS([after[1], before[3]], true, true));
-            if (hitWall && before[0] < width - 1) {
-                this.vcoor[0] = 0;
-                this.coor[0] = before[1] * unit + pixel * 2.99;
-            } else if (!this.complete && before[2] >= 0 && before[1] >= width - 1) { // Level Complete!
+            if (hitWall && before[0] == width - 1 && !this.complete && isGoalY([before[2], before[3]])) {
                 levels.endLevel();
                 this.complete = true;
                 this.keys = [0, 0, 1, 0];
+            } else if (hitWall) {
+                this.vcoor[0] = 0;
+                this.coor[0] = before[1] * unit + pixel * 2.99;
             }
         } else if (before[0] > after[0]) { // LEFT - crossed into new cell
             hitWall = (isS([after[0], before[2]], true, true) || isS([after[0], before[3]], true, true));

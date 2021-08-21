@@ -20,7 +20,9 @@ function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
 function between([a, b], num) {
     return num >= Math.min(a, b) && num <= Math.max(a, b);
 }
-function isS([x, y], nonSemi = false, hor = false) { // is solid?
+function isS([x, y], nonSemi = false, hor = false) { // is solid???
+    // nonSemi = true --> don't collide with semis.
+    // hor = true --> do collide horizontally.
     let outside = false;
     if (x < 0 || x >= width || y < 0 || y >= height) {
         if (hor && (y < 0 || y >= height) && (x < 0 || x >= width)) return true;
@@ -33,6 +35,15 @@ function isS([x, y], nonSemi = false, hor = false) { // is solid?
     let l = levels.levels[levels.currentLevel];
     if (nonSemi) return (l[y][x] == 1 || (l[y][x] == 1.5 && !outside));
     else return (l[y][x] >= 1 && l[y][x] <= 2 && (l[y][x] != 1.5 || !outside));
+}
+function isGoalY([yt, yb]) { // checks if the character is in the goal y-values
+    let yg = levels.exits[levels.currentLevel]; // y-goal
+    if (yt < yg) return false;
+    for (y = yg; y < height; y++) {
+        if (levels.levels[levels.currentLevel][y][width - 1] == 1) break;
+        if (y == yb) return true;
+    }
+    return false;
 }
 function XOR(values) { // returns true if exactly one of the values is true
     if (values.reduce((a, x) => x ? a + 1 : a, 0) == 1) {
@@ -50,11 +61,13 @@ function capitalize(string) {
 // Levels Object
 let levels = {
     levels: [],
+    exits: [],
     ghosts: [],
     scores: [[0, 0], 0, [0, 0]], // [[lowest, highest (time)], swaps, [blocks, alreadyCounted]] - live recording of the current level's score.
     currentLevel: 0,
-    addLevel: function (values, goals) {
+    addLevel: function (values, goals, exitY) {
         this.levels.push(values);
+        this.exits.push(exitY);
         score.goals.push(goals);
     },
     drawLevel: function (level, simple = false) { // draw the specified level
@@ -63,6 +76,7 @@ let levels = {
         clear(c);
         let l = this.levels[level];
         let semiShape = [0, []]; // [(1-open {=} 2-line {+}), [x's of no {=}]];
+        let doneGoal = false; // when a block stops the goal, it's done.
         for (let y = 0; y < height; y++) {
             let semiNext = [0, []]; // the going "semiShape" for the next row
             for (let x = 0; x < width; x++) {
@@ -107,6 +121,15 @@ let levels = {
                         if (!simple) avatar.init([x * unit, y * unit]);
                         else ctx[c].drawImage(img[2], 1 * 100, 1 * 100, 100, 100, Math.round(x * m), Math.round(y * m), m, m);
                         break;
+                }
+                if (x == width - 1 && y >= this.exits[level] && !doneGoal) {
+                    if (l[y][x] == 1) {
+                        doneGoal = true;
+                        ctx[c].drawImage(img[3], 1 * 100, 1 * 50, 100, 50, x * m, (y - 1/2) * m, m, m / 2);
+                    } else {
+                        ctx[c].drawImage(img[3], 0 * 100, 0 * 100, 100, 100, x * m, y * m, m, m);
+                        if (y == this.exits[level]) ctx[c].drawImage(img[3], 1 * 100, 0 * 50, 100, 50, x * m, y * m, m, m / 2);
+                    }
                 }
             }
             semiShape = semiNext;
@@ -184,7 +207,14 @@ let score = {
             "You've achieved <span class='gold'>Gold</span>, fantastic fighter!",
             "You've achieved <span class='gold'>Gold</span>, super solver!",
             "Your rank is <span class='gold'>Gold</span>. Nothing left to achieve.",
-            "Getting <span class='gold'>Gold</span> feels great, doesn't it?"
+            "Getting <span class='gold'>Gold</span> feels great, doesn't it?",
+            "You've reached <span class='gold'>Gold</span> rank; nice work.",
+            "Good luck with the rest of the levels!",
+            "You're <span class='gold'>Gold</span>, my friend.",
+            "Excellent job perfoming at a <span class='gold'>Gold</span>-medal level.",
+            "Don't stop working hard to get that <span class='gold'>Gold</span> rank!",
+            "Good job reaching the rank of <span class='gold'>Gold</span>.",
+            "Your skill has taken you all the way to <span class='gold'>Gold</span>; well done."
         ],
         [
             "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
@@ -265,12 +295,13 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[2, 0, 0], [3, 0, 0]]
+[[2, 0, 0], [3, 0, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
+3 // [goal-y]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -286,7 +317,8 @@ levels.addLevel([
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[4, 0, 0], [9, 0, 0]]
+[[4, 0, 0], [9, 0, 0]],
+4
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -302,7 +334,8 @@ levels.addLevel([
     [3, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[2, 0, 0], [9, 0, 0]]
+[[2, 0, 0], [9, 0, 0]],
+1
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -318,7 +351,8 @@ levels.addLevel([
     [3, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1],
 ],
-[[2, 0, 0], [9, 0, 0]]
+[[2, 0, 0], [9, 0, 0]],
+4
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -334,7 +368,8 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[2, 1, 1], [13, 1, 1]]
+[[2, 1, 1], [13, 1, 1]],
+0
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -350,7 +385,8 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[4, 0, 0], [15, 1, 1]]
+[[4, 0, 0], [15, 1, 1]],
+0
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -366,7 +402,8 @@ levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0],
     [0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0],
 ],
-[[3, 1, 1], [16, 2, 2]]
+[[3, 1, 1], [16, 2, 2]],
+2
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -382,10 +419,11 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ],
-[[4, 1, 1], [16, 2, 2]]
+[[4, 1, 1], [16, 2, 2]],
+1
 );
 levels.addLevel([
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
     [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 0, 2, 2, 1, 1],
     [0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
@@ -398,7 +436,8 @@ levels.addLevel([
     [3, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[7, 1, 1], [20, 1, 1]]
+[[7, 1, 1], [20, 1, 1]],
+1
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -414,7 +453,8 @@ levels.addLevel([
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[15, 4, 4], [30, 7, 5]]
+[[15, 4, 4], [30, 7, 5]],
+1
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -430,7 +470,8 @@ levels.addLevel([
     [3, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[4, 4, 4], [20, 7, 7]]
+[[4, 4, 4], [20, 7, 7]],
+0
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -446,7 +487,8 @@ levels.addLevel([
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[26, 6, 9], [50, 12, 11]]
+[[26, 6, 9], [50, 12, 11]],
+1
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -462,7 +504,8 @@ levels.addLevel([
     [3, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[40, 12, 13], [100, 20, 18]]
+[[40, 12, 13], [100, 20, 18]],
+1
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -478,7 +521,8 @@ levels.addLevel([
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[30, 0, 0], [60, 2, 2]]
+[[30, 0, 0], [60, 2, 2]],
+0
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -494,7 +538,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -510,7 +555,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -526,7 +572,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -542,7 +589,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -558,7 +606,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -574,7 +623,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -590,7 +640,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -606,7 +657,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -622,7 +674,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -638,7 +691,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -654,7 +708,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -670,7 +725,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -686,7 +742,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -702,7 +759,8 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -718,5 +776,6 @@ levels.addLevel([
     [3, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[400, 70, 55], [1000, 130, 85]]
+[[400, 70, 55], [1000, 130, 85]],
+10
 );
