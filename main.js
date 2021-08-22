@@ -1,7 +1,7 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = true;
+let coolMathGames = false;
 let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
@@ -65,7 +65,6 @@ window.onload = function () {
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
     startAnimating(60); // 60 fps
     setTimeout(visible, 300); // should be the length of menu animation
-    window.scrollTo(0, 0);
 }
 
 // To run actual frame-by-frame animation

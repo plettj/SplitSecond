@@ -54,7 +54,7 @@ let avatar = {
         this.coor[1] += this.vcoor[1];
         let after = [Math.floor((this.coor[0] + pixel * 2) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
         
-        let l = levels.levels[levels.currentLevel];
+        //let l = levels.levels[levels.currentLevel];
         
         if (before[3] < after[3]) { // DOWN - crossed into new cell
             onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]]));
@@ -133,7 +133,7 @@ let avatar = {
                         this.vcoor[0] = 0;
                     }
                 } else if (before[2] >= 0) { // not above the screen
-                    // comment out this code if I want to disable [down] when inside other blocks
+                    // comment out this code if I want to DISABLE [down] when INSIDE OTHER BLOCKS
                     this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
                     this.bFrame[1] = 1;
                     if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
@@ -222,7 +222,7 @@ let Ghost = class {
             a[1] = f[3] + 4;
             if (f[6][0] == 2) {
                 ctx[4].globalAlpha = 1;
-                levels.levels[levels.currentLevel][Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
+                currentLevel[Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
             }
         }
         ctx[4].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
@@ -262,5 +262,5 @@ function swapTime() {
 
 // OBSTACLES
 
-// BUTTON
+// BUTTONS
 

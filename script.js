@@ -9,6 +9,7 @@ let dom = {
     pauseTitle: document.body.querySelector("#PauseTitle"),
     pauseNum: document.body.querySelector("#CurrLevel"),
     pauseButton: document.body.querySelector("#Pause"),
+    instruction: document.body.querySelector(".instruction"),
     progressFill: document.body.querySelector("#ProgressFill"),
     bestScore: document.body.querySelector("#BestScore"),
     nextScore: document.body.querySelector("#NextScore"),
@@ -24,7 +25,8 @@ let dom = {
                 dom.menus[0].classList.remove("off");
                 dom.menus[0].classList.add("on");
                 dom.pauseNum.textContent = levels.currentLevel + 1;
-                dom.pauseButton.style.display = "none"; // PAUSE TRANSITION ANIMATION FIX
+                dom.pauseButton.classList.add("off");
+                dom.instruction.classList.add("off");
                 dom.covers.forEach(function (e) {e.classList.add("on");});
                 paused = true;
                 setTimeout(function () {
@@ -64,7 +66,8 @@ let dom = {
         else if (level == undefined) level = levels.currentLevel;
         else if (level - 1 !== levels.currentLevel) levels.startLevel(level - 1);
         dom.close();
-        dom.pauseButton.style.display = "block"; // PAUSE TRANSITION ANIMATION FIX
+        dom.pauseButton.classList.remove("off");
+        dom.instruction.classList.remove("off");
         dom.covers.forEach(function (e) {e.classList.remove("on");});
         paused = false;
         dom.displayed = -1;
@@ -74,13 +77,16 @@ let dom = {
             dom.levelNum.textContent = levels.currentLevel + 2;
             dom.covers.forEach(function (e) {e.classList.add("on");});
             dom.levelText.classList.add("on");
-            dom.pauseButton.style.display = "none"; // PAUSE TRANSITION ANIMATION FIX
+            dom.pauseButton.classList.add("off");
+            dom.instruction.classList.add("off");
             dom.displayed = 3;
         } else {
             dom.covers.forEach(function (e) {e.classList.remove("on");});
             dom.levelText.classList.remove("on");
-            dom.pauseButton.style.display = "block"; // PAUSE TRANSITION ANIMATION FIX
+            dom.pauseButton.classList.remove("off");
+            dom.instruction.classList.remove("off");
             dom.displayed = -1;
+            dom.updateInstruct();
         }
     },
     key: function (code) {
@@ -207,6 +213,22 @@ let dom = {
             dom.preview = l;
         }
     },
+    updateInstruct: function () {
+        document.body.querySelectorAll(".key").forEach(function (key) {
+            key.classList.add("off");
+        });
+        if (instructions.length > levels.currentLevel) {
+            for (let k = 0; k < instructions[levels.currentLevel][0].length; k++) {
+                let key = document.body.querySelectorAll(".key")[k];
+                key.classList.remove("off");
+                key.textContent = instructions[levels.currentLevel][0][k];
+            }
+            console.log("huh??");
+            document.body.querySelector(".instruction p.text").textContent = instructions[levels.currentLevel][1];
+        } else {
+            document.body.querySelector(".instruction").classList.add("permaOff");
+        }
+    },
     scrollToRow: function (row, direction) { // direction --> 0-GOAWAY, 1-Up, -1-Down
         if (!direction) return false;
         let menuScroll = document.body.querySelector(".scroll").scrollTop;
@@ -303,4 +325,5 @@ function initializeLevels() {
 
 function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
+    window.scrollTo(0, 0);
 }

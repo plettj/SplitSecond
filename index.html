@@ -7,6 +7,9 @@
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
     </head>
     <body>
+        <div class="instruction">
+            <div class="key">W</div> <div class="key">A</div> <div class="key">S</div> <div class="key">D</div>  <p class="text">Run to the right</p>
+        </div>
         <!-- Canvases are created with JavaScript -->
         <p class="belowCanvases"></p>
         <div class="cover one"></div>
@@ -71,7 +74,9 @@
             </div>
         </main>
 
-        <div id="Pause" style="display: block;" onclick="dom.newMenu(0);"></div>
+        <div id="Pause" onclick="dom.newMenu(0);"></div>
+
+        <div class="cover three"></div>
     </body>
 	<script src="main.js"></script>
 	<script src="map.js"></script>
