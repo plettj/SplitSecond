@@ -58,6 +58,8 @@ function capitalize(string) {
 
 // LEVELS
 
+let currentLevel = []; // The currently displayed and manipulated level.
+
 // Levels Object
 let levels = {
     levels: [],
@@ -146,6 +148,8 @@ let levels = {
         this.currentLevel = level;
         this.scores = [[0, 0], 0, [0, 0]];
         this.drawLevel(level);
+        currentLevel = this.levels[level].map(row => [...row]);
+        //console.log(currentLevel);
         this.ghosts = [];
         nextGhost = new Ghost();
     },

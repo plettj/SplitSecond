@@ -1,8 +1,8 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = false;
-let beginningLevel = 6;
+let coolMathGames = true;
+let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
