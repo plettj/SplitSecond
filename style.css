@@ -513,5 +513,8 @@ canvas {
     display: inline-block;
     font-size: calc(var(--unit) * 0.8);
     line-height: calc(var(--unit) * 0.9);
+    margin-left: 0;
+}
+.instruction p.text.margin {
     margin-left: calc(var(--unit) * 0.5);
 }

@@ -218,12 +218,16 @@ let dom = {
             key.classList.add("off");
         });
         if (instructions.length > levels.currentLevel) {
-            for (let k = 0; k < instructions[levels.currentLevel][0].length; k++) {
-                let key = document.body.querySelectorAll(".key")[k];
-                key.classList.remove("off");
-                key.textContent = instructions[levels.currentLevel][0][k];
+            if (instructions[levels.currentLevel][0].length == 0) {
+                document.body.querySelector(".instruction p.text").classList.remove("margin");
+            } else {
+                document.body.querySelector(".instruction p.text").classList.add("margin");
+                for (let k = 0; k < instructions[levels.currentLevel][0].length; k++) {
+                    let key = document.body.querySelectorAll(".key")[k];
+                    key.classList.remove("off");
+                    key.textContent = instructions[levels.currentLevel][0][k];
+                }
             }
-            console.log("huh??");
             document.body.querySelector(".instruction p.text").textContent = instructions[levels.currentLevel][1];
         } else {
             document.body.querySelector(".instruction").classList.add("permaOff");
@@ -326,4 +330,5 @@ function initializeLevels() {
 function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
     window.scrollTo(0, 0);
+    dom.updateSide(document.body.querySelector("td"));
 }

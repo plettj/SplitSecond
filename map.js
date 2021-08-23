@@ -787,6 +787,6 @@ levels.addLevel([
 let instructions = [
     [["W", "A", "S", "D"], "Run to the right"],
     [[], "Jump through semi-solid platforms"],
-    [["R"], "Restart the level"],
+    [["R", "P"], "Restart, or pause"],
     [[], "Don't fall off the map"]
 ];
