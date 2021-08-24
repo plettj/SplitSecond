@@ -32,12 +32,17 @@
             <div class="content">
                 <div class="back" onclick="dom.back();" tabindex="0"></div>
                 <div class="title">Settings</div>
-                <div class="button" id="settingsfocustemp" tabindex="0">None yet.</div>
+                <div class="button" id="settingsfocustemp" tabindex="0">No settings yet.</div>
+                <p style="font-family: D_D; font-size: calc(var(--unit) * 0.3);">
+                    In case you didn't know, you do not need the mouse to navigate the main menus; 
+                    just use WASD (or arrow keys) and [enter] to select.<br>
+                    The game is NOT DONE! Just so you know. That's why this settings menu is so dysfunctional.
+                </p>
             </div>
         </main>
         <main id="LevelsMenu" class="menu off" style="visibility: hidden;">
             <div class="content">
-                <div class="settings" onclick="/*dom.newMenu(2);*/" tabindex="0"></div>
+                <div class="settings" onclick="dom.newMenu(2);" tabindex="0"></div>
                 <div class="back" onclick="dom.back(true);" tabindex="0"></div>
                 <div class="title">Levels</div>
                 <section class="scroll">

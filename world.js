@@ -17,6 +17,7 @@ let avatar = {
     amax: 1 / 8 * pixel, // max acceleration
     gravity: 1 / 7 * pixel,
     jump: 1 / 3.85 * unit, // jump speed
+    time: true, // can swap time
     complete: false,
     init: function (coor) {
         this.keys = [0, 0, 0, 0];
@@ -28,7 +29,11 @@ let avatar = {
         this.draw();
     },
     draw: function (a = [1, this.dir]) { // a: [xOnTileset, yOnTileset]
-        ctx[5].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
+        if (!this.time) { // drawing the time-swap frames
+            ctx[5].drawImage(img[2], this.dir * 100 + ((this.bFrame[0] == 2) ? 200 : 0), 600, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
+        } else { // normal drawing
+            ctx[5].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
+        }
     },
     drawTempSquares: function (squares, colour, opacity = 0.3) {
         ctx[4].beginPath();
@@ -225,7 +230,7 @@ let Ghost = class {
                 currentLevel[Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
             }
         }
-        ctx[4].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
+        ctx[4].drawImage(img[2], a[0] * 100 + 400, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
         if (f[6][0] == 2) ctx[4].globalAlpha = 0.5;
     }
     newFrame () { // runs every frame
@@ -253,11 +258,15 @@ let Ghost = class {
 // PHYSICS
 
 function swapTime() {
-    time *= -1;
-    levels.scores[1]++;
-    nextGhost.finish();
-    levels.ghosts.push(nextGhost);
-    nextGhost = new Ghost();
+    if (avatar.time) { // if avatar is allowed to swap
+        time *= -1;
+        levels.scores[1]++;
+        nextGhost.finish();
+        levels.ghosts.push(nextGhost);
+        nextGhost = new Ghost();
+        avatar.time = false;
+        setTimeout(function () {avatar.time = true;}, swapDelay);
+    }
 }
 
 // OBSTACLES

@@ -12,6 +12,7 @@ document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
 let paused = false;
+let swapDelay = 200; // milliseconds before you can swap time again
 let stepCounter = 0; // animation step digit
 let step = 0; // actual animation step
 let stepSpeed = 8; // steps per second

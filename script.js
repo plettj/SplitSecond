@@ -17,7 +17,7 @@ let dom = {
     menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu"), document.body.querySelector("#SettingsMenu")],
     focuses: [document.body.querySelector(".play"), "Dynamically chooses the current level.", document.body.querySelector("#settingsfocustemp")],
     displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-SettingsMenu 3-LevelTransition
-    preview: beginningLevel,
+    preview: -1, // the currently-displayed level
     newMenu: function (menu = 1) {
         dom.close();
         switch (menu) {
