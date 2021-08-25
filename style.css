@@ -140,6 +140,7 @@ canvas {
 }
 #Pause.off {
     opacity: 0;
+    pointer-events: none;
 }
 #Pause:hover {
     background-position-y: bottom;

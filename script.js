@@ -20,6 +20,7 @@ let dom = {
     preview: -1, // the currently-displayed level
     newMenu: function (menu = 1) {
         dom.close();
+        console.log(menu);
         switch (menu) {
             case 0: // Pause Menu
                 dom.menus[0].classList.remove("off");

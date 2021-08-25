@@ -48,7 +48,8 @@ let avatar = {
         let key = [((!this.keys[3] || this.keys[1]) && !this.bFrame[1]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
         
         // [Xleft, Xright, Ytop, Ybottom]
-        let before = [Math.floor((this.coor[0] + pixel * 2) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
+        let beforeInPixels = [this.coor[0] + pixel * 2, this.coor[0] + (this.box[0] + 1) * pixel, this.coor[1] + 2.99 * pixel, this.coor[1] + (this.box[1] + 2.99) * pixel];
+        let before = beforeInPixels.map((n) => Math.floor(n / unit));
         if (!key[0]) this.vcoor[0] = Math.sign(this.vcoor[0]) * (Math.abs(this.vcoor[0]) - this.amax / (this.inAir + 1));
         this.vcoor[0] += key[0] * this.amax / (this.inAir + 1);
         this.vcoor[1] += this.gravity;
@@ -57,7 +58,8 @@ let avatar = {
             this.coor[0] += this.vcoor[0];
         }
         this.coor[1] += this.vcoor[1];
-        let after = [Math.floor((this.coor[0] + pixel * 2) / unit), Math.floor((this.coor[0] + (this.box[0] + 1) * pixel) / unit), Math.floor((this.coor[1] + 2.99 * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
+        let afterInPixels = [this.coor[0] + pixel * 2, this.coor[0] + (this.box[0] + 1) * pixel, this.coor[1] + 2.99 * pixel, this.coor[1] + (this.box[1] + 2.99) * pixel];
+        let after = afterInPixels.map((n) => Math.floor(n / unit));
         
         //let l = levels.levels[levels.currentLevel];
         
@@ -195,6 +197,15 @@ let avatar = {
                 this.coor[0] = this.bFrame[2];
             }
         }
+
+        levels.buttons[levels.currentLevel].forEach(function (button) {
+            button.objects.forEach(function (object) {
+                //if (object.type = "Swap") {
+                    object.collide((beforeInPixels[0] + beforeInPixels[1]) / 2, (beforeInPixels[2] + beforeInPixels[3]) / 2, (afterInPixels[0] + afterInPixels[1]) / 2);
+                //}
+            });
+        });
+
         this.draw(a);
     }
 }
@@ -277,6 +288,7 @@ let Lazer = class {
         this.location = [x, [top, bottom]];
         this.job = job;
         this.on = value;
+        this.side = 0;
         this.activated = false;
     }
     activate (activate = true, simple = false) {
@@ -296,15 +308,30 @@ let Lazer = class {
                 if (y == ys[0]) { // vertical thing
                     ctx[c].drawImage(img[3], 80, 100, 20, 50, (this.location[0] + 0.4) * m, (y + 0.5) * m, m / 5, m / 2);
                 } else if (y == ys[1]) {// vertical thing 2
-                    ctx[c].drawImage(img[3], 80, 150, 20, 50, (this.location[0] + 0.4) * m, (y) * m, m / 5, m / 2);
+                    ctx[c].drawImage(img[3], 80, 150, 20, 50, (this.location[0] + 0.4) * m, y * m, m / 5, m / 2);
                 } else {
-                    ctx[c].drawImage(img[3], 0, 100, 20, 100, (this.location[0] + 0.4) * m, (y) * m, m / 5, m);
+                    ctx[c].drawImage(img[3], 0, 100, 20, 100, (this.location[0] + 0.4) * m, y * m, m / 5, m);
                 }
             }
         }
     }
     update () {
-        console.log("tryna update");
+        if (this.on && this.activated) {
+            let ys = this.location[1]; // the y's
+            for (let y = ys[0] + 1; y < ys[1]; y++) {
+                ctx[6].clearRect((this.location[0] + 0.4) * unit, y * unit, unit / 5, unit);
+                ctx[6].drawImage(img[3], ((step > 0) ? step % 4 : 3 + step % 4) * 20, 100, 20, 100, (this.location[0] + 0.4) * unit, y * unit, unit / 5, unit);
+            }
+        }
+    }
+    collide (x, y, newX) { // avatar's, in actual pixels
+        if (Math.sign(x - (this.location[0] + 0.5) * unit) !== Math.sign(newX - (this.location[0] + 0.5) * unit)) {
+            console.log("cross X!");
+            console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
+            if (y > (this.location[1][0] + 0.5) * unit && y < (this.location[1][1] + 0.5) * unit) {
+                swapTime(true);
+            }
+        }
     }
 }
 

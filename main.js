@@ -5,6 +5,7 @@ let coolMathGames = false;
 let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
+let graphics = "images"; // = "imagesTwo"; for Dahlia's
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
 let pixel = unit / 10;
@@ -13,8 +14,8 @@ document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
 let paused = false;
 let swapDelay = 200; // milliseconds before you can swap time again
-let stepCounter = 0; // animation step digit
-let step = 0; // actual animation step
+let stepCounter = 0; // animation step always up (counts)
+let step = 0; // actual animation step (counts)
 let stepSpeed = 8; // steps per second
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
@@ -52,7 +53,7 @@ let img = [];
 function makeImages(srcs) {
     for (let i = 0; i < srcs.length; i++) {
         let image = new Image();
-        image.src = "images/" + srcs[i];
+        image.src = graphics + "/" + srcs[i];
         img.push(image);
     }
 }
@@ -96,7 +97,7 @@ function animate() {
                 stepCounter++;
                 step += time;
             }
-            if (!(frame % GFuel)) { // Run the Ghosts + Update the Level
+            if (!(frame % GFuel)) { // Run the Ghosts + Update the Level objects
                 nextGhost.learn();
                 clear(4);
                 for (g in levels.ghosts) {

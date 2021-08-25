@@ -77,7 +77,8 @@ let levels = {
     drawLevel: function (level, simple = false) { // draw the specified level
         let c = (simple) ? ctx.length - 1 : 1; // canvas index
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
-        clear(c);
+        clear(c);            /*opskjdcjcv jvc99cxyde09idsu8dyuxs90 -- cat code! #Kip's 3rd birthday*/
+        if (c !== ctx.length - 1) {clear(2); clear(6);}
         let l = this.levels[level];
         let semiShape = [0, []]; // [(1-open {=} 2-line {+}), [x's of no {=}]];
         let doneGoal = false; // when a block stops the goal, it's done.
@@ -197,6 +198,9 @@ let levels = {
                 }
             }
         }
+        this.buttons[this.currentLevel].forEach(function (button) {
+            button.update();
+        });
     },
     updateTime: function () { // updates the score based on the total time
         this.scores[0][0] = (frame < this.scores[0][0]) ? frame : this.scores[0][0];
