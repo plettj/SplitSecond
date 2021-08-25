@@ -257,8 +257,8 @@ let Ghost = class {
 
 // PHYSICS
 
-function swapTime() {
-    if (avatar.time) { // if avatar is allowed to swap
+function swapTime(override = false) {
+    if (avatar.time || override) { // if avatar is allowed to swap
         time *= -1;
         levels.scores[1]++;
         nextGhost.finish();
@@ -271,5 +271,60 @@ function swapTime() {
 
 // OBSTACLES
 
+let Lazer = class {
+    // ([x, [top, bottom]]), (job-Swap/Teleport/Kill), (value-boolean)
+    constructor ([x, [top, bottom]], job, value) {
+        this.location = [x, [top, bottom]];
+        this.job = job;
+        this.on = value;
+        this.activated = false;
+    }
+    activate (activate = true, simple = false) {
+        this.activated = activate;
+        if (activate) this.draw(simple);
+    }
+    draw (simple = false) {
+        if (!this.activated) return;
+        let c = (simple) ? ctx.length - 1 : 2; // canvas index
+        let m = (simple) ? unit * 0.32 : unit; // size multiplier
+        ctx[c].drawImage(img[3], 200, 0, 100, 50, this.location[0] * m, (this.location[1][0] + 0.5) * m, m, m / 2);
+        ctx[c].drawImage(img[3], 200, 50, 100, 50, this.location[0] * m, (this.location[1][1]) * m, m, m / 2);
+        if (this.on) {
+            let ys = this.location[1]; // the y's
+            c = (c == 2) ? 6 : c;
+            for (let y = ys[0]; y <= ys[1]; y++) {
+                if (y == ys[0]) { // vertical thing
+                    ctx[c].drawImage(img[3], 80, 100, 20, 50, (this.location[0] + 0.4) * m, (y + 0.5) * m, m / 5, m / 2);
+                } else if (y == ys[1]) {// vertical thing 2
+                    ctx[c].drawImage(img[3], 80, 150, 20, 50, (this.location[0] + 0.4) * m, (y) * m, m / 5, m / 2);
+                } else {
+                    ctx[c].drawImage(img[3], 0, 100, 20, 100, (this.location[0] + 0.4) * m, (y) * m, m / 5, m);
+                }
+            }
+        }
+    }
+    update () {
+        console.log("tryna update");
+    }
+}
+
 // BUTTONS
 
+let Button = class {
+    constructor (type, coors/* [[x, y], [x, y]] */, objects, noButton = false) {
+        this.type = type;
+        this.coors = coors;
+        this.objects = objects;
+        this.appear = noButton;
+    }
+    activate (activate = true, simple = false) {
+        this.objects.forEach(function (object) {
+            object.activate(activate, simple);
+        });
+    }
+    update () {
+        this.objects.forEach(function (object) {
+            object.update();
+        });
+    }
+}

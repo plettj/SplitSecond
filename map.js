@@ -65,11 +65,13 @@ let levels = {
     levels: [],
     exits: [],
     ghosts: [],
+    buttons: [],
     scores: [[0, 0], 0, [0, 0]], // [[lowest, highest (time)], swaps, [blocks, alreadyCounted]] - live recording of the current level's score.
     currentLevel: 0,
-    addLevel: function (values, goals, exitY) {
+    addLevel: function (values, goals, exitY, buttons) {
         this.levels.push(values);
         this.exits.push(exitY);
+        this.buttons.push(buttons);
         score.goals.push(goals);
     },
     drawLevel: function (level, simple = false) { // draw the specified level
@@ -127,16 +129,19 @@ let levels = {
                 if (x == width - 1 && y >= this.exits[level] && !doneGoal) {
                     if (l[y][x] == 1) {
                         doneGoal = true;
-                        ctx[c].drawImage(img[3], 1 * 100, 1 * 50, 100, 50, x * m, (y - 0.3) * m, m, m / 2);
+                        ctx[c].drawImage(img[3], 1 * 100, 1 * 50, 100, 50, x * m, (y) * m, m, m / 2);
                     } else {
                         ctx[c].drawImage(img[3], 0 * 100, 0 * 100, 100, 100, x * m, y * m, m, m);
-                        if (y == this.exits[level]) ctx[c].drawImage(img[3], 1 * 100, 0 * 50, 100, 50, x * m, y * m, m, m / 2);
+                        if (y == this.exits[level]) ctx[c].drawImage(img[3], 1 * 100, 0 * 50, 100, 50, x * m, (y - 1/2) * m, m, m / 2);
                     }
                 }
             }
             semiShape = semiNext;
         }
         // draw the buttons and spikes and walls and doors and stuff
+        this.buttons[level].forEach(function (button) {
+            button.activate(true, simple);
+        });
     },
     startLevel: function (level) {
         if (level >= this.levels.length) level = this.levels.length - 1;
@@ -297,14 +302,23 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
     [3, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[15, 0, 0], [30, 1, 1]], // [Gold, Silver] --> [seconds, swaps, blocks]
-0 // [goal-y]
+0, // [goal-y]
+[
+    new Button(
+        "Lazer", [[0, 0]],
+        [
+            new Lazer([4, [7, 11]], "Swap", true)
+        ],
+        true
+    )
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -321,7 +335,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[15, 0, 0], [25, 0, 0]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -338,7 +355,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[10, 0, 0], [25, 0, 0]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -355,7 +375,10 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ],
 [[10, 0, 0], [20, 0, 0]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -372,7 +395,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[15, 0, 1], [25, 0, 5]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -389,7 +415,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[8, 0, 0], [20, 5, 3]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -406,7 +435,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[15, 1, 1], [40, 6, 3]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -423,7 +455,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[8, 0, 0], [25, 2, 2]],
-7
+7,
+[
+
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -440,7 +475,10 @@ levels.addLevel([
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
 ],
 [[12, 3, 3], [30, 6, 4]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -457,7 +495,10 @@ levels.addLevel([
     [1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1],
 ],
 [[15, 0, 0], [30, 0, 0]],
-0
+0,
+[
+    
+]
 );
 
 levels.addLevel([
@@ -475,7 +516,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[20, 1, 1], [30, 5, 3]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -492,7 +536,10 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ],
 [[8, 1, 1], [15, 4, 3]],
-5
+5,
+[
+
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -509,7 +556,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[20, 4, 4], [40, 9, 10]],
-0
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -525,8 +575,11 @@ levels.addLevel([
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[25, 0, 0], [60, 2, 2]],
-0
+[[25, 0, 0], [30, 2, 2]],
+0,
+[
+    
+]
 );
 levels.addLevel([
     [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1],
@@ -543,7 +596,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[400, 70, 55], [1000, 130, 85]],
-10
+10,
+[
+    
+]
 );
 /*
 levels.addLevel([
@@ -561,7 +617,10 @@ levels.addLevel([
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[15, 0, 0], [30, 0, 0]],
-0
+0,
+[
+    
+]
 );
 */
 
@@ -569,16 +628,16 @@ let instructions = [
     [["W", "A", "S", "D"], "Run to the right"],
     [[], "Jump through semi-solid platforms"],
     [["R", "P"], "Restart, or pause"],
-    [[], "Don't fall off the map"],
-    [["S", "⬇"], "Create a dino-block"],
+    [[], ""],//[[], "Don't fall off the map"],
+    [["S"], "Create a dino-block"],
     [["E"], "Swap the direction of time!"],
-    [["S", "⬇", "E"], "Past-you could be a block, to help"],
-    [[], "Use less blocks, swaps, and time to score better"],
-    [[], "Stacking multiple blocks can help"],
-    [[], "Good luck"],
-    [[], "Levels are getting more puzzly!"],
-    [[], "Use 🠔🠕🠖🠗 instead of WASD, if you prefer"],
-    [[], "All menus are navigable with just the keyboard [WASD and enter], by the way"],
-    [[], "This is the second-last level!"],
-    [[], "Please don't waste your time on this"],
+    [["S", "E"], "Past-you could be a block"],
+    [[], ""],//[[], "Use less blocks, swaps, and time to score better"],
+    [[], ""],//[[], "Stacking multiple blocks can help"],
+    [[], ""],//[[], "Good luck"],
+    [[], ""],//[[], "Levels are getting more puzzly!"],
+    [[], ""],//[[], "Use 🠔🠕🠖🠗 instead of WASD, if you prefer"],
+    [[], ""],//[[], "All menus are navigable with just the keyboard [WASD and enter], by the way"],
+    [[], ""],//[[], "This is the second-last level!"],
+    [[], ""],//[[], "Please don't waste your time on this"],
 ];

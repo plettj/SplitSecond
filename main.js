@@ -29,7 +29,7 @@ setTimeout(function () {
 // INITIALIZATION
 
 // Canvas holder
-let ctx = []; // [0-background, 1-blocks, 2-objects, 3-ghosts, 4-ghostBlocks, 5-avatar, ---  :last:-LCanvas]
+let ctx = []; // [0-background, 1-blocks, 2-mainObjects, 3-ghosts, 4-ghostBlocks, 5-avatar, 6-frontObjects  :last:-LCanvas]
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
@@ -44,7 +44,7 @@ function makeContexts(num) {
     miniC.height = unit * height * 0.32;
     ctx.push(miniC.getContext('2d'));
 }
-makeContexts(6);
+makeContexts(7);
 ctx[4].globalAlpha = 0.5;
 
 // Image holder
