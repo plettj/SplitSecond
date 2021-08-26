@@ -56,9 +56,16 @@ function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 function animationFrameCalc(f, dir, button = false) {
-    f = f + (animationStepSpeed * ((button) ? GFuel : 1)) * (dir * 2 - 1);
+    f = f + (animationStepSpeed / ((button) ? GFuel : 1)) * (dir * 2 - 1);
     f = (f <= 0) ? 0 : ((f >= 2) ? 2 : f);
     return f;
+}
+function inRect([Xleft, Xright, Ytop, Ybottom], points) {
+    let inside = false;
+    points.forEach(function (coor) {
+        if (coor[0] >= Xleft && coor[0] <= Xright && coor[1] >= Ytop && coor[1] <= Ybottom) inside = true;
+    });
+    return inside;
 }
 
 // LEVELS
@@ -151,6 +158,11 @@ let levels = {
     },
     startLevel: function (level) {
         if (level >= this.levels.length) level = this.levels.length - 1;
+        if (level == this.currentLevel) { // restarting
+            this.buttons[level].forEach(function (button) {
+                button.activate(false);
+            });
+        }
         time = 1;
         frame = 0;
         stepcounter = 0;
@@ -177,6 +189,10 @@ let levels = {
         //console.log("Score: [" + info[2][0] + ", " + info[2][1] + ", " + info[2][2] + "]");
         //console.log("Gold: [" + score.goals[this.currentLevel][0][0] + ", " + score.goals[this.currentLevel][0][1] + ", " + score.goals[this.currentLevel][0][2] + "]");
         //console.log("RANK: " + info[0]);
+        this.buttons[this.currentLevel].forEach(function (button) {
+            button.activate(false);
+        });
+        
         dom.newLevel(true);
         // setTimeout for when to start the next level
         setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
@@ -308,7 +324,7 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
@@ -321,7 +337,8 @@ levels.addLevel([
     new Button(
         2, [6, 10], 0,
         [
-            new Lazer([4, [7, 11]], "Swap", true)
+            new Lazer([4, [7, 11]], "Swap", true),
+            //new Lazer([10, [6, 10]], "Kill", false)
         ],
         false // appear!!
     )
