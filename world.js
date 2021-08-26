@@ -282,11 +282,11 @@ function swapTime(override = false) {
 // OBSTACLES
 
 let Lazer = class {
-    // ([x, [top, bottom]]), (job-Swap/Teleport/Kill), (value-boolean)
-    constructor ([x, [top, bottom]], job, value) {
+    // ([x, [top, bottom]]), (job-Swap/Kill), (opp-boolean)
+    constructor ([x, [top, bottom]], job, opp) {
         this.location = [x, [top, bottom]];
         this.job = job;
-        this.on = value;
+        this.opp = opp;
         this.side = 0;
         this.activated = false;
     }
@@ -300,7 +300,7 @@ let Lazer = class {
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
         ctx[c].drawImage(img[3], 200, 0, 100, 50, this.location[0] * m, (this.location[1][0] + 0.5) * m, m, m / 2);
         ctx[c].drawImage(img[3], 200, 50, 100, 50, this.location[0] * m, (this.location[1][1]) * m, m, m / 2);
-        if (this.on) {
+        if (this.opp) {
             let ys = this.location[1]; // the y's
             c = (c == 2) ? 6 : c;
             for (let y = ys[0]; y <= ys[1]; y++) {
@@ -319,8 +319,12 @@ let Lazer = class {
 
         // use "button" to figure everything out!!
 
+        // be sure to consider that "button" may not be "appear"-ed
 
-        if (this.on && this.activated) {
+        // also: consider this own .opp value
+
+
+        if (this.opp && this.activated) {
             let ys = this.location[1]; // the y's
             for (let y = ys[0] + 1; y < ys[1]; y++) {
                 ctx[6].clearRect((this.location[0] + 0.4) * unit, y * unit, unit / 5, unit);
@@ -358,6 +362,7 @@ let Button = class {
     activate (activate = true, simple = false) {
         if (activate) {
             this.onScreen = true;
+            this.draw(simple, true)
         } else {
             this.onScreen = false;
 
@@ -370,52 +375,37 @@ let Button = class {
             object.activate(activate, simple);
         });
     }
-    draw (simple = false) {
+    draw (simple = false, first = false) {
         if (!this.onScreen || !this.appear) return;
 
         let c = (simple) ? ctx.length - 1 : 2; // canvas index
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
 
-        ctx[c].drawImage(img[3], 50 * this.side + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side) * m, this.coor[1] * m, m / 2, m);
-        if (this.memory[Math.floor(frame / GFuel) - this.first] == 0) ctx[c].drawImage(img[3], 50 * this.side + 100 + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side + 0.2 * (this.side * 2 - 1)) * m, this.coor[1] * m, m / 2, m);
-
-        /*
-        if (this.on) {
-            let ys = this.location[1]; // the y's
-            c = (c == 2) ? 6 : c;
-            for (let y = ys[0]; y <= ys[1]; y++) {
-                if (y == ys[0]) { // vertical thing
-                    ctx[c].drawImage(img[3], 80, 100, 20, 50, (this.location[0] + 0.4) * m, (y + 0.5) * m, m / 5, m / 2);
-                } else if (y == ys[1]) {// vertical thing 2
-                    ctx[c].drawImage(img[3], 80, 150, 20, 50, (this.location[0] + 0.4) * m, y * m, m / 5, m / 2);
-                } else {
-                    ctx[c].drawImage(img[3], 0, 100, 20, 100, (this.location[0] + 0.4) * m, y * m, m / 5, m);
-                }
-            }
-        }
-        */
+        if (first) ctx[c].drawImage(img[3], 50 * this.side + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side) * m, this.coor[1] * m, m / 2, m);
+        if (this.memory[(first) ? 0 : Math.floor(frame / GFuel) - this.first] == 0) ctx[(c == ctx.length - 1) ? c : 6].drawImage(img[3], 50 * this.side + 100 + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side + 0.2 * (this.side * 2 - 1)) * m, this.coor[1] * m, m / 2, m);
     }
     update () {
         let b = this;
         let f = Math.floor(frame / GFuel); // frame
 
+        if (this.appear) {
+            // UPDATE b.dir if COLLISION with AVATAR
 
-        // UPDATE b.dir if COLLISION with AVATAR
+            
 
-        
-
-        // update its memory
-        if (f - b.first >= b.memory.length) { // FORWARD off the end of the memory
-            b.memory.push(animationFrameCalc(b.memory[b.memory.length - 1], b.dir, true));
-        } else if (f < b.first) { // BACKWARD off the end of the memory
-            b.memory.unshift(animationFrameCalc(b.memory[0], b.dir, true));
-            b.first--;
-        } else { // middle of memory; update time!
-            if (b.memory[f - b.first + time]/* future */ !== b.memory[f - b.first]/* current */) {
-                // remembered value is NOT SAME AS FUTURE VALUE!
-                // set future value to what it should be now, unless it's bigger.
-                if (b.memory[f - b.first + time] <= animationFrameCalc(b.memory[f - b.first], b.dir, true)) {
-                    b.memory[f - b.first] = animationFrameCalc(b.memory[f - b.first], b.dir, true);
+            // update its memory
+            if (f - b.first >= b.memory.length) { // FORWARD off the end of the memory
+                b.memory.push(animationFrameCalc(b.memory[b.memory.length - 1], b.dir, true));
+            } else if (f < b.first) { // BACKWARD off the end of the memory
+                b.memory.unshift(animationFrameCalc(b.memory[0], b.dir, true));
+                b.first--;
+            } else { // middle of memory; update time!
+                if (b.memory[f - b.first + time]/* future */ !== b.memory[f - b.first]/* current */) {
+                    // remembered value is NOT SAME AS FUTURE VALUE!
+                    // set future value to what it should be now, unless it's bigger.
+                    if (b.memory[f - b.first + time] <= animationFrameCalc(b.memory[f - b.first], b.dir, true)) {
+                        b.memory[f - b.first] = animationFrameCalc(b.memory[f - b.first], b.dir, true);
+                    }
                 }
             }
         }
