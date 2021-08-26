@@ -61,8 +61,6 @@ let avatar = {
         let afterInPixels = [this.coor[0] + pixel * 2, this.coor[0] + (this.box[0] + 1) * pixel, this.coor[1] + 2.99 * pixel, this.coor[1] + (this.box[1] + 2.99) * pixel];
         let after = afterInPixels.map((n) => Math.floor(n / unit));
         
-        //let l = levels.levels[levels.currentLevel];
-        
         if (before[3] < after[3]) { // DOWN - crossed into new cell
             onGround = (isS([before[0], after[3]]) || isS([before[1], after[3]]));
             if (onGround) {
@@ -157,8 +155,7 @@ let avatar = {
             this.bFrame[1] = 0;
             levels.scores[2][1] = 0;
         }
-        this.bFrame[0] = this.bFrame[0] + 0.15 * (this.bFrame[1] * 2 - 1);
-        this.bFrame[0] = (this.bFrame[0] <= 0) ? 0 : ((this.bFrame[0] >= 2) ? 2 : this.bFrame[0]);
+        this.bFrame[0] = animationFrameCalc(this.bFrame[0], this.bFrame[1]);
 
         
         //clear(4); // draw the squares that indicate the collision square locations.
@@ -271,7 +268,9 @@ let Ghost = class {
 function swapTime(override = false) {
     if (avatar.time || override) { // if avatar is allowed to swap
         time *= -1;
-        levels.scores[1]++;
+        if (!override) { // pressed the key (not the swap-lazer)
+            levels.scores[1]++;
+        }
         nextGhost.finish();
         levels.ghosts.push(nextGhost);
         nextGhost = new Ghost();
@@ -315,7 +314,12 @@ let Lazer = class {
             }
         }
     }
-    update () {
+    update (button) {
+
+
+        // use "button" to figure everything out!!
+
+
         if (this.on && this.activated) {
             let ys = this.location[1]; // the y's
             for (let y = ys[0] + 1; y < ys[1]; y++) {
@@ -326,8 +330,8 @@ let Lazer = class {
     }
     collide (x, y, newX) { // avatar's, in actual pixels
         if (Math.sign(x - (this.location[0] + 0.5) * unit) !== Math.sign(newX - (this.location[0] + 0.5) * unit)) {
-            console.log("cross X!");
-            console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
+            //console.log("cross X!");
+            //console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
             if (y > (this.location[1][0] + 0.5) * unit && y < (this.location[1][1] + 0.5) * unit) {
                 swapTime(true);
             }
@@ -338,20 +342,94 @@ let Lazer = class {
 // BUTTONS
 
 let Button = class {
-    constructor (type, coors/* [[x, y], [x, y]] */, objects, noButton = false) {
+    constructor (type, coor, side/* 0-left 1-right */, objects, noButton = false) {
         this.type = type;
-        this.coors = coors;
+        // 0-wall 1-spike/deathLazer 2-swapLazer 3-spike/onOffBlocks
+        this.coor = coor;
         this.objects = objects;
-        this.appear = noButton;
+        this.side = side;
+        this.dir = -1; // animation-direction
+        this.first = 0; // the "frame" at which the first value of "memory" is located.
+        this.memory = [0]; // values from 0 (off) to 2 (on)
+        this.appear = !noButton;
+        this.onScreen = false;
+        // this.frame is: Math.floor(frame / GFuel);
     }
     activate (activate = true, simple = false) {
+        if (activate) {
+            this.onScreen = true;
+        } else {
+            this.onScreen = false;
+
+
+            // destroy its memory and re-initialize it!!!!!
+
+
+        }
         this.objects.forEach(function (object) {
             object.activate(activate, simple);
         });
     }
+    draw (simple = false) {
+        if (!this.onScreen || !this.appear) return;
+
+        let c = (simple) ? ctx.length - 1 : 2; // canvas index
+        let m = (simple) ? unit * 0.32 : unit; // size multiplier
+
+        ctx[c].drawImage(img[3], 50 * this.side + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side) * m, this.coor[1] * m, m / 2, m);
+        if (this.memory[Math.floor(frame / GFuel) - this.first] == 0) ctx[c].drawImage(img[3], 50 * this.side + 100 + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side + 0.2 * (this.side * 2 - 1)) * m, this.coor[1] * m, m / 2, m);
+
+        /*
+        if (this.on) {
+            let ys = this.location[1]; // the y's
+            c = (c == 2) ? 6 : c;
+            for (let y = ys[0]; y <= ys[1]; y++) {
+                if (y == ys[0]) { // vertical thing
+                    ctx[c].drawImage(img[3], 80, 100, 20, 50, (this.location[0] + 0.4) * m, (y + 0.5) * m, m / 5, m / 2);
+                } else if (y == ys[1]) {// vertical thing 2
+                    ctx[c].drawImage(img[3], 80, 150, 20, 50, (this.location[0] + 0.4) * m, y * m, m / 5, m / 2);
+                } else {
+                    ctx[c].drawImage(img[3], 0, 100, 20, 100, (this.location[0] + 0.4) * m, y * m, m / 5, m);
+                }
+            }
+        }
+        */
+    }
     update () {
-        this.objects.forEach(function (object) {
-            object.update();
+        let b = this;
+        let f = Math.floor(frame / GFuel); // frame
+
+
+        // UPDATE b.dir if COLLISION with AVATAR
+
+        
+
+        // update its memory
+        if (f - b.first >= b.memory.length) { // FORWARD off the end of the memory
+            b.memory.push(animationFrameCalc(b.memory[b.memory.length - 1], b.dir, true));
+        } else if (f < b.first) { // BACKWARD off the end of the memory
+            b.memory.unshift(animationFrameCalc(b.memory[0], b.dir, true));
+            b.first--;
+        } else { // middle of memory; update time!
+            if (b.memory[f - b.first + time]/* future */ !== b.memory[f - b.first]/* current */) {
+                // remembered value is NOT SAME AS FUTURE VALUE!
+                // set future value to what it should be now, unless it's bigger.
+                if (b.memory[f - b.first + time] <= animationFrameCalc(b.memory[f - b.first], b.dir, true)) {
+                    b.memory[f - b.first] = animationFrameCalc(b.memory[f - b.first], b.dir, true);
+                }
+            }
+        }
+
+        // update its objects
+        b.objects.forEach(function (object) {
+            object.update(b);
         });
+
+        // draw itself
+        b.draw()
+        
+        if (!(f % 50)) {
+            //console.log(this.memory);
+        }
     }
 }

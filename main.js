@@ -17,9 +17,10 @@ let swapDelay = 200; // milliseconds before you can swap time again
 let stepCounter = 0; // animation step always up (counts)
 let step = 0; // actual animation step (counts)
 let stepSpeed = 8; // steps per second
+let animationStepSpeed = 0.2; // bigger = faster
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
-let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier)
+let GFuel = 2; // number of game frames per ghost frame (ghosts are choppier)
 let nextGhost = undefined;
 
 

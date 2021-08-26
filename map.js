@@ -20,7 +20,7 @@ function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
 function between([a, b], num) {
     return num >= Math.min(a, b) && num <= Math.max(a, b);
 }
-function isS([x, y], nonSemi = false, hor = false) { // is solid???
+function isS([x, y], nonSemi = false, hor = false, l = currentLevel) { // is solid???
     // nonSemi = true --> don't collide with semis.
     // hor = true --> do collide horizontally.
     let outside = false;
@@ -32,7 +32,7 @@ function isS([x, y], nonSemi = false, hor = false) { // is solid???
         if (y < 0 || y >= height) y = (y < 0) ? 0 : height - 1;
         outside = true;
     }
-    let l = currentLevel;
+
     if (nonSemi) return (l[y][x] == 1 || (l[y][x] == 1.5 && !outside));
     else return (l[y][x] >= 1 && l[y][x] <= 2 && (l[y][x] != 1.5 || !outside));
 }
@@ -54,6 +54,11 @@ function XOR(values) { // returns true if exactly one of the values is true
 }
 function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+function animationFrameCalc(f, dir, button = false) {
+    f = f + (animationStepSpeed * ((button) ? GFuel : 1)) * (dir * 2 - 1);
+    f = (f <= 0) ? 0 : ((f >= 2) ? 2 : f);
+    return f;
 }
 
 // LEVELS
@@ -181,20 +186,18 @@ let levels = {
         // Check if anything should go from 1.5 to [what it was before]:
         for (let y = 0; y < height; y++) {
             for (let x = 0; x < width; x++) {
-                switch(currentLevel[y][x]) {
-                    case 1.5:
-                        // run through the ghosts; is there anyone standing here now?
-                        let there = false;
-                        for (let i in this.ghosts) {
-                            let g = this.ghosts[i];
-                            if (!g.waiting) {
-                                if (Math.floor(g.instructions[g.frame][0] / unit) == x && Math.floor(g.instructions[g.frame][1] / unit) == y && g.instructions[g.frame][6][0] == 2) {
-                                    there = true;
-                                }
+                if (currentLevel[y][x] == 1.5) {
+                    // run through the ghosts; is there anyone standing here now?
+                    let there = false;
+                    for (let i in this.ghosts) {
+                        let g = this.ghosts[i];
+                        if (!g.waiting) {
+                            if (Math.floor(g.instructions[g.frame][0] / unit) == x && Math.floor(g.instructions[g.frame][1] / unit) == y && g.instructions[g.frame][6][0] == 2) {
+                                there = true;
                             }
                         }
-                        if (!there) currentLevel[y][x] = levels.levels[levels.currentLevel][y][x];
-                        break;
+                    }
+                    if (!there) currentLevel[y][x] = levels.levels[levels.currentLevel][y][x];
                 }
             }
         }
@@ -316,11 +319,11 @@ levels.addLevel([
 0, // [goal-y]
 [
     new Button(
-        "Lazer", [[0, 0]],
+        2, [6, 10], 0,
         [
             new Lazer([4, [7, 11]], "Swap", true)
         ],
-        true
+        false // appear!!
     )
 ]
 );
