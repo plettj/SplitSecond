@@ -11,7 +11,8 @@ let avatar = {
     action: 0, // 0-still 1-left 2-right
     dir: 1, // 0-left 1-right
     inAir: 0, // 0-grounded 1-in air
-    bFrame: [0, 0, 0], // [(0 through 1.8 are animation frames; 2 is block), (0-outOfBlock; 1-intoBlock), (target x, in computer pixels)]
+    //trapped: false, // true-stuck in wall/block
+    bFrame: [0, 0, 0], // [(0 through 1.8 are animation frames; 2 is block), (0-outOfBlock; 1-intoBlock; -1-TRAPPED), (target x, in computer pixels)]
     vcoor: [0, 0], // velocity of the avatar
     vmax: [pixel * 0.9, 1 / 3.85 * unit], // max velocity: [x, y]
     amax: 1 / 8 * pixel, // max acceleration
@@ -30,9 +31,9 @@ let avatar = {
     },
     draw: function (a = [1, this.dir]) { // a: [xOnTileset, yOnTileset]
         if (!this.time) { // drawing the time-swap frames
-            ctx[5].drawImage(img[2], this.dir * 100 + ((this.bFrame[0] == 2) ? 200 : 0), 600, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
+            ctx[5].drawImage(img[2], this.dir * 100 + ((this.bFrame[0] == 2 || this.bFrame[1] == -1) ? 200 : 0), 600 + ((this.bFrame[1] == -1) ? 100 : 0), 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
         } else { // normal drawing
-            ctx[5].drawImage(img[2], a[0] * 100, a[1] * 100, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
+            ctx[5].drawImage(img[2], (this.bFrame[1] == -1) ? this.dir * 100 : a[0] * 100, (this.bFrame[1] == -1) ? 700 : a[1] * 100, 100, 100, Math.round(this.coor[0]), Math.round(this.coor[1]), unit, unit);
         }
     },
     drawTempSquares: function (squares, colour, opacity = 0.3) {
@@ -46,7 +47,8 @@ let avatar = {
     physics: function () { // PHYSICS
         clear(5, this.coor);
         let key = [((!this.keys[3] || this.keys[1]) && !this.bFrame[1]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
-        
+        if (this.bFrame[1] == -1) key = [0, 0, 0, 0];
+
         // [Xleft, Xright, Ytop, Ybottom]
         let beforeInPixels = [this.coor[0] + pixel * 2, this.coor[0] + (this.box[0] + 1) * pixel, this.coor[1] + 2.99 * pixel, this.coor[1] + (this.box[1] + 2.99) * pixel];
         let before = beforeInPixels.map((n) => Math.floor(n / unit));
@@ -195,18 +197,41 @@ let avatar = {
             }
         }
 
+        let trapped = 0;
         levels.buttons[levels.currentLevel].forEach(function (button) {
             button.objects.forEach(function (object) {
-                if (object.constructor.name == "Lazer") {
+                if (object.type == "Swap" || object.type == "Kill") {
                     object.collide((beforeInPixels[0] + beforeInPixels[1]) / 2, (beforeInPixels[2] + beforeInPixels[3]) / 2, (afterInPixels[0] + afterInPixels[1]) / 2, beforeInPixels);
-                } else if (object.constructor.name == "Spikes") {
+                } else if (object.type == "Spike") {
                     if (object.collide(beforeInPixels)) {
                         levels.startLevel(levels.currentLevel);
                     }
+                } else if (object.type == "Wall") {
+                    let result = object.collide(beforeInPixels); // [0-nothing 1-collide left 2-collide right 3-trapped, x]
+                    if (result[0] == 3) {
+                        trapped = -1;
+                        avatar.vcoor[0] = 0;
+                        avatar.bFrame[2] = result[1] * unit; // x coor
+                        console.log("trapped");
+                    } else if (result[0] == 2) { // hit RIGHT side of wall
+                        console.log("right-collide");
+                        avatar.vcoor[0] = 0;
+                        avatar.coor[0] = (Math.floor(avatar.coor[0] / unit) + 0.5001) * unit;
+                    } else if (result[0] == 1) { // hit LEFT side of wall
+                        console.log("left-collide");
+                        avatar.vcoor[0] = 0;
+                        avatar.coor[0] = (Math.floor(avatar.coor[0] / unit) + (avatar.box[0] - 0.01) / 10) * unit;
+                    }
                 }
+                // do nothing for on/off blocks; it should be automatic
             });
         });
-
+        if (trapped == -1) {
+            this.bFrame[1] = trapped; // -1 for trapped, 0 for normal
+            this.bFrame[0] = 0;
+        } else if (this.bFrame[1] == -1) {
+            this.bFrame[1] = 0;
+        }
         this.draw(a);
     }
 }
@@ -242,7 +267,7 @@ let Ghost = class {
                 currentLevel[Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
             }
         }
-        ctx[4].drawImage(img[2], a[0] * 100 + 400, a[1] * 100, 100, 100, f[0], f[1], unit, unit);
+        ctx[4].drawImage(img[2], ((f[6][1] == -1) ? f[3] * 100 : a[0] * 100) + 400, (f[6][1] == -1) ? 700 : a[1] * 100, 100, 100, f[0], f[1], unit, unit);
         if (f[6][0] == 2) ctx[4].globalAlpha = 0.5;
     }
     newFrame () { // runs every frame
@@ -354,8 +379,8 @@ let Lazer = class {
         if (!this.active) return;
         if (this.type == "Swap") {
             if (Math.sign(x - (this.location[0] + 0.5) * unit) !== Math.sign(newX - (this.location[0] + 0.5) * unit)) {
-                //console.log("cross X!");
-                //console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
+                console.log("cross X!");
+                console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
                 if (y > (this.location[1][0] + 0.5) * unit && y < (this.location[1][1] + 0.5) * unit) {
                     swapTime(true);
                 }
@@ -370,10 +395,11 @@ let Lazer = class {
 }
 
 let Spikes = class {
-    constructor (spikes, type/* 0-black; 1-red */) {
+    constructor (spikes, colour/* 0-black; 1-red */) {
         this.spikes = spikes.map((info) => [...info, info[2]]);
         // [x, y, natural, currState]
-        this.type = type;
+        this.colour = colour;
+        this.type = "Spike";
         this.onScreen = false;
     }
     activate (activate = true, simple = false) {
@@ -386,9 +412,9 @@ let Spikes = class {
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
 
         for (let s = 0; s < this.spikes.length; s++) {
-            ctx[c].drawImage(img[3], 500, this.spikes[s][2] * 50 + 300 * this.type, 100, 50, Math.round(this.spikes[s][0] * m), Math.round((this.spikes[s][1] + 1) * m), m, m / 2);
+            ctx[c].drawImage(img[3], 500, this.spikes[s][2] * 50 + 300 * this.colour, 100, 50, Math.round(this.spikes[s][0] * m), Math.round((this.spikes[s][1] + 1) * m), m, m / 2);
             if (this.spikes[s][2]) {
-                ctx[(c == 2) ? 6 : c].drawImage(img[3], 700, 300 * this.type, 100, 100, this.spikes[s][0] * m, this.spikes[s][1] * m, m, m);
+                ctx[(c == 2) ? 6 : c].drawImage(img[3], 700, 300 * this.colour, 100, 100, this.spikes[s][0] * m, this.spikes[s][1] * m, m, m);
             }
         }
     }
@@ -407,11 +433,11 @@ let Spikes = class {
 
             if (animState !== 0) {
                 ctx[6].drawImage(
-                    img[3], 600 + ((animState == 3) ? 100 : 0), 300 * this.type + ((animState == 2) ? 50 : 0), 100, 100 - ((animState % 3 !== 0) ? 50 : 0), 
+                    img[3], 600 + ((animState == 3) ? 100 : 0), 300 * this.colour + ((animState == 2) ? 50 : 0), 100, 100 - ((animState % 3 !== 0) ? 50 : 0), 
                     spike[0] * unit, (spike[1] + ((animState % 3 !== 0) ? 0.5 : 0)) * unit, unit, unit / ((animState % 3 !== 0) ? 2 : 1)
                 );
             }
-            ctx[2].drawImage(img[3], 500, ((animState !== 0) ? 50 : 0) + 300 * this.type, 100, 50, Math.round(spike[0] * unit), Math.round((spike[1] + 1) * unit), unit, unit / 2);
+            ctx[2].drawImage(img[3], 500, ((animState !== 0) ? 50 : 0) + 300 * this.colour, 100, 50, Math.round(spike[0] * unit), Math.round((spike[1] + 1) * unit), unit, unit / 2);
         }
     }
     collide (beforeIP) {
@@ -425,6 +451,77 @@ let Spikes = class {
             }
         }
         return false;
+    }
+}
+
+let Walls = class {
+    constructor (walls) {
+        this.walls = walls.map((info) => [...info, info[2]]);
+        // [x, y, natural, currState]
+        this.type = "Wall";
+        this.onScreen = false;
+    }
+    activate (activate = true, simple = false) {
+        this.onScreen = activate;
+        if (activate) this.draw(simple);
+    }
+    draw (simple = false) {
+        if (!this.onScreen) return;
+        let c = (simple) ? ctx.length - 1 : 2; // canvas index
+        let m = (simple) ? unit * 0.32 : unit; // size multiplier
+
+        for (let s = 0; s < this.walls.length; s++) {
+            ctx[c].drawImage(img[3], this.walls[s][2] * 100, 300, 100, 50, Math.round(this.walls[s][0] * m), Math.round((this.walls[s][1] - 0.5) * m), m, m / 2);
+            ctx[c].drawImage(img[3], this.walls[s][2] * 100, 350, 100, 50, Math.round(this.walls[s][0] * m), Math.round((this.walls[s][1] + 1) * m), m, m / 2);
+            if (this.walls[s][2]) {
+                ctx[c].drawImage(img[3], 400, 300, 100, 100, this.walls[s][0] * m, this.walls[s][1] * m, m, m);
+            }
+        }
+    }
+    update (button) {
+        let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
+
+        for (let s = 0; s < this.walls.length; s++) {
+            let wall = this.walls[s];
+            wall[3] = ((wall[2] && info[0] == 0) || (!wall[2] && info[0] == 2)); // if button pressed, compare to wall's native state
+
+            let animState = (info[0]) ? Math.ceil(info[0] + 0.01) : 0;
+            if (wall[2] == 1) animState = (animState - 3) * -1;
+
+            ctx[2].clearRect(wall[0] * unit, (wall[1] - 0.5) * unit, unit, unit * 2); // base
+
+            if (animState !== 0) {
+                ctx[2].drawImage(img[3], animState * 100 + 100, 300, 100, 100, Math.round(this.walls[s][0] * unit), Math.round(this.walls[s][1] * unit), unit, unit);
+            }
+            ctx[2].drawImage(img[3], ((animState !== 0) ? 100 : 0), 300, 100, 50, Math.round(this.walls[s][0] * unit), Math.round((this.walls[s][1] - 0.5) * unit), unit, unit / 2);
+            ctx[2].drawImage(img[3], ((animState !== 0) ? 100 : 0), 350, 100, 50, Math.round(this.walls[s][0] * unit), Math.round((this.walls[s][1] + 1) * unit), unit, unit / 2);
+        }
+    }
+    collide (beforeIP) {
+        // run the collisions
+        for (let w = 0; w < this.walls.length; w++) {
+            let ww = this.walls[w];
+            let points = [[(ww[0] + 0.3) * unit, (ww[1] + 0.5) * unit], [(ww[0] + 0.7) * unit, (ww[1] + 0.5) * unit], [(ww[0] + 0.5) * unit, (ww[1] + 0.5) * unit]];
+            // points: [[left, right, middle]]
+            if (ww[3]) { // wall is on!
+                let collides = points.map((point) => inRect(beforeIP, [point]));
+                if (collides[2]) {
+                    return [3, ww[0]];
+                } else if (collides[1]) {
+                    return [2, ww[0]];
+                } else if (collides[0]) {
+                    return [1, ww[0]];
+                }
+                /*if (collides[0] && !collides[1]) {
+                    return [1, ww[0]];
+                } else if (collides[1] && !collides[0]) {
+                    return [2, ww[0]];
+                } else if (collides[2]) {
+                    return [3, ww[0]];
+                }*/
+            }
+        }
+        return [0, avatar.bFrame[2]];
     }
 }
 
@@ -493,8 +590,13 @@ let Button = class {
                 b.memory.unshift([animationFrameCalc(b.memory[0][0], (b.dir / 2 + 0.5), true), b.dir]);
                 b.first--;
             } else { // middle of memory; update time!
-                let previous = b.memory[((f - b.first - time >= 0)) ? ((f - b.first - time < b.memory.length) ? f - b.first - time : b.memory.length - 2) : 1];
+                let previous = b.memory[(b.memory.length < 2) ? 0 : ((f - b.first - time >= 0) ? ((f - b.first - time < b.memory.length) ? f - b.first - time : b.memory.length - 2) : 1)];
                 let now = b.memory[f - b.first];
+
+                if (previous == undefined) {
+                    console.log("type: " + b.type);
+                    console.log(b.memory.length, (((f - b.first - time >= 0)) ? ((f - b.first - time < b.memory.length) ? f - b.first - time : b.memory.length - 2) : 1));
+                }
 
                 if (animationFrameCalc(previous[0], (b.dir / 2 + 0.5), true) > now[0]) {
                     b.memory[f - b.first] = [animationFrameCalc(previous[0], (b.dir / 2 + 0.5), true), b.dir];

@@ -20,7 +20,7 @@ let stepSpeed = 8; // steps per second
 let animationStepSpeed = 0.2; // bigger = faster
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
-let GFuel = 2; // number of game frames per ghost frame (ghosts are choppier)
+let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier)
 let nextGhost = undefined;
 
 
