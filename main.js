@@ -2,7 +2,7 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = false;
-let beginningLevel = 0;
+let beginningLevel = 1;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for Dahlia's
@@ -31,7 +31,7 @@ setTimeout(function () {
 // INITIALIZATION
 
 // Canvas holder
-let ctx = []; // [0-background, 1-blocks, 2-mainObjects, 3-ghosts, 4-ghostBlocks, 5-avatar, 6-frontObjects  :last:-LCanvas]
+let ctx = []; // [0-background, 1-blocks, 2-mainObjects, 3-ghosts, 4-ghostBlocks, 5-avatar, 6-frontObjects, 7-frontER_Objects(goal, items) :last:-LCanvas]
 function makeContexts(num) {
     for (let i = 0; i < num; i++) {
         let canvas = document.createElement("CANVAS");
@@ -39,14 +39,16 @@ function makeContexts(num) {
         canvas.width = unit * width;
         canvas.height = unit * height;
         document.body.insertBefore(canvas, document.querySelector(".belowCanvases"));
-        ctx.push(canvas.getContext('2d'));
+        let thisCTX = canvas.getContext('2d');
+        thisCTX.imageSmoothingEnabled = false;
+        ctx.push(thisCTX);
     }
     let miniC = document.body.querySelector("#LCanvas");
     miniC.width = unit * width * 0.32;
     miniC.height = unit * height * 0.32;
     ctx.push(miniC.getContext('2d'));
 }
-makeContexts(7);
+makeContexts(8);
 ctx[4].globalAlpha = 0.5;
 
 // Image holder

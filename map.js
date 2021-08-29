@@ -56,7 +56,7 @@ function capitalize(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 function animationFrameCalc(f, dir, button = false) {
-    f = f + (animationStepSpeed / ((button) ? GFuel : 1)) * (dir * 2 - 1);
+    f = f + (animationStepSpeed * ((button) ? GFuel : 1)) * (dir * 2 - 1);
     f = (f <= 0) ? 0 : ((f >= 2) ? 2 : f);
     return f;
 }
@@ -90,7 +90,7 @@ let levels = {
         let c = (simple) ? ctx.length - 1 : 1; // canvas index
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
         clear(c);            /*opskjdcjcv jvc99cxyde09idsu8dyuxs90 -- cat code! #Kip's 3rd birthday*/
-        if (c !== ctx.length - 1) {clear(2); clear(6);}
+        if (c !== ctx.length - 1) {clear(2); clear(6); clear(7);}
         let l = this.levels[level];
         let semiShape = [0, []]; // [(1-open {=} 2-line {+}), [x's of no {=}]];
         let doneGoal = false; // when a block stops the goal, it's done.
@@ -121,11 +121,11 @@ let levels = {
                         if (x > 0) if (l[y][x - 1] !== 1) blocks[1] = 1;
                         if (y > 0) if (l[y - 1][x] !== 1) blocks[2] = 1;
                         if (y < height - 1) if (l[y + 1][x] !== 1) blocks[3] = 1;
-                        ctx[c].drawImage(img[0], (blocks[1] + 2 * blocks[0]) * 100, (blocks[2] + 2 * blocks[3]) * 100, 100, 100, x * m, y * m, m, m);
-                        if (x > 0 && y > 0) if (!blocks[1] && !blocks[2] && l[y - 1][x - 1] !== 1) ctx[c].drawImage(img[0], 400, 0, 100, 100, x * m, y * m, m, m);
-                        if (x < width - 1 && y > 0) if (!blocks[0] && !blocks[2] && l[y - 1][x + 1] !== 1) ctx[c].drawImage(img[0], 400, 100, 100, 100, x * m, y * m, m, m);
-                        if (x < width - 1 && y < height - 1) if (!blocks[0] && !blocks[3] && l[y + 1][x + 1] !== 1) ctx[c].drawImage(img[0], 400, 200, 100, 100, x * m, y * m, m, m);
-                        if (x > 0 && y < height - 1) if (!blocks[1] && !blocks[3] && l[y + 1][x - 1] !== 1) ctx[c].drawImage(img[0], 400, 300, 100, 100, x * m, y * m, m, m);
+                        ctx[c].drawImage(img[0], (blocks[1] + 2 * blocks[0]) * 100, (blocks[2] + 2 * blocks[3]) * 100, 100, 100, Math.round(x * m), Math.round(y * m), m, m);
+                        if (x > 0 && y > 0) if (!blocks[1] && !blocks[2] && l[y - 1][x - 1] !== 1) ctx[c].drawImage(img[0], 400, 0, 100, 100, Math.round(x * m), Math.round(y * m), m, m);
+                        if (x < width - 1 && y > 0) if (!blocks[0] && !blocks[2] && l[y - 1][x + 1] !== 1) ctx[c].drawImage(img[0], 400, 100, 100, 100, Math.round(x * m), Math.round(y * m), m, m);
+                        if (x < width - 1 && y < height - 1) if (!blocks[0] && !blocks[3] && l[y + 1][x + 1] !== 1) ctx[c].drawImage(img[0], 400, 200, 100, 100, Math.round(x * m), Math.round(y * m), m, m);
+                        if (x > 0 && y < height - 1) if (!blocks[1] && !blocks[3] && l[y + 1][x - 1] !== 1) ctx[c].drawImage(img[0], 400, 300, 100, 100, Math.round(x * m), Math.round(y * m), m, m);
                         break;
                     case 2: // semisolid block
                         let blocks2 = [0, 0]; // [right, left]; 1 means not there.
@@ -142,10 +142,10 @@ let levels = {
                 if (x == width - 1 && y >= this.exits[level] && !doneGoal) {
                     if (l[y][x] == 1) {
                         doneGoal = true;
-                        ctx[c].drawImage(img[3], 1 * 100, 1 * 50, 100, 50, x * m, (y) * m, m, m / 2);
+                        ctx[(c == ctx.length - 1) ? c : 7].drawImage(img[3], 1 * 100, 1 * 50, 100, 50, x * m, (y) * m, m, m / 2);
                     } else {
-                        ctx[c].drawImage(img[3], 0 * 100, 0 * 100, 100, 100, x * m, y * m, m, m);
-                        if (y == this.exits[level]) ctx[c].drawImage(img[3], 1 * 100, 0 * 50, 100, 50, x * m, (y - 1/2) * m, m, m / 2);
+                        ctx[(c == ctx.length - 1) ? c : 7].drawImage(img[3], 0 * 100, 0 * 100, 100, 100, x * m, y * m, m, m);
+                        if (y == this.exits[level]) ctx[(c == ctx.length - 1) ? c : 7].drawImage(img[3], 1 * 100, 0 * 50, 100, 50, x * m, (y - 1/2) * m, m, m / 2);
                     }
                 }
             }
@@ -294,12 +294,12 @@ let score = {
     },
     calibrate: function ([seconds, swaps, blocks]) {
         // The below code needs to be super calibrated!
-        return [seconds * 40, swaps * 205, blocks * 115];
+        return [seconds * 31, swaps * 205, blocks * 115];
     },
     displayScore: function (values, alreadyCalibrated) {
         let value = (!alreadyCalibrated) ? this.calibrate(values).reduce((a, b) => a + b, 0) : values.reduce((a, b) => a + b, 0);
         // take 'value' and put it between 100 and 1000; 1000 is the max score.
-        let newValue = Math.floor(1073.5 - ((value * 920) / (value + 920)));
+        let newValue = Math.floor(1058.5 - ((value * 920) / (value + 920)));
         return newValue;
     },
     unlock: function (newLevel) {
@@ -328,7 +328,7 @@ levels.addLevel([
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-    [3, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [3, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[15, 0, 0], [30, 1, 1]], // [Gold, Silver] --> [seconds, swaps, blocks]
@@ -337,10 +337,14 @@ levels.addLevel([
     new Button(
         2, [6, 10], 0,
         [
-            new Lazer([4, [7, 11]], "Swap", true),
-            //new Lazer([10, [6, 10]], "Kill", false)
-        ],
-        false // appear!!
+            new Lazer([4, [7, 11]], "Swap", false)
+        ]
+    ),
+    new Button(
+        1, [3, 10], 1,
+        [
+            new Lazer([10, [6, 10]], "Kill", false)
+        ]
     )
 ]
 );
@@ -355,13 +359,18 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 2, 2, 2, 2, 1, 1, 1, 0, 0, 0],
-    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+    [3, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[15, 0, 0], [25, 0, 0]],
 0,
 [
-    
+    new Button(
+        1, [3, 10], 0,
+        [
+            new Spikes([[6, 10, 0], [7, 10, 1], [10, 8, 0], [14, 10, 1]], 1)
+        ]
+    )
 ]
 );
 levels.addLevel([

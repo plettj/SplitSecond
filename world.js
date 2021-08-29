@@ -197,9 +197,11 @@ let avatar = {
 
         levels.buttons[levels.currentLevel].forEach(function (button) {
             button.objects.forEach(function (object) {
-                //if (object.type = "Swap") {
-                    object.collide((beforeInPixels[0] + beforeInPixels[1]) / 2, (beforeInPixels[2] + beforeInPixels[3]) / 2, (afterInPixels[0] + afterInPixels[1]) / 2);
-                //}
+                if (object.constructor.name == "Lazer") {
+                    object.collide((beforeInPixels[0] + beforeInPixels[1]) / 2, (beforeInPixels[2] + beforeInPixels[3]) / 2, (afterInPixels[0] + afterInPixels[1]) / 2, beforeInPixels);
+                } else if (object.constructor.name == "Spikes") {
+                    object.collide(beforeInPixels);
+                }
             });
         });
 
@@ -281,15 +283,25 @@ function swapTime(override = false) {
 
 // OBSTACLES
 
+// Each is its own class, rather than inheriting from a baseline class, because
+// I'm a lazy programmer at the moment, and I realize that there's not a tonne that
+// every object has in common other than general structure.
+
 let Lazer = class {
-    // ([x, [top, bottom]]), (job-"Swap"/"Kill"), (opp-true means opposite)
-    constructor ([x, [top, bottom]], job, opp = false) {
+    // ([x, [top, bottom]]), (type-"Swap"/"Kill"), (opp-true means opposite)
+    constructor ([x, [top, bottom]], type, opp = false) {
         this.location = [x, [top, bottom]];
-        this.job = job;
+        this.type = type;
         this.opp = opp;
         this.active = !opp;
         this.side = 0;
         this.onScreen = false;
+        this.points = [];
+        if (this.type == "Kill") {
+            for (let y = top + 0.5; y <= bottom + 0.5; y += 0.5) {
+                this.points.push([(x + 0.5) * unit, y * unit]);
+            }
+        }
     }
     activate (activate = true, simple = false) {
         this.onScreen = activate;
@@ -305,7 +317,7 @@ let Lazer = class {
         let c = (simple) ? ctx.length - 1 : 2; // canvas index
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
 
-        let kill = (this.job == "Kill") ? 100 : 0;
+        let kill = (this.type == "Kill") ? 100 : 0;
         ctx[c].drawImage(img[3], 200, 0, 100, 50, this.location[0] * m, (this.location[1][0] + 0.5) * m, m, m / 2);
         ctx[c].drawImage(img[3], 200, 50, 100, 50, this.location[0] * m, (this.location[1][1]) * m, m, m / 2);
         let ys = this.location[1]; // the y's
@@ -316,47 +328,93 @@ let Lazer = class {
             } else if (y == ys[1]) {// vertical thing 2
                 ctx[c].drawImage(img[3], 80 + kill, 150, 20, 50, (this.location[0] + 0.4) * m, y * m, m / 5, m / 2);
             } else if (this.active) {
-                if (simple) console.log("oh boy!");
                 ctx[c].drawImage(img[3], 0 + kill, 100, 20, 100, (this.location[0] + 0.4) * m, y * m, m / 5, m);
             }
         }
     }
     update (button) {
-
-
         // use "button" to figure everything out!! update this.onScreen.
         let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
 
         if (this.onScreen) this.active = (info[1] > 0 == this.opp);
-        else {
-            // State of being during the out-going animation
-
-            /*
-            this.active = ()
-            console.log(this.active);
-            */
-        }
-
-        // also: consider this own .opp value
+        else {/*State of being during the out-going animation*/}
 
 
         let ys = this.location[1]; // the y's
         for (let y = ys[0] + 1; y < ys[1]; y++) {
             ctx[6].clearRect((this.location[0] + 0.4) * unit, y * unit, unit / 5, unit);
             if (this.active && this.onScreen) {
-                ctx[6].drawImage(img[3], ((step > 0) ? step % 4 : 3 + step % 4) * 20 + ((this.job == "Kill") ? 100 : 0), 100, 20, 100, (this.location[0] + 0.4) * unit, y * unit, unit / 5, unit);
+                ctx[6].drawImage(img[3], ((step > 0) ? step % 4 : 3 + step % 4) * 20 + ((this.type == "Kill") ? 100 : 0), 100, 20, 100, (this.location[0] + 0.4) * unit, y * unit, unit / 5, unit);
             }
         }
     }
-    collide (x, y, newX) { // avatar's, in actual pixels
+    collide (x, y, newX, beforeIP) { // avatar's, in actual pixels
         if (!this.active) return;
-        if (Math.sign(x - (this.location[0] + 0.5) * unit) !== Math.sign(newX - (this.location[0] + 0.5) * unit)) {
-            //console.log("cross X!");
-            //console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
-            if (y > (this.location[1][0] + 0.5) * unit && y < (this.location[1][1] + 0.5) * unit) {
-                swapTime(true);
+        if (this.type == "Swap") {
+            if (Math.sign(x - (this.location[0] + 0.5) * unit) !== Math.sign(newX - (this.location[0] + 0.5) * unit)) {
+                //console.log("cross X!");
+                //console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
+                if (y > (this.location[1][0] + 0.5) * unit && y < (this.location[1][1] + 0.5) * unit) {
+                    swapTime(true);
+                }
+            }
+        } else if (this.type == "Kill") {
+            let inLazer = inRect(beforeIP, this.points);
+            if (inLazer) {
+                levels.startLevel(levels.currentLevel);
             }
         }
+    }
+}
+
+let Spikes = class {
+    constructor (spikes, type/* 0-black; 1-red */) {
+        this.spikes = spikes.map((info) => [...info, info[2]]);
+        // spikes[n][3] represents the collision state; 0-DOWN, 1-UP!
+        this.type = type;
+        this.onScreen = false;
+    }
+    activate (activate = true, simple = false) {
+        this.onScreen = activate;
+        if (activate) this.draw(simple);
+    }
+    draw (simple = false) {
+        if (!this.onScreen) return;
+        let c = (simple) ? ctx.length - 1 : 2; // canvas index
+        let m = (simple) ? unit * 0.32 : unit; // size multiplier
+
+        for (let s = 0; s < this.spikes.length; s++) {
+            ctx[c].drawImage(img[3], 500, this.spikes[s][2] * 50 + 300 * this.type, 100, 50, Math.round(this.spikes[s][0] * m), Math.round((this.spikes[s][1] + 1) * m), m, m / 2);
+            if (this.spikes[s][2]) {
+                ctx[(c == 2) ? 6 : c].drawImage(img[3], 700, 300 * this.type, 100, 100, this.spikes[s][0] * m, this.spikes[s][1] * m, m, m);
+            }
+        }
+    }
+    update (button) {
+        let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
+
+        for (let s = 0; s < this.spikes.length; s++) {
+            let spike = this.spikes[s];
+            //spike[3] = ((info[0] == 2) == !spike[2]); // if button pressed, compare to spike's native state
+
+            let animState = (info[0]) ? Math.ceil(info[0] + 0.01) : 0;
+            if (spike[2] == 1) animState = (animState - 3) * -1;
+
+            ctx[6].clearRect(spike[0] * unit, spike[1] * unit, unit, unit); // spike
+            ctx[2].clearRect(spike[0] * unit, (spike[1] + 1) * unit, unit, unit / 2); // base
+
+            if (animState !== 0) {
+                ctx[6].drawImage(
+                    img[3], 600 + ((animState == 3) ? 100 : 0), 300 * this.type + ((animState == 2) ? 50 : 0), 100, 100 - ((animState % 3 !== 0) ? 50 : 0), 
+                    spike[0] * unit, (spike[1] + ((animState % 3 !== 0) ? 0.5 : 0)) * unit, unit, unit / ((animState % 3 !== 0) ? 2 : 1)
+                );
+            }
+            ctx[2].drawImage(img[3], 500, ((animState !== 0) ? 50 : 0) + 300 * this.type, 100, 50, Math.round(spike[0] * unit), Math.round((spike[1] + 1) * unit), unit, unit / 2);
+        }
+    }
+    collide (beforeIP) {
+        // run the collisions
+        return false;
     }
 }
 
@@ -399,10 +457,10 @@ let Button = class {
         let c = (simple) ? ctx.length - 1 : 6; // main (top) canvas index
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
 
-        if (c !== ctx.length - 1) ctx[c].clearRect((this.coor[0] + 1 + 0.5 * this.side + 0.2 * (this.side * 2 - 1)) * m, this.coor[1] * m, m / 2, m);
+        if (c !== ctx.length - 1) ctx[c].clearRect((this.coor[0] + 1 - 1.5 * this.side + 0.2 * (this.side * 2 - 1)) * m, this.coor[1] * m, m / 2, m);
 
-        if (first) ctx[(c == ctx.length - 1) ? c : 2].drawImage(img[3], 50 * this.side + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side) * m, this.coor[1] * m, m / 2, m);
-        if (this.memory[(first) ? 0 : Math.floor(frame / GFuel) - this.first][1] < 0) ctx[c].drawImage(img[3], 50 * this.side + 100 + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 + 0.5 * this.side + 0.2 * (this.side * 2 - 1)) * m, this.coor[1] * m, m / 2, m);
+        if (first) ctx[(c == ctx.length - 1) ? c : 2].drawImage(img[3], 50 * this.side + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 - 1.5 * this.side) * m, this.coor[1] * m, m / 2, m);
+        if (this.memory[(first) ? 0 : Math.floor(frame / GFuel) - this.first][1] < 0) ctx[c].drawImage(img[3], 50 * this.side + 100 + 200 * this.type, 200, 50, 100, (this.coor[0] + 1 - 1.5 * this.side + 0.2 * (this.side * 2 - 1)) * m, this.coor[1] * m, m / 2, m);
     }
     update () {
         let b = this;
@@ -420,14 +478,14 @@ let Button = class {
 
             // update its memory
             if (f - b.first >= b.memory.length) { // FORWARD off the end of the memory
-                b.memory.push([animationFrameCalc(b.memory[b.memory.length - 1][0], b.dir, true), b.dir]);
+                b.memory.push([animationFrameCalc(b.memory[b.memory.length - 1][0], (b.dir / 2 + 0.5), true), b.dir]);
             } else if (f < b.first) { // BACKWARD off the end of the memory
-                b.memory.unshift([animationFrameCalc(b.memory[0][0], b.dir, true), b.dir]);
+                b.memory.unshift([animationFrameCalc(b.memory[0][0], (b.dir / 2 + 0.5), true), b.dir]);
                 b.first--;
             } else { // middle of memory; update time!
                 //if (b.memory[f - b.first])
                 if (b.memory[f - b.first][1] < b.dir) {
-                    b.memory[f - b.first] = [animationFrameCalc(b.memory[f - b.first - time], b.dir, true), b.dir];
+                    b.memory[f - b.first] = [animationFrameCalc(b.memory[f - b.first - time], (b.dir / 2 + 0.5), true), b.dir];
                 }
             }
         }
