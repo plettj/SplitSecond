@@ -200,7 +200,9 @@ let avatar = {
                 if (object.constructor.name == "Lazer") {
                     object.collide((beforeInPixels[0] + beforeInPixels[1]) / 2, (beforeInPixels[2] + beforeInPixels[3]) / 2, (afterInPixels[0] + afterInPixels[1]) / 2, beforeInPixels);
                 } else if (object.constructor.name == "Spikes") {
-                    object.collide(beforeInPixels);
+                    if (object.collide(beforeInPixels)) {
+                        levels.startLevel(levels.currentLevel);
+                    }
                 }
             });
         });
@@ -370,7 +372,7 @@ let Lazer = class {
 let Spikes = class {
     constructor (spikes, type/* 0-black; 1-red */) {
         this.spikes = spikes.map((info) => [...info, info[2]]);
-        // spikes[n][3] represents the collision state; 0-DOWN, 1-UP!
+        // [x, y, natural, currState]
         this.type = type;
         this.onScreen = false;
     }
@@ -395,7 +397,7 @@ let Spikes = class {
 
         for (let s = 0; s < this.spikes.length; s++) {
             let spike = this.spikes[s];
-            //spike[3] = ((info[0] == 2) == !spike[2]); // if button pressed, compare to spike's native state
+            spike[3] = ((info[0] == 2) == !spike[2]); // if button pressed, compare to spike's native state
 
             let animState = (info[0]) ? Math.ceil(info[0] + 0.01) : 0;
             if (spike[2] == 1) animState = (animState - 3) * -1;
@@ -414,6 +416,14 @@ let Spikes = class {
     }
     collide (beforeIP) {
         // run the collisions
+        for (let s = 0; s < this.spikes.length; s++) {
+            let ss = this.spikes[s];
+            // points: [left, top, right]
+            if (ss[3]) {
+                let points = [[(ss[0] + 0.25) * unit, (ss[1] + 0.6) * unit], [(ss[0] + 0.5) * unit, (ss[1] + 0.3) * unit], [(ss[0] + 0.75) * unit, (ss[1] + 0.7) * unit]];
+                if (inRect(beforeIP, points)) return true;
+            }
+        }
         return false;
     }
 }
@@ -483,9 +493,11 @@ let Button = class {
                 b.memory.unshift([animationFrameCalc(b.memory[0][0], (b.dir / 2 + 0.5), true), b.dir]);
                 b.first--;
             } else { // middle of memory; update time!
-                //if (b.memory[f - b.first])
-                if (b.memory[f - b.first][1] < b.dir) {
-                    b.memory[f - b.first] = [animationFrameCalc(b.memory[f - b.first - time], (b.dir / 2 + 0.5), true), b.dir];
+                let previous = b.memory[((f - b.first - time >= 0)) ? ((f - b.first - time < b.memory.length) ? f - b.first - time : b.memory.length - 2) : 1];
+                let now = b.memory[f - b.first];
+
+                if (animationFrameCalc(previous[0], (b.dir / 2 + 0.5), true) > now[0]) {
+                    b.memory[f - b.first] = [animationFrameCalc(previous[0], (b.dir / 2 + 0.5), true), b.dir];
                 }
             }
         }
