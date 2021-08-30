@@ -2,10 +2,12 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = false;
-let beginningLevel = 1;
+let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for Dahlia's
+let levelsWpowers = [5, 8]; // the levels that hold powers
+let powers = [false, false]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
 let pixel = unit / 10;

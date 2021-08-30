@@ -48,8 +48,13 @@ let avatar = {
         clear(5, this.coor);
         let key = [((!this.keys[3] || this.keys[1]) && !this.bFrame[1]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
         if (this.bFrame[1] == -1) {
-            key = [0, 0, 0, 0];
+            key = [0, 0];
             this.bFrame[1] = 0;
+        }
+        if (key[1] == -1 && (levels.scores[2][0] >= levels.powers[levels.currentLevel][1] && !levels.scores[2][1])) {
+            // too many dino-bocks!
+            shakePower(1);
+            key[1] = 0;
         }
 
         // [Xleft, Xright, Ytop, Ybottom]
@@ -123,7 +128,10 @@ let avatar = {
                         if (isS([before[1], after[3]])) { // right below is solid
                             this.bFrame[2] = before[1] * unit;
                             this.bFrame[1] = 1;
-                            if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                            if (levels.scores[2][1] == 0) {
+                                levels.scores[2][0]++; // add to total dino-blocks in level.
+                                updatePower();
+                            }
                             levels.scores[2][1] = 1;
                             this.vcoor[0] = 0;
                         }
@@ -131,14 +139,20 @@ let avatar = {
                         if (isS([before[0], after[3]])) { // left below is solid
                             this.bFrame[2] = before[0] * unit;
                             this.bFrame[1] = 1;
-                            if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                            if (levels.scores[2][1] == 0) {
+                                levels.scores[2][0]++; // add to total dino-blocks in level.
+                                updatePower();
+                            }
                             levels.scores[2][1] = 1;
                             this.vcoor[0] = 0;
                         }
                     } else {
                         this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
                         this.bFrame[1] = 1;
-                        if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                        if (levels.scores[2][1] == 0) {
+                            levels.scores[2][0]++; // add to total dino-blocks in level.
+                            updatePower();
+                        }
                         levels.scores[2][1] = 1;
                         this.vcoor[0] = 0;
                     }
@@ -146,7 +160,10 @@ let avatar = {
                     // comment out this code if I want to DISABLE [down] when INSIDE OTHER BLOCKS
                     this.bFrame[2] = (!isS([before[this.dir], after[3]])) ? before[this.dir * -1 + 1] * unit : before[this.dir] * unit;
                     this.bFrame[1] = 1;
-                    if (levels.scores[2][1] == 0) levels.scores[2][0]++; // add to total dino-blocks in level.
+                    if (levels.scores[2][1] == 0) {
+                        levels.scores[2][0]++; // add to total dino-blocks in level.
+                        updatePower();
+                    }
                     levels.scores[2][1] = 1;
                     this.vcoor[0] = 0;
                 }
@@ -197,7 +214,12 @@ let avatar = {
                 if (currentLevel[center[1]][center[0]] == 1) {
                     console.log("GET STUCK");
                     this.bFrame = [0, -1, center[0]];
-                } else if ([currentLevel[spots[0][1]][spots[0][0]] == 1, currentLevel[spots[1][1]][spots[1][0]] == 1, currentLevel[spots[2][1]][spots[2][0]] == 1, currentLevel[spots[2][1]][spots[2][0]] == 1].reduce((a, x) => x ? a + 1 : a, 0) > 1) { // snap out of block
+                } else if ([
+                    currentLevel[(spots[0][1] < 0) ? 0 : (spots[0][1] >= height) ? height - 1 : spots[0][1]][spots[0][0]] == 1,
+                    currentLevel[(spots[1][1] < 0) ? 0 : (spots[1][1] >= height) ? height - 1 : spots[1][1]][spots[1][0]] == 1,
+                    currentLevel[(spots[2][1] < 0) ? 0 : (spots[2][1] >= height) ? height - 1 : spots[2][1]][spots[2][0]] == 1,
+                    currentLevel[(spots[3][1] < 0) ? 0 : (spots[3][1] >= height) ? height - 1 : spots[3][1]][spots[3][0]] == 1
+                ].reduce((a, x) => x ? a + 1 : a, 0) > 1) { // snap out of block
                     if (((beforeInPixels[0] + beforeInPixels[1]) / 2 / unit) % 1 > 0.5) { // needs to move LEFT
                         console.log("SNAP LEFT");
                         if (this.vcoor[0] > 0) this.vcoor[0] = 0;
@@ -206,6 +228,16 @@ let avatar = {
                         console.log("SNAP RIGHT");
                         if (this.vcoor[0] < 0) this.vcoor[0] = 0;
                         this.coor[0] = (center[0] - 0.2) * unit + 0.1;
+                    }
+                }
+            }
+            if (levels.currentLevel == levelsWpowers[0] || levels.currentLevel == levelsWpowers[1]) {
+                if (center[1] >= 0 && center[1] < height) {
+                    let value = currentLevel[center[1]][center[0]];
+                    if (value == 4 || value == 5) { // CAPTURED A POWERUP!
+                        ctx[1].clearRect(center[0] * unit, center[1] * unit, unit, unit);
+                        powers[value - 4] = true;
+                        document.body.querySelectorAll("#Powers .powerBox")[value - 4].classList.add("on");
                     }
                 }
             }
@@ -317,16 +349,19 @@ let Ghost = class {
 // PHYSICS
 
 function swapTime(override = false) {
-    if (avatar.time || override) { // if avatar is allowed to swap
+    if ((avatar.time && levels.scores[1] < levels.powers[levels.currentLevel][0]) || override) { // if avatar is allowed to swap
         time *= -1;
         if (!override) { // pressed the key (not the swap-lazer)
             levels.scores[1]++;
+            updatePower();
         }
         nextGhost.finish();
         levels.ghosts.push(nextGhost);
         nextGhost = new Ghost();
         avatar.time = false;
         setTimeout(function () {avatar.time = true;}, swapDelay);
+    } else if (levels.scores[1] >= levels.powers[levels.currentLevel][0]) {
+        shakePower(0);
     }
 }
 
@@ -465,7 +500,7 @@ let Spikes = class {
         }
     }
     collide (beforeIP) {
-        if (!this.onScreen) return;
+        if (!this.onScreen) return false;
         // run the collisions
         for (let s = 0; s < this.spikes.length; s++) {
             let ss = this.spikes[s];
@@ -525,7 +560,7 @@ let Walls = class {
     }
     collide (beforeIP) {
         // run the collisions
-        if (!this.onScreen) return;
+        if (!this.onScreen) return [0, avatar.bFrame[2]];
         for (let w = 0; w < this.walls.length; w++) {
             let ww = this.walls[w];
             let points = [[(ww[0] + 0.3) * unit, (ww[1] + 0.5) * unit], [(ww[0] + 0.7) * unit, (ww[1] + 0.5) * unit], [(ww[0] + 0.5) * unit, (ww[1] + 0.5) * unit]];

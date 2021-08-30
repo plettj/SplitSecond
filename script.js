@@ -9,6 +9,7 @@ let dom = {
     pauseTitle: document.body.querySelector("#PauseTitle"),
     pauseNum: document.body.querySelector("#CurrLevel"),
     pauseButton: document.body.querySelector("#Pause"),
+    powers: document.body.querySelector("#Powers"),
     instruction: document.body.querySelector(".instruction"),
     progressFill: document.body.querySelector("#ProgressFill"),
     bestScore: document.body.querySelector("#BestScore"),
@@ -27,6 +28,7 @@ let dom = {
                 dom.menus[0].classList.add("on");
                 dom.pauseNum.textContent = levels.currentLevel + 1;
                 dom.pauseButton.classList.add("off");
+                dom.powers.classList.add("off");
                 dom.instruction.classList.add("off");
                 dom.covers.forEach(function (e) {e.classList.add("on");});
                 paused = true;
@@ -68,6 +70,7 @@ let dom = {
         else if (level - 1 !== levels.currentLevel) levels.startLevel(level - 1);
         dom.close();
         dom.pauseButton.classList.remove("off");
+        dom.powers.classList.remove("off");
         dom.instruction.classList.remove("off");
         dom.covers.forEach(function (e) {e.classList.remove("on");});
         paused = false;
@@ -79,12 +82,14 @@ let dom = {
             dom.covers.forEach(function (e) {e.classList.add("on");});
             dom.levelText.classList.add("on");
             dom.pauseButton.classList.add("off");
+            dom.powers.classList.add("off");
             dom.instruction.classList.add("off");
             dom.displayed = 3;
         } else {
             dom.covers.forEach(function (e) {e.classList.remove("on");});
             dom.levelText.classList.remove("on");
             dom.pauseButton.classList.remove("off");
+            dom.powers.classList.remove("off");
             dom.instruction.classList.remove("off");
             dom.displayed = -1;
             dom.updateInstruct();
@@ -187,7 +192,7 @@ let dom = {
                 dom.back(dom.displayed == 1);
             }
         }
-        // watch out! sometimes I return from this function.
+        // watch out! (don't add more) sometimes I return from this function.
     },
     updateSide: function (element = document.body.querySelector(":focus"), direction = 0, cursor = false) {
         let l = parseInt(element.textContent) - 1;
@@ -295,6 +300,21 @@ let dom = {
         dom.play();
         levels.startLevel(levels.currentLevel);
     },
+}
+
+function shakePower(power) {
+    document.body.querySelectorAll(".powerBox p")[power].classList.add("shake");
+    setTimeout(function () {
+        document.body.querySelectorAll(".powerBox p")[power].classList.remove("shake");
+    }, 1000);
+    console.log("Shake " + power + " power!!!");
+}
+
+function updatePower() {
+    console.log("Updating power!!!");
+    let displays = document.body.querySelectorAll(".powerBox p");
+    displays[0].textContent = Math.floor(levels.powers[levels.currentLevel][0] - levels.scores[1]);
+    displays[1].textContent = Math.floor(levels.powers[levels.currentLevel][1] - levels.scores[2][0]);
 }
 
 // This function relies on score.scores being up-to-date ([0, 0, 0] = uncomplete)

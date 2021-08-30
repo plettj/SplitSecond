@@ -519,3 +519,49 @@ canvas {
 .instruction p.text.margin {
     margin-left: calc(var(--unit) * 0.5);
 }
+
+
+#Powers {
+    width: 50%;
+    height: calc(var(--unit) * 1);
+    position: absolute;
+    top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
+    left: calc((100% - var(--unit) * (var(--width) - 1)) / 2);
+    transition-duration: 0.1s;
+    pointer-events: none;
+}
+#Powers.off {
+    opacity: 0;
+}
+.powerBox {
+    width: calc(var(--unit) * 2.3);
+    height: calc(var(--unit) * 1);
+    display: inline-block;
+    opacity: 0;
+    transition-duration: 0.1s;
+}
+.powerBox.on {
+    opacity: 1;
+}
+.powerBox div {
+    width: calc(var(--unit) * 0.6);
+    height: calc(var(--unit) * 0.6);
+    background-image: url("images/Symbols.png");
+    background-size: calc(var(--unit) * 1.4) calc(var(--unit) * 0.6);
+    margin-top: calc(var(--unit) * 0.2);
+    display: inline-block;
+}
+.powerBox div.Pblock {
+    background-position-x: calc(var(--unit) * -0.8);
+}
+.powerBox p {
+    display: inline-block;
+    margin-left: calc(var(--unit) * 0.9);
+    margin-top: calc(var(--unit) * -0.1);
+    font-size: calc(var(--unit) * 0.7);
+    color: #262626;
+    transition-duration: 0.2s;
+}
+.powerBox p.shake {
+    color: #d62a1d;
+}
