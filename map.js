@@ -20,9 +20,10 @@ function semisolid(x, y, l) { // finds whether a 0 is a semisolid support
 function between([a, b], num) {
     return num >= Math.min(a, b) && num <= Math.max(a, b);
 }
-function isS([x, y], nonSemi = false, hor = false, l = currentLevel) { // is solid???
+function isS([x, y], nonSemi = false, hor = false, l = currentLevel, block = false) { // is solid???
     // nonSemi = true --> don't collide with semis.
     // hor = true --> do collide horizontally.
+    // block = true --> don't collide with 1.5s
     let outside = false;
     if (x < 0 || x >= width || y < 0 || y >= height) {
         if (hor && (y < 0 || y >= height) && (x < 0 || x >= width)) return true;
@@ -34,7 +35,7 @@ function isS([x, y], nonSemi = false, hor = false, l = currentLevel) { // is sol
     }
 
     if (nonSemi) return (l[y][x] == 1 || (l[y][x] == 1.5 && !outside));
-    else return (l[y][x] >= 1 && l[y][x] <= 2 && (l[y][x] != 1.5 || !outside));
+    else return (l[y][x] >= 1 && l[y][x] <= 2 && (l[y][x] != 1.5 || !outside) && !block);
 }
 function isGoalY([yt, yb]) { // checks if the character is in the goal y-values
     let yg = levels.exits[levels.currentLevel]; // y-goal
@@ -381,7 +382,7 @@ levels.addLevel([
     new Button(
         3, [2, 10], 0,
         [
-            new Walls([[6, 10, 0], [7, 10, 1], [10, 8, 0], [14, 10, 1]])
+            new Blocks([[6, 10, 1], [7, 10, 1], [10, 8, 0], [14, 10, 1]])
         ]
     )
 ]

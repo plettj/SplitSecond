@@ -47,7 +47,10 @@ let avatar = {
     physics: function () { // PHYSICS
         clear(5, this.coor);
         let key = [((!this.keys[3] || this.keys[1]) && !this.bFrame[1]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
-        if (this.bFrame[1] == -1) key = [0, 0, 0, 0];
+        if (this.bFrame[1] == -1) {
+            key = [0, 0, 0, 0];
+            this.bFrame[1] = 0;
+        }
 
         // [Xleft, Xright, Ytop, Ybottom]
         let beforeInPixels = [this.coor[0] + pixel * 2, this.coor[0] + (this.box[0] + 1) * pixel, this.coor[1] + 2.99 * pixel, this.coor[1] + (this.box[1] + 2.99) * pixel];
@@ -172,7 +175,8 @@ let avatar = {
 
         // -1: no clip. 
         let spots = [[before[0], before[2]], [before[1], before[2]], [before[0], before[3]], [before[1], before[3]]];
-        let clipped = XOR([isS(spots[0], true, false), isS(spots[1], true, false), isS(spots[2], true, false), isS(spots[3], true, false)]);
+        let solid = [isS(spots[0], true, false), isS(spots[1], true, false), isS(spots[2], true, false), isS(spots[3], true, false)];
+        let clipped = XOR(solid);
         if (clipped !== -1) {
             console.log("You've corner-clipped!");
             //this.drawTempSquares([[Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)]], "#1515ff", 0.9);
@@ -184,6 +188,16 @@ let avatar = {
                 this.coor[1] = centerCo[1] * unit - 2 * pixel;
             } else { // downwards clip
                 this.coor[1] = centerCo[1] * unit - unit;
+            }
+        } else {
+            // Get stuck in a block if your center is inside it!
+            let center = [Math.floor((beforeInPixels[0] + beforeInPixels[1]) / 2 / unit), Math.floor((beforeInPixels[2] + beforeInPixels[3]) / 2 / unit)];
+
+            if (center[0] >= 0 && center[0] < width && center[1] >= 0 && center[1] < height) {
+                if (currentLevel[center[1]][center[0]] == 1) {
+                    console.log("GET STUCK");
+                    this.bFrame = [0, -1, center[0]];
+                }
             }
         }
 
@@ -223,14 +237,12 @@ let avatar = {
                         avatar.coor[0] = (Math.floor(avatar.coor[0] / unit) + (avatar.box[0] - 0.01) / 10) * unit;
                     }
                 }
-                // do nothing for on/off blocks; it should be automatic
+                // do nothing for on/off blocks; it's automatic
             });
         });
         if (trapped == -1) {
-            this.bFrame[1] = trapped; // -1 for trapped, 0 for normal
+            this.bFrame[1] = -1; // -1 for trapped, 0 for normal
             this.bFrame[0] = 0;
-        } else if (this.bFrame[1] == -1) {
-            this.bFrame[1] = 0;
         }
         this.draw(a);
     }
@@ -360,6 +372,7 @@ let Lazer = class {
         }
     }
     update (button) {
+        if (!this.onScreen) return;
         // use "button" to figure everything out!! update this.onScreen.
         let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
 
@@ -376,7 +389,7 @@ let Lazer = class {
         }
     }
     collide (x, y, newX, beforeIP) { // avatar's, in actual pixels
-        if (!this.active) return;
+        if (!this.active || !this.onScreen) return;
         if (this.type == "Swap") {
             if (Math.sign(x - (this.location[0] + 0.5) * unit) !== Math.sign(newX - (this.location[0] + 0.5) * unit)) {
                 console.log("cross X!");
@@ -419,6 +432,7 @@ let Spikes = class {
         }
     }
     update (button) {
+        if (!this.onScreen) return;
         let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
 
         for (let s = 0; s < this.spikes.length; s++) {
@@ -441,6 +455,7 @@ let Spikes = class {
         }
     }
     collide (beforeIP) {
+        if (!this.onScreen) return;
         // run the collisions
         for (let s = 0; s < this.spikes.length; s++) {
             let ss = this.spikes[s];
@@ -470,15 +485,16 @@ let Walls = class {
         let c = (simple) ? ctx.length - 1 : 2; // canvas index
         let m = (simple) ? unit * 0.32 : unit; // size multiplier
 
-        for (let s = 0; s < this.walls.length; s++) {
-            ctx[c].drawImage(img[3], this.walls[s][2] * 100, 300, 100, 50, Math.round(this.walls[s][0] * m), Math.round((this.walls[s][1] - 0.5) * m), m, m / 2);
-            ctx[c].drawImage(img[3], this.walls[s][2] * 100, 350, 100, 50, Math.round(this.walls[s][0] * m), Math.round((this.walls[s][1] + 1) * m), m, m / 2);
-            if (this.walls[s][2]) {
-                ctx[c].drawImage(img[3], 400, 300, 100, 100, this.walls[s][0] * m, this.walls[s][1] * m, m, m);
+        for (let w = 0; w < this.walls.length; w++) {
+            ctx[c].drawImage(img[3], this.walls[w][2] * 100, 300, 100, 50, Math.round(this.walls[w][0] * m), Math.round((this.walls[w][1] - 0.5) * m), m, m / 2);
+            ctx[c].drawImage(img[3], this.walls[w][2] * 100, 350, 100, 50, Math.round(this.walls[w][0] * m), Math.round((this.walls[w][1] + 1) * m), m, m / 2);
+            if (this.walls[w][2]) {
+                ctx[c].drawImage(img[3], 400, 300, 100, 100, this.walls[w][0] * m, this.walls[w][1] * m, m, m);
             }
         }
     }
     update (button) {
+        if (!this.onScreen) return;
         let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
 
         for (let s = 0; s < this.walls.length; s++) {
@@ -499,6 +515,7 @@ let Walls = class {
     }
     collide (beforeIP) {
         // run the collisions
+        if (!this.onScreen) return;
         for (let w = 0; w < this.walls.length; w++) {
             let ww = this.walls[w];
             let points = [[(ww[0] + 0.3) * unit, (ww[1] + 0.5) * unit], [(ww[0] + 0.7) * unit, (ww[1] + 0.5) * unit], [(ww[0] + 0.5) * unit, (ww[1] + 0.5) * unit]];
@@ -512,16 +529,48 @@ let Walls = class {
                 } else if (collides[0]) {
                     return [1, ww[0]];
                 }
-                /*if (collides[0] && !collides[1]) {
-                    return [1, ww[0]];
-                } else if (collides[1] && !collides[0]) {
-                    return [2, ww[0]];
-                } else if (collides[2]) {
-                    return [3, ww[0]];
-                }*/
             }
         }
         return [0, avatar.bFrame[2]];
+    }
+}
+
+let Blocks = class {
+    constructor (blocks) {
+        this.blocks = blocks.map((info) => [...info, info[2]]);
+        // [x, y, natural, currState]
+        this.type = "Block";
+        this.onScreen = false;
+    }
+    activate (activate = true, simple = false) {
+        this.onScreen = activate;
+        if (activate) this.draw(simple);
+    }
+    draw (simple = false) {
+        if (!this.onScreen) return;
+        let c = (simple) ? ctx.length - 1 : 2; // canvas index
+        let m = (simple) ? unit * 0.32 : unit; // size multiplier
+
+        for (let b = 0; b < this.blocks.length; b++) {
+            ctx[c].drawImage(img[3], this.blocks[b][2] * 100 + 300, 0, 100, 100, Math.round(this.blocks[b][0] * m), Math.round(this.blocks[b][1] * m), m, m);
+        }
+    }
+    update (button) {
+        if (!this.onScreen) return;
+        let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
+
+        for (let s = 0; s < this.blocks.length; s++) {
+            let block = this.blocks[s];
+            block[3] = (info[1] > 0 == (block[2] != true));
+            if (block[3]) {
+                currentLevel[block[1]][block[0]] = 1;
+            } else {
+                currentLevel[block[1]][block[0]] = levels.levels[levels.currentLevel][block[1]][block[0]];
+            }
+
+            ctx[2].clearRect(block[0] * unit, block[1] * unit, unit, unit);
+            ctx[2].drawImage(img[3], (block[3]) ? 400 : 300, 0, 100, 100, Math.round(this.blocks[s][0] * unit), Math.round(this.blocks[s][1] * unit), unit, unit);
+        }
     }
 }
 
@@ -530,7 +579,7 @@ let Walls = class {
 let Button = class {
     constructor (type, coor, side/* 0-left 1-right */, objects, noButton = false) {
         this.type = type;
-        // 0-wall 1-spike/deathLazer 2-swapLazer 3-spike/onOffBlocks
+        // 0-walls 1-spike/deathLazer 2-swapLazer 3-spike/onOffBlocks
         this.coor = coor;
         this.spot = [(coor[0] + 0.2 + (side * -1 + 1) * 0.6) * unit, (coor[1] + 0.2) * unit, (coor[1] + 0.8) * unit];
         // [X, Ytop, Ybottom], in pixels, used for collisions
