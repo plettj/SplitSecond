@@ -197,7 +197,7 @@ let avatar = {
                 if (currentLevel[center[1]][center[0]] == 1) {
                     console.log("GET STUCK");
                     this.bFrame = [0, -1, center[0]];
-                } else if (solid.reduce((a, x) => x ? a + 1 : a, 0) > 1) { // snap out of block
+                } else if ([currentLevel[spots[0][1]][spots[0][0]] == 1, currentLevel[spots[1][1]][spots[1][0]] == 1, currentLevel[spots[2][1]][spots[2][0]] == 1, currentLevel[spots[2][1]][spots[2][0]] == 1].reduce((a, x) => x ? a + 1 : a, 0) > 1) { // snap out of block
                     if (((beforeInPixels[0] + beforeInPixels[1]) / 2 / unit) % 1 > 0.5) { // needs to move LEFT
                         console.log("SNAP LEFT");
                         if (this.vcoor[0] > 0) this.vcoor[0] = 0;
