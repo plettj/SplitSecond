@@ -32,7 +32,15 @@
             <div class="content">
                 <div class="back" onclick="dom.back();" tabindex="0"></div>
                 <div class="title">Settings</div>
-                <p style="text-align: center;"><br><br><br><br>Sorry; there are no settings options right now.<br>Stay tuned for when there are, though!</p>
+                
+                <section class="settingsTop">
+                    <p>Total score: <span id="TotalScore">0</span></p>
+                    <p style="font-size: calc(var(--unit) * 0.3); margin-top: calc(var(--unit) * -1.4);">Developer's record: 16000</p>
+                </section>
+                <section class="settingsBottom">
+                    <input type="checkbox" checked onclick="dom.swapPref(this, 'autoStart')" tabindex="0">
+                    <p class="label">Auto-start next level, after completion.</p>    
+                </section>
             </div>
         </main>
         <main id="LevelsMenu" class="menu off" style="visibility: hidden;">
@@ -54,15 +62,15 @@
                         <aside class="line right"></aside>
                     </div>
                     <div id="ProgressBack">
-                        <div id="ProgressFill" class="silver"></div>
+                        <div id="ProgressFill" class="gold"></div>
                         <div class="progressMedal bronze"></div>
                         <div class="progressMedal silver"></div>
                         <div class="progressMedal gold"></div>
                     </div>
                     <table id="Scores">
                         <tr>
-                            <td>Your best score:</td>
-                            <td id="BestScore" class="silver">0</td>
+                            <td>Your best score Split Second:</td>
+                            <td id="BestScore" class="gold">0</td>
                         </tr>
                         <tr>
                             <td id="NextScoreTitle">Next medal:</td>

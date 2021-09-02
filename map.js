@@ -201,10 +201,23 @@ let levels = {
             button.activate(false);
         });
         
-        dom.newLevel(true);
-        // setTimeout for when to start the next level
-        setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
-        setTimeout(dom.newLevel, 1700);
+        if (autoStart) {
+            dom.newLevel(true);
+            // setTimeout for when to start the next level
+            setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
+            setTimeout(dom.newLevel, 1700);
+        } else {
+            setTimeout(function () {
+                dom.newLevel(false);
+                dom.newMenu(0);
+                dom.newMenu();
+                setTimeout(function () {
+                    levels.currentLevel = -1;
+                }, 50);
+            }, 150);
+        }
+
+        dom.updateTotalScore(score.calcTotal());
     },
     update: function () {
         // Check if anything should go from 1.5 to [what it was before]:
@@ -240,8 +253,31 @@ let score = {
     goals: [], // calibrated from the 2nd parameter of 'levels.addLevel()'.
     ranks: [], // array of the addition of 'goals'.
     scores: [], // [rank, [0, 0, 0], message] player's information per level.
-    translate: ["gold", "silver", "bronze", ""], // translate rank (0-3) to text ("gold", etc)
-    messages: [ // 0-Gold 1-Silver 2-Bronze
+    myBest: [
+        [2, 0, 0],
+        [2, 0, 0],
+        [2, 0, 0],
+        [1, 0, 0],
+        [2, 0, 0], // LEVEL 5 (not index)
+        [2, 0, 0],
+        [2, 1, 0],
+        [3, 1, 0],
+        [2, 0, 0],
+        [4, 0, 0], // LEVEL 10
+        [2, 1, 1],
+        [2, 1, 1],
+        [3, 1, 0],
+        [3, 1, 1],
+        [6, 2, 0], // LEVEL 15
+        [4, 2, 2],
+        [4, 0, 1],
+        [2, 4, 4],
+        [5, 0, 2],
+        [8, 0, 0] // LEVEL 20
+    ],
+    totalScore: 0, // total calibrated score.
+    translate: ["gold", "silver", "bronze", "uselessClass"], // translate rank (0-3) to text ("gold", etc).
+    messages: [ // 0-Gold 1-Silver 2-Bronze.
         [
             "You've achieved <span class='gold'>Gold</span>, wondrous warrior!",
             "You've achieved <span class='gold'>Gold</span>, fantastic fighter!",
@@ -254,7 +290,8 @@ let score = {
             "Excellent job perfoming at a <span class='gold'>Gold</span>-medal level.",
             "Don't stop working hard to get that <span class='gold'>Gold</span> rank!",
             "Good job reaching the rank of <span class='gold'>Gold</span>.",
-            "Your skill has taken you all the way to <span class='gold'>Gold</span>; well done."
+            "Your skill has taken you all the way to <span class='gold'>Gold</span>; well done.",
+            "Great work; getting <span class='gold'>Gold</span> is certainly not easy."
         ],
         [
             "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
@@ -300,26 +337,39 @@ let score = {
             return [rank, this.messages[rank][biggest], s];
         } else return [rank, this.scores[level][1], s];
     },
-    calibrate: function ([seconds, swaps, blocks]) {
+    calibrate: function ([seconds, swaps, blocks], sum = false) {
         // The below code needs to be super calibrated!
-        return [seconds * 31, swaps * 205, blocks * 115];
+        let calibratedScore = [seconds * 11, swaps * 150, blocks * 100];
+        if (!sum) return calibratedScore;
+        else return calibratedScore.reduce((a, b) => a + b, 0);
     },
     displayScore: function (values, alreadyCalibrated) {
         let value = (!alreadyCalibrated) ? this.calibrate(values).reduce((a, b) => a + b, 0) : values.reduce((a, b) => a + b, 0);
         // take 'value' and put it between 100 and 1000; 1000 is the max score.
-        let newValue = Math.floor(1058.5 - ((value * 920) / (value + 920)));
+        let newValue = Math.floor(1022 - ((value * 920) / (value + 920)));
         newValue = (newValue > 1000) ? 1000 : newValue;
         return newValue;
     },
     unlock: function (newLevel) {
         // unlock the level in the html.
-        console.log("Unlocking Level " + (newLevel + 1));
-        let td = document.querySelector("tr #td" + (newLevel + 1));
+        //console.log("Unlocking Level " + (newLevel + 1));
+        newLevel = (newLevel >= levels.levels.length) ? levels.levels.length - 1 : newLevel;
+        let td = document.querySelector("tr #td" + ((newLevel >= levels.levels.length) ? levels.levels.length - 1 : newLevel + 1));
         td.classList.remove("locked");
-        td.setAttribute("onclick", "dom.play(" + (newLevel + 1) + ");");
+        td.setAttribute("onclick", "dom.play(" + ((newLevel >= levels.levels.length) ? levels.levels.length - 1 : newLevel + 1) + ");");
         // update the bar for the previous level
         let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
+        console.log(score.translate[this.scores[newLevel - 1][0]]);
         bar.classList.add(score.translate[this.scores[newLevel - 1][0]]);
+    },
+    calcTotal: function () {
+        let curr = 0;
+        for (let l = 0; l < this.scores.length; l++) {
+            let calibrated = score.displayScore(this.scores[l][1], true);
+            if (this.scores[l][1].reduce((a, b) => a + b, 0) > 0) curr += calibrated;
+        }
+        this.totalScore = curr;
+        return curr;
     }
 }
 
@@ -407,7 +457,7 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
     [3, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ],
 [[15, 0, 0], [30, 1, 1]], // [Gold, Silver] --> [seconds, swaps, blocks]
 0, // [goal-y]
@@ -510,7 +560,7 @@ levels.addLevel([
         ]
     ),
 ],
-10, 0
+0, 0
 ); // ^ LEVEL index 4
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -835,17 +885,17 @@ levels.addLevel([
     [1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[20, 0, 2], [40, 0, 3]],
+[[15, 0, 2], [40, 0, 3]],
 0,
 [
     new Button(
         2, [2, 5], 0,
         [
-            new Lazer([7, [6, 9]], "Swap", true),
+            new Lazer([7, [6, 12]], "Swap", true),
             new Lazer([3, [-1, 5]], "Swap", false),
         ]
     ),
@@ -855,15 +905,15 @@ levels.addLevel([
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1],
-    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0],
+    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
 [[13, 0, 0], [150, 0, 0]],

@@ -557,11 +557,45 @@ canvas {
 .powerBox p {
     display: inline-block;
     margin-left: calc(var(--unit) * 0.9);
-    margin-top: calc(var(--unit) * -0.1);
-    font-size: calc(var(--unit) * 0.7);
-    color: #262626;
+    margin-top: calc(var(--unit) * 0.03);
+    font-size: calc(var(--unit) * 0.5);
+    color: rgba(0, 0, 0, 0.65);
     transition-duration: 0.2s;
+    /*font-family: VCR_OSD;*/
 }
 .powerBox p.shake {
     color: #d62a1d;
+}
+
+#SettingsMenu section {
+    width: 100%;
+    font-family: D_D;
+}
+#SettingsMenu section.settingsTop {
+    margin-top: calc(var(--unit) * 0.5);
+    height: calc(var(--unit) * 2.7);
+    line-height: calc(var(--unit) * 2);
+}
+#SettingsMenu section.settingsTop p {
+    font-size: calc(var(--unit) * 0.45);
+    text-align: center;
+}
+#SettingsMenu section.settingsTop p {
+    font-size: calc(var(--unit) * 0.8);
+}
+#TotalScore {
+    color: black;
+}
+#SettingsMenu section.settingsBottom input {
+    border: none;
+    outline: none;
+    width: calc(var(--unit) * 0.35);
+    height: calc(var(--unit) * 0.35);
+    opacity: 0.5;
+}
+#SettingsMenu section.settingsBottom p {
+    display: inline-block;
+    font-size: calc(var(--unit) * 0.5);
+    margin-left: calc(var(--unit) * 0.4);
+    margin-top: calc(var(--unit) * -0.8);
 }

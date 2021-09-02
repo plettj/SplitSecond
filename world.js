@@ -437,8 +437,8 @@ let Lazer = class {
         if (!this.active || !this.onScreen) return;
         if (this.type == "Swap") {
             if (Math.sign(x - (this.location[0] + 0.5) * unit) !== Math.sign(newX - (this.location[0] + 0.5) * unit)) {
-                console.log("cross X!");
-                console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
+                //console.log("cross X!");
+                //console.log(y + " - " + ((this.location[1][0] + 0.5) * unit));
                 if (y > (this.location[1][0] + 0.5) * unit && y < (this.location[1][1] + 0.5) * unit) {
                     swapTime(true);
                 }

@@ -16,7 +16,7 @@ let dom = {
     nextScore: document.body.querySelector("#NextScore"),
     medals: [document.body.querySelector(".progressMedal.gold"), document.body.querySelector(".progressMedal.silver"), document.body.querySelector(".progressMedal.bronze")],
     menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu"), document.body.querySelector("#SettingsMenu")],
-    focuses: [document.body.querySelector(".play"), "Dynamically chooses the current level.", document.body.querySelector("#settingsfocustemp")],
+    focuses: [document.body.querySelector(".play"), "Dynamically chooses the current level.", document.body.querySelectorAll("#SettingsMenu [tabindex='0']")[0]],
     displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-SettingsMenu 3-LevelTransition
     preview: -1, // the currently-displayed level
     newMenu: function (menu = 1) {
@@ -41,7 +41,7 @@ let dom = {
                 dom.menus[1].classList.remove("off");
                 dom.menus[1].classList.add("on");
                 setTimeout(function () {
-                    document.body.querySelectorAll("td")[levels.currentLevel].focus();
+                    document.body.querySelectorAll("td")[(levels.currentLevel == -1) ? 0 : levels.currentLevel].focus();
                     dom.updateSide();
                     console.log("focussing on levels.currentLevel");
                 }, 0);
@@ -92,6 +92,7 @@ let dom = {
             dom.powers.classList.remove("off");
             dom.instruction.classList.remove("off");
             dom.displayed = -1;
+            if (!autoStart) dom.preview = -1;
             dom.updateInstruct();
         }
     },
@@ -117,9 +118,11 @@ let dom = {
                 dom.updateSide();
             } else if (dom.displayed == 2) {
                 // settings menu left button...
+
+                // don't do anything since settings only have vertical controls
             }
         } else if (code == 38 || code == 87) { // Up
-            if (dom.displayed == 0 || dom.displayed == 2) {
+            if (dom.displayed == 0) {
                 if (element.previousElementSibling.matches("[tabindex='0']")) element.previousElementSibling.focus();
                 else element.parentElement.querySelector(":scope > [tabindex='0']:last-child").focus();
             } else if (dom.displayed == 1) {
@@ -157,6 +160,8 @@ let dom = {
                 dom.updateSide();
             } else if (dom.displayed == 2) {
                 // settings menu right button...
+
+                // don't do anything since settings only have vertical controls
             }
         } else if (code == 40 || code == 83) { // Down
             if (dom.displayed == 0 || dom.displayed == 2) {
@@ -300,6 +305,16 @@ let dom = {
         dom.play();
         levels.startLevel(levels.currentLevel);
     },
+    updateTotalScore: function (totalScore) {
+        document.querySelector("#TotalScore").textContent = totalScore;
+    },
+    swapPref: function (element, type) {
+        switch (type) {
+            case "autoStart":
+                autoStart = element.checked;
+                break;
+        }
+    }
 }
 
 function shakePower(power) {
@@ -311,7 +326,6 @@ function shakePower(power) {
 }
 
 function updatePower() {
-    console.log("Updating power!!!");
     let displays = document.body.querySelectorAll(".powerBox p");
     displays[0].textContent = Math.floor(levels.powers[levels.currentLevel][0] - levels.scores[1]);
     displays[1].textContent = Math.floor(levels.powers[levels.currentLevel][1] - levels.scores[2][0]);
