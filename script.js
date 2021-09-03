@@ -17,6 +17,7 @@ let dom = {
     medals: [document.body.querySelector(".progressMedal.gold"), document.body.querySelector(".progressMedal.silver"), document.body.querySelector(".progressMedal.bronze")],
     menus: [document.body.querySelector("#PauseMenu"), document.body.querySelector("#LevelsMenu"), document.body.querySelector("#SettingsMenu")],
     focuses: [document.body.querySelector(".play"), "Dynamically chooses the current level.", document.body.querySelectorAll("#SettingsMenu [tabindex='0']")[0]],
+    checkboxes: document.body.querySelectorAll("input[type='checkbox']"),
     displayed: -1, // -1-nothing, 0-PauseMenu, 1-LevelsMenu, 2-SettingsMenu 3-LevelTransition
     preview: -1, // the currently-displayed level
     newMenu: function (menu = 1) {
@@ -41,7 +42,7 @@ let dom = {
                 dom.menus[1].classList.remove("off");
                 dom.menus[1].classList.add("on");
                 setTimeout(function () {
-                    document.body.querySelectorAll("td")[(levels.currentLevel == -1) ? 0 : levels.currentLevel].focus();
+                    document.body.querySelectorAll("#Select td")[(levels.currentLevel == -1) ? 0 : levels.currentLevel].focus();
                     dom.updateSide();
                     console.log("focussing on levels.currentLevel");
                 }, 0);
@@ -309,7 +310,7 @@ let dom = {
                     dom.nextScore.classList.remove(name);
                 }
             });
-            console.log(rank);
+            //console.log(rank);
 
             dom.bestScore.classList.add(score.translate[rank]);
             dom.nextScore.classList.add(score.translate[(rank > 0) ? rank - 1 : 0]);
@@ -323,10 +324,17 @@ let dom = {
     updateTotalScore: function (totalScore) {
         document.querySelector("#TotalScore").textContent = totalScore;
     },
-    swapPref: function (element, type) {
+    swapPref: function (n, type) {
         switch (type) {
             case "autoStart":
-                autoStart = element.checked;
+                autoStart = !autoStart;
+                dom.checkboxes[n].checked = autoStart;
+                save();
+                break;
+            case "fullStatHints":
+                fullStatHints = !fullStatHints;
+                dom.checkboxes[n].checked = fullStatHints;
+                save();
                 break;
         }
     }
@@ -349,6 +357,7 @@ function updatePower() {
 // This function relies on score.scores being up-to-date ([0, 0, 0] = uncomplete)
 function initializeLevels() {
     let currRow = document.createElement("tr");
+    let comeToLast = false; // true, if come to last solved level
     for (let s = 0; s < score.scores.length; s++) {
         if (!(s % 4)) { // first in a row
             currRow = document.createElement("tr");
@@ -356,8 +365,16 @@ function initializeLevels() {
         let td = document.createElement("td");
         let bar = document.createElement("div");
         bar.classList.add("bar");
-        if (score.scores[s][1][0] + score.scores[s][1][1] + score.scores[s][1][2] <= 0 && s !== 0 && !beginningLevel) {
-            td.classList.add("locked");
+        if (score.scores[s][1][0] + score.scores[s][1][1] + score.scores[s][1][2] <= 0) {
+            if (comeToLast) td.classList.add("locked");
+            else {
+                td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");
+                let rank = score.scores[s][0];
+                if (rank == 2) bar.classList.add("bronze");
+                else if (rank == 1) bar.classList.add("silver");
+                else if (rank == 0) bar.classList.add("gold");
+                comeToLast = true;
+            }
         } else {
             td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");
             let rank = score.scores[s][0];
@@ -381,4 +398,24 @@ function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
     window.scrollTo(0, 0);
     dom.updateSide(document.body.querySelector("td"));
+    console.log("Make powers visible");
+    for (let i = 0; i < 2; i++) {
+        if (powers[i]) document.body.querySelectorAll("#Powers .powerBox")[i].classList.add("on");
+    }
+    dom.updateTotalScore(score.calcTotal());
+    dom.checkboxes[0].checked = autoStart;
+    dom.checkboxes[1].checked = fullStatHints;
+}
+
+function fullDelete() {
+    //if (confirm("Are you sure you want to delete all your progress in Split Second?")) {
+        console.log("Full deletion time!!");
+        localStorage.setItem('saved', JSON.stringify({
+            "bestLevel": 0,
+            "powers": [false, false],
+            "autoStart": true,
+            "scores": []
+        }));
+        location.reload();
+    //}
 }

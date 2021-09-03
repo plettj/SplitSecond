@@ -586,9 +586,13 @@ canvas {
 #TotalScore {
     color: black;
 }
+#SettingsMenu section.settingsBottom {
+    padding-left: calc(var(--unit) * 0.4);
+}
 #SettingsMenu section.settingsBottom input {
     border: none;
     outline: none;
+    float: left;
     width: calc(var(--unit) * 0.35);
     height: calc(var(--unit) * 0.35);
     opacity: 0.5;
@@ -597,5 +601,20 @@ canvas {
     display: inline-block;
     font-size: calc(var(--unit) * 0.5);
     margin-left: calc(var(--unit) * 0.4);
-    margin-top: calc(var(--unit) * -0.8);
+    margin-top: calc(var(--unit) * 0.2);
+    height: calc(var(--unit) * 0.7);
+}
+#SettingsMenu div.button {
+    /*font-size: calc(var(--unit) * 0.6);*/
+    width: auto;
+    margin-top: calc(var(--unit) * 0.15);
+}
+#SettingsMenu div.button:hover {
+    color: #d62a1d;
+}
+
+td.small {
+    font-size: calc(var(--unit) * 0.3);
+    font-weight: 200;
+    color: red;
 }

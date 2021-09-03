@@ -38,8 +38,21 @@
                     <p style="font-size: calc(var(--unit) * 0.3); margin-top: calc(var(--unit) * -1.4);">Developer's record at your level: <span id="DevelopersRecord" style="color: black;">0</span></p>
                 </section>
                 <section class="settingsBottom">
-                    <input type="checkbox" checked onclick="dom.swapPref(this, 'autoStart')" tabindex="0">
-                    <p class="label">Auto-start next level, after completion.</p>    
+                    <table>
+                        <tr>
+                            <td><input type="checkbox" checked onclick="dom.swapPref(0, 'autoStart')" tabindex="0"></td>
+                            <td><p class="label">Auto-start next level, after completion</p></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" onclick="dom.swapPref(1, 'fullStatHints')" tabindex="0"></td>
+                            <td><p class="label">Show specific stats in the level menu</p></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="button" onclick="fullDelete();" tabindex="0">Restart: delete all progress and preferences</div>
+                            </td>
+                        </tr>
+                    </table>
                 </section>
             </div>
         </main>
@@ -76,6 +89,29 @@
                             <td id="NextScoreTitle">Next medal:</td>
                             <td id="NextScore" class="gold">999</td>
                         </tr>
+                        <!--
+                        <tr>
+                            <td colspan="2" class="small">Gold stats:</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+
+                                <table id="TinyTable">
+                                    <tr>
+                                        <td class="small secondsTitle">Seconds</td>
+                                        <td class="small swapsTitle">Swaps</td>
+                                        <td class="small dinoblocksTitle">Dino-Blocks</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="small secondsNum">2</td>
+                                        <td class="small swapsNum">3</td>
+                                        <td class="small dinoblocksNum">1</td>
+                                    </tr>
+                                </table>
+
+                            </td>
+                        </tr>
+                        -->
                     </table>
                     <div id="LMessage">This level has not been completed.</div>
                 </section>

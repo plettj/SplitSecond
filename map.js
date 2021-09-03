@@ -68,6 +68,23 @@ function inRect([Xleft, Xright, Ytop, Ybottom], points) {
     });
     return inside;
 }
+function save() {
+    saved["powers"] = [powers[0], powers[1]];
+    saved["autoStart"] = autoStart;
+    saved["fullStatHints"] = fullStatHints;
+    tempScoreRecord = [];
+    for (let l = 1; l < levels.levels.length; l++) {
+        if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
+            if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
+                // first level with no completion
+                saved["bestLevel"] = l;
+            }
+            tempScoreRecord.push(score.scores[l - 1]);
+        }
+    }
+    saved["scores"] = tempScoreRecord;
+    localStorage.setItem('saved', JSON.stringify(saved));
+}
 
 // LEVELS
 
@@ -308,10 +325,12 @@ let score = {
         for (let i = 0; i < score.goals.length; i++) { // calibrate the 'goals'.
             score.goals[i][0] = this.calibrate(score.goals[i][0]);
             score.goals[i][1] = this.calibrate(score.goals[i][1]);
+            if (i < saved["scores"].length) {
+                score.scores.push(saved["scores"][i]);
+            } else {
+                score.scores.push([3, [0, 0, 0], "This level has not been completed."]);
+            }
         }
-        levels.levels.forEach((l) => {
-            score.scores.push([3, [0, 0, 0], "This level has not been completed."]);
-        });
         let t = this;
         t.goals.forEach((nums) => {
             t.ranks.push([nums[0].reduce((a, b) => a + b, 0), nums[1].reduce((a, b) => a + b, 0)]);
@@ -334,6 +353,7 @@ let score = {
             this.scores[level] = [rank, s, this.messages[rank][(rank > 0) ? biggest : Math.floor(Math.random() * (this.messages[0].length - 1))]];
             console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
             if (complete) this.unlock(level + 1);
+            save();
             return [rank, this.messages[rank][biggest], s];
         } else return [rank, this.scores[level][1], s];
     },
