@@ -331,9 +331,9 @@ let dom = {
                 dom.checkboxes[n].checked = autoStart;
                 save();
                 break;
-            case "fullStatHints":
-                fullStatHints = !fullStatHints;
-                dom.checkboxes[n].checked = fullStatHints;
+            case "statisticTwo":
+                statisticTwo = !statisticTwo;
+                dom.checkboxes[n].checked = statisticTwo;
                 save();
                 break;
         }
@@ -404,7 +404,7 @@ function visible() {
     }
     dom.updateTotalScore(score.calcTotal());
     dom.checkboxes[0].checked = autoStart;
-    dom.checkboxes[1].checked = fullStatHints;
+    dom.checkboxes[1].checked = statisticTwo;
 }
 
 function fullDelete() {

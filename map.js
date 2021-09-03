@@ -71,7 +71,9 @@ function inRect([Xleft, Xright, Ytop, Ybottom], points) {
 function save() {
     saved["powers"] = [powers[0], powers[1]];
     saved["autoStart"] = autoStart;
-    saved["fullStatHints"] = fullStatHints;
+    saved["statisticTwo"] = statisticTwo;
+    if (statisticTwo) GFuel = 1;
+    else GFuel = 3;
     tempScoreRecord = [];
     for (let l = 1; l < levels.levels.length; l++) {
         if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {

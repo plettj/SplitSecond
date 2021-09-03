@@ -17,21 +17,21 @@ document.body.style.setProperty("--height", height);
 let paused = false;
 let swapDelay = 250; // milliseconds before you can swap time again
 let autoStart = true; // automatically move on to the next level upon completion
-let fullStatHints = false; // show developer's records' information in side menu
+let statisticTwo = false; // show developer's records' information in side menu
 let stepCounter = 0; // animation step always up (counts)
 let step = 0; // actual animation step (counts)
 let stepSpeed = 8; // steps per second
 let animationStepSpeed = 0.2; // bigger = faster
 let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
-let GFuel = 2; // number of game frames per ghost frame (ghosts are choppier with larger numbers)
+let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier with larger numbers)
 let nextGhost = undefined;
 
 let saved = {
     "bestLevel": 0,
     "powers": [false, false],
     "autoStart": true,
-    "fullStatHints": false,
+    "statisticTwo": false,
     "scores": []
 }
 
@@ -43,7 +43,9 @@ if (!previousSaved) { // stuff hasn't been saved yet
     beginningLevel = saved["bestLevel"];
     powers = [saved["powers"][0], saved["powers"][1]];
     autoStart = saved["autoStart"];
-    fullStatHints = saved["fullStatHints"];
+    statisticTwo = saved["statisticTwo"];
+    if (statisticTwo) GFuel = 1;
+    else GFuel = 3;
     // saved["scores"] is done over in the map.js file
 }
 
