@@ -21,7 +21,7 @@ let dom = {
     preview: -1, // the currently-displayed level
     newMenu: function (menu = 1) {
         dom.close();
-        console.log(menu);
+        //console.log(menu);
         switch (menu) {
             case 0: // Pause Menu
                 dom.menus[0].classList.remove("off");
@@ -201,6 +201,19 @@ let dom = {
     },
     updateSide: function (element = document.body.querySelector(":focus"), direction = 0, cursor = false) {
         let l = parseInt(element.textContent) - 1;
+        console.log();
+        let personalBest = 0;
+        for (let l = 0; l < document.querySelectorAll("#Select td:not(.locked)").length - 1; l++) {
+            personalBest += score.displayScore(score.myBest[l], false);
+        }
+        if (document.querySelectorAll("#Select td:not(.locked)").length == score.myBest.length) {
+            let final = document.querySelectorAll("#Select td:not(.locked)")[score.myBest.length - 1];
+            let possClass = final.childNodes[1].classList[1];
+            if (possClass == score.translate[0] || possClass == score.translate[1] || possClass == score.translate[2]) {
+                personalBest += score.displayScore(score.myBest[l], false);
+            }
+        }
+        document.body.querySelector("#DevelopersRecord").textContent = personalBest;
         if (l !== dom.preview) { // new element
             if (typeof(l) !== "number" || l !== l || !element.matches("[tabindex='0']:not(.locked)")) return;
             //console.log("Updating for level " + (l + 1) + "...");
@@ -296,6 +309,8 @@ let dom = {
                     dom.nextScore.classList.remove(name);
                 }
             });
+            console.log(rank);
+
             dom.bestScore.classList.add(score.translate[rank]);
             dom.nextScore.classList.add(score.translate[(rank > 0) ? rank - 1 : 0]);
         }

@@ -261,15 +261,15 @@ let score = {
         [2, 0, 0], // LEVEL 5 (not index)
         [2, 0, 0],
         [2, 1, 0],
-        [3, 1, 0],
+        [2, 1, 0],
         [2, 0, 0],
         [4, 0, 0], // LEVEL 10
         [2, 1, 1],
         [2, 1, 1],
-        [3, 1, 0],
+        [2, 1, 0],
         [3, 1, 1],
-        [6, 2, 0], // LEVEL 15
-        [4, 2, 2],
+        [4, 2, 0], // LEVEL 15
+        [3, 2, 2],
         [4, 0, 1],
         [2, 4, 4],
         [5, 0, 2],
@@ -353,10 +353,18 @@ let score = {
     unlock: function (newLevel) {
         // unlock the level in the html.
         //console.log("Unlocking Level " + (newLevel + 1));
-        newLevel = (newLevel >= levels.levels.length) ? levels.levels.length - 1 : newLevel;
-        let td = document.querySelector("tr #td" + ((newLevel >= levels.levels.length) ? levels.levels.length - 1 : newLevel + 1));
+        if (newLevel >= levels.levels.length) {
+            console.log("You've beat the final level!!");
+            if (newLevel == levels.levels.length) {
+                let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
+                console.log(score.translate[this.scores[newLevel - 1][0]]);
+                bar.classList.add(score.translate[this.scores[newLevel - 1][0]]);
+            }
+            return;
+        }
+        let td = document.querySelector("tr #td" + (newLevel + 1));
         td.classList.remove("locked");
-        td.setAttribute("onclick", "dom.play(" + ((newLevel >= levels.levels.length) ? levels.levels.length - 1 : newLevel + 1) + ");");
+        td.setAttribute("onclick", "dom.play(" + (newLevel + 1) + ");");
         // update the bar for the previous level
         let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
         console.log(score.translate[this.scores[newLevel - 1][0]]);
@@ -547,7 +555,7 @@ levels.addLevel([
 0,
 [
     new Button(
-        2, [6, 10], 0,
+        2, [0, 0], 0,
         [
             new Lazer([10, [4, 8]], "Swap", false)
         ],
@@ -906,11 +914,11 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
