@@ -137,6 +137,7 @@ canvas {
     opacity: 1;
     transition-duration: 0.1s;
     transition-property: opacity;
+    cursor: pointer;
 }
 #Pause.off {
     opacity: 0;
@@ -611,4 +612,50 @@ canvas {
 }
 #SettingsMenu div.button:hover {
     color: #d62a1d;
+}
+#TitleScreen,#TitleScreenOverlay {
+    position: absolute;
+    width: calc(var(--unit) * var(--width));
+    height: calc(var(--unit) * var(--height));
+    left: calc((100% - var(--unit) * var(--width)) / 2);
+    top: calc((100% - var(--unit) * var(--height)) / 2);
+    z-index: 2;
+}
+#TitleScreen {
+    background-image: url("images/TitleScreen.png");
+    background-color: rgba(255, 255, 255, 0);
+    background-size: calc(var(--unit) * var(--width)) calc(var(--unit) * var(--height));
+}
+#TitleScreenOverlay {
+    background-color: rgba(255, 255, 255, 0);
+    transition-duration: 0.5s;
+    pointer-events: none;
+    z-index: 3;
+}
+#TitleScreenOverlay.leaving {
+    background-color: rgba(255, 255, 255, 1);
+}
+#TitleScreen.gone {
+    background-image: none;
+    display: none;
+}
+#TitleScreen #FirstPlay {
+    background-color: transparent;
+    outline: none;
+    border: none;
+    background-image: url("images/Play.png");
+    background-size: calc(var(--unit) * 3) calc(var(--unit) * 2.5);
+    position: absolute;
+    width: calc(var(--unit) * 3);
+    height: calc(var(--unit) * 1.2);
+    left: calc((100% - var(--unit) * var(--width)) / 2 + var(--unit) * 6.5);
+    top: calc((100% - var(--unit) * var(--height)) / 2 + var(--unit) * 8.9);
+    cursor: pointer;
+    pointer-events: all;
+}
+#TitleScreen #FirstPlay:hover {
+    top: calc((100% - var(--unit) * var(--height)) / 2 + var(--unit) * 8.8);
+    height: calc(var(--unit) * 1.3);
+    background-size: calc(var(--unit) * 3) calc(var(--unit) * 2.5);
+    background-position-y: bottom;
 }

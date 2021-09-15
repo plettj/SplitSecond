@@ -120,9 +120,9 @@ let levels = {
             let semiNext = [0, []]; // the going "semiShape" for the next row
             for (let x = 0; x < width; x++) {
                 switch (l[y][x]) {
-                    case 0:
                     case 1.5:
-                        if (l[y][x] == 1.5) l[y][x] = 0; // mistakenly kept as 1.5
+                        l[y][x] = 0; // mistakenly kept as 1.5
+                    case 0:
                         if (semisolid(x, y, l)) { // semisolid above
                             let option = Math.floor(Math.random() * 4); // style option: 1-{=} 2-{+} 3-{-}
                             if (semisolid(x + 1, y, l)) { // RIGHT is available

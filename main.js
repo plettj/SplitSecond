@@ -36,8 +36,11 @@ let saved = {
 }
 
 let previousSaved = localStorage.getItem('saved');
+let veryveryfirst = false;
 if (!previousSaved) { // stuff hasn't been saved yet
-    save();
+    setTimeout(function () {
+        save();
+    }, 2000);
 } else { // update based on save
     saved = JSON.parse(localStorage.getItem('saved'));
     beginningLevel = saved["bestLevel"];
@@ -46,6 +49,11 @@ if (!previousSaved) { // stuff hasn't been saved yet
     statisticTwo = saved["statisticTwo"];
     if (statisticTwo) GFuel = 1;
     else GFuel = 3;
+    if (saved["scores"].length < 1) {
+        veryveryfirst = true;
+    } else {
+        document.body.querySelector("#TitleScreen").style.display = "none";
+    }
     // saved["scores"] is done over in the map.js file
 }
 
@@ -93,10 +101,12 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png", "Objects.
 // *** Where it all starts ***
 window.onload = function () {
     score.init();
-    levels.startLevel(beginningLevel);
-    levels.drawLevel(beginningLevel, true);
+    if (!veryveryfirst) {
+        levels.startLevel(beginningLevel);
+        levels.drawLevel(beginningLevel, true);
+        startAnimating(60); // 60 fps
+    }
     ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
-    startAnimating(60); // 60 fps
     setTimeout(visible, 300); // should be the length of menu animation
 }
 

@@ -398,13 +398,28 @@ function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
     window.scrollTo(0, 0);
     dom.updateSide(document.body.querySelector("td"));
-    console.log("Make powers visible");
+    //console.log("Possibly: make powers visible");
     for (let i = 0; i < 2; i++) {
         if (powers[i]) document.body.querySelectorAll("#Powers .powerBox")[i].classList.add("on");
     }
     dom.updateTotalScore(score.calcTotal());
     dom.checkboxes[0].checked = autoStart;
     dom.checkboxes[1].checked = statisticTwo;
+}
+
+function startGame() {
+    console.log("starting the game!!");
+    document.body.querySelector("#TitleScreenOverlay").classList.add("leaving");
+    setTimeout(function () {
+        document.body.querySelector("#TitleScreen").classList.add("gone");
+        document.body.querySelector("#TitleScreenOverlay").classList.remove("leaving");
+        levels.startLevel(beginningLevel);
+        levels.drawLevel(beginningLevel, true);
+        startAnimating(60); // 60 fps
+    }, 500);
+    setTimeout(function () {
+        document.body.querySelector("#TitleScreenOverlay").style.display = "none";
+    }, 1000);
 }
 
 function fullDelete() {
