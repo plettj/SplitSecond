@@ -482,7 +482,11 @@ let Spikes = class {
 
         for (let s = 0; s < this.spikes.length; s++) {
             let spike = this.spikes[s];
-            spike[3] = ((info[0] == 2) == !spike[2]); // if button pressed, compare to spike's native state
+            if (spike[2]) {
+                spike[3] = (info[0] == 0); // if button pressed, compare to spike's native state
+            } else {
+                spike[3] = (info[0] == 2); // if button pressed, compare to spike's native state
+            }
 
             let animState = (info[0]) ? Math.ceil(info[0] + 0.01) : 0;
             if (spike[2] == 1) animState = (animState - 3) * -1;
@@ -505,7 +509,7 @@ let Spikes = class {
         for (let s = 0; s < this.spikes.length; s++) {
             let ss = this.spikes[s];
             // points: [left, top, right]
-            if (ss[3]) {
+            if (ss[3] >= 2) {
                 let points = [[(ss[0] + 0.25) * unit, (ss[1] + 0.6) * unit], [(ss[0] + 0.5) * unit, (ss[1] + 0.3) * unit], [(ss[0] + 0.75) * unit, (ss[1] + 0.7) * unit]];
                 if (inRect(beforeIP, points)) return true;
             }

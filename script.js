@@ -261,7 +261,7 @@ let dom = {
     scrollToRow: function (row, direction) { // direction --> 0-GOAWAY, 1-Up, -1-Down
         if (!direction) return false;
         let menuScroll = document.body.querySelector(".scroll").scrollTop;
-        let elemScroll = document.body.querySelectorAll("tr")[row].offsetTop - Math.round(unit * 0.15);
+        let elemScroll = document.body.querySelectorAll("#Select tr")[row].offsetTop - Math.round(unit * 0.15);
         let willScroll = false;
         if (direction == 1) { // Up
             if (elemScroll - menuScroll < unit * 1) {
