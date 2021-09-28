@@ -455,7 +455,7 @@ let Lazer = class {
 let Spikes = class {
     constructor (spikes, colour/* 0-black; 1-red */) {
         this.spikes = spikes.map((info) => [...info, info[2]]);
-        // [x, y, natural, currState]
+        // [x, y, natural, currState (boolean)]
         this.colour = colour;
         this.type = "Spike";
         this.onScreen = false;
@@ -483,10 +483,11 @@ let Spikes = class {
         for (let s = 0; s < this.spikes.length; s++) {
             let spike = this.spikes[s];
             if (spike[2]) {
-                spike[3] = (info[0] == 0); // if button pressed, compare to spike's native state
+                spike[3] = (info[0] == 0);
             } else {
-                spike[3] = (info[0] == 2); // if button pressed, compare to spike's native state
+                spike[3] = (info[0] == 2);
             }
+            console.log(spike[3]);
 
             let animState = (info[0]) ? Math.ceil(info[0] + 0.01) : 0;
             if (spike[2] == 1) animState = (animState - 3) * -1;
@@ -509,7 +510,7 @@ let Spikes = class {
         for (let s = 0; s < this.spikes.length; s++) {
             let ss = this.spikes[s];
             // points: [left, top, right]
-            if (ss[3] >= 2) {
+            if (ss[3]) {
                 let points = [[(ss[0] + 0.25) * unit, (ss[1] + 0.6) * unit], [(ss[0] + 0.5) * unit, (ss[1] + 0.3) * unit], [(ss[0] + 0.75) * unit, (ss[1] + 0.7) * unit]];
                 if (inRect(beforeIP, points)) return true;
             }
