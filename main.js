@@ -14,7 +14,8 @@ let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
-let paused = false;
+let paused = true;
+let gameBegun = false; // initial title screen boolean
 let swapDelay = 250; // milliseconds before you can swap time again
 let autoStart = true; // automatically move on to the next level upon completion
 let statisticTwo = false; // show developer's records' information in side menu
@@ -53,6 +54,8 @@ if (!previousSaved) { // stuff hasn't been saved yet
         veryveryfirst = true;
     } else {
         document.body.querySelector("#TitleScreen").style.display = "none";
+        gameBegun = true;
+        paused = false;
     }
     // saved["scores"] is done over in the map.js file
 }

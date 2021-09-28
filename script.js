@@ -98,8 +98,14 @@ let dom = {
         }
     },
     key: function (code) {
+        console.log(code);
         let element = document.body.querySelector(":focus");
-        if (code == 82 && dom.displayed == -1) { // R
+        if (!gameBegun) {
+            if (code == 13 || code == 32 || code == 38 || code == 39 || code == 87 || code == 68 || code == 27) {
+                startGame();
+            }
+            return;
+        } if (code == 82 && dom.displayed == -1) { // R
             levels.startLevel(levels.currentLevel);
         } else if ((code == 80 || code == 27) && dom.displayed == -1) { // P
             dom.newMenu(0);
@@ -409,6 +415,8 @@ function visible() {
 
 function startGame() {
     console.log("starting the game!!");
+    paused = false;
+    gameBegun = true;
     document.body.querySelector("#TitleScreenOverlay").classList.add("leaving");
     setTimeout(function () {
         document.body.querySelector("#TitleScreen").classList.add("gone");
