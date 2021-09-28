@@ -98,7 +98,6 @@ let dom = {
         }
     },
     key: function (code) {
-        console.log(code);
         let element = document.body.querySelector(":focus");
         if (!gameBegun) {
             if (code == 13 || code == 32 || code == 38 || code == 39 || code == 87 || code == 68 || code == 27) {
@@ -341,6 +340,7 @@ let dom = {
                 statisticTwo = !statisticTwo;
                 dom.checkboxes[n].checked = statisticTwo;
                 save();
+                levels.startLevel(levels.currentLevel);
                 break;
         }
     }

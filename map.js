@@ -415,7 +415,7 @@ let score = {
         td.setAttribute("onclick", "dom.play(" + (newLevel + 1) + ");");
         // update the bar for the previous level
         let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
-        console.log(score.translate[this.scores[newLevel - 1][0]]);
+        //console.log(score.translate[this.scores[newLevel - 1][0]]);
         bar.classList.add(score.translate[this.scores[newLevel - 1][0]]);
     },
     calcTotal: function () {

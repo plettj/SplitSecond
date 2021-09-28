@@ -268,13 +268,13 @@ let avatar = {
                         trapped = -1;
                         avatar.vcoor[0] = 0;
                         avatar.bFrame[2] = result[1] * unit; // x coor
-                        console.log("trapped");
+                        //console.log("trapped");
                     } else if (result[0] == 2) { // hit RIGHT side of wall
-                        console.log("right-collide");
+                        //console.log("right-collide");
                         avatar.vcoor[0] = 0;
                         avatar.coor[0] = (Math.floor(avatar.coor[0] / unit) + 0.5001) * unit;
                     } else if (result[0] == 1) { // hit LEFT side of wall
-                        console.log("left-collide");
+                        //console.log("left-collide");
                         avatar.vcoor[0] = 0;
                         avatar.coor[0] = (Math.floor(avatar.coor[0] / unit) + (avatar.box[0] - 0.01) / 10) * unit;
                     }
