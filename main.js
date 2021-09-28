@@ -10,6 +10,7 @@ let levelsWpowers = [5, 8]; // the levels that hold powers
 let powers = [false, false]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
+if (window.innerWidth < (width + 0.5) * unit) unit = Math.floor(window.innerWidth / (width + 0.5) / 4) * 4;
 let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
