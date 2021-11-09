@@ -22,7 +22,6 @@ let dom = {
     preview: -1, // the currently-displayed level
     newMenu: function (menu = 1) {
         dom.close();
-        //console.log(menu);
         switch (menu) {
             case 0: // Pause Menu
                 dom.menus[0].classList.remove("off");
@@ -44,7 +43,6 @@ let dom = {
                 setTimeout(function () {
                     document.body.querySelectorAll("#Select td")[(levels.currentLevel == -1) ? 0 : levels.currentLevel].focus();
                     dom.updateSide();
-                    console.log("focussing on levels.currentLevel");
                 }, 0);
                 break;
             case 2: // Settings Menu
@@ -207,7 +205,6 @@ let dom = {
     },
     updateSide: function (element = document.body.querySelector(":focus"), direction = 0, cursor = false) {
         let l = parseInt(element.textContent) - 1;
-        console.log();
         let personalBest = 0;
         for (let l = 0; l < document.querySelectorAll("#Select td:not(.locked)").length - 1; l++) {
             personalBest += score.displayScore(score.myBest[l], false);
@@ -351,7 +348,6 @@ function shakePower(power) {
     setTimeout(function () {
         document.body.querySelectorAll(".powerBox p")[power].classList.remove("shake");
     }, 1000);
-    console.log("Shake " + power + " power!!!");
 }
 
 function updatePower() {
@@ -404,7 +400,6 @@ function visible() {
     document.body.querySelectorAll(".menu").forEach(function (e) {e.style.visibility = "visible";});
     window.scrollTo(0, 0);
     dom.updateSide(document.body.querySelector("td"));
-    //console.log("Possibly: make powers visible");
     for (let i = 0; i < 2; i++) {
         if (powers[i]) document.body.querySelectorAll("#Powers .powerBox")[i].classList.add("on");
     }
@@ -414,7 +409,7 @@ function visible() {
 }
 
 function startGame() {
-    console.log("starting the game!!");
+    console.log("Starting the game!");
     paused = false;
     gameBegun = true;
     document.body.querySelector("#TitleScreenOverlay").classList.add("leaving");
@@ -432,7 +427,7 @@ function startGame() {
 
 function fullDelete() {
     //if (confirm("Are you sure you want to delete all your progress in Split Second?")) {
-        console.log("Full deletion time!!");
+        console.log("Fully deleting memory...");
         localStorage.setItem('saved', JSON.stringify({
             "bestLevel": 0,
             "powers": [false, false],

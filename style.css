@@ -53,7 +53,7 @@ canvas {
     height: calc(var(--unit) * var(--height));
     left: calc((100% - var(--unit) * var(--width)) / 2);
     top: calc((100% - var(--unit) * var(--height)) / 2);
-    background-color: rgba(0, 0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.01);
 }
 .cover.one {
     transition: backdrop-filter 0.2s ease-in-out;

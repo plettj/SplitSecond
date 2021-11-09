@@ -377,7 +377,7 @@ let score = {
         let biggest = diff.indexOf(Math.max(...diff));
         biggest = (biggest == -1) ? Math.floor(Math.random() * 3) : biggest;
         let previousBest = this.scores[level][1].reduce((a, b) => a + b, 0);
-        console.log("(" + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
+        console.log("(Level " + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
         if (previousBest >= total || previousBest == 0) {
             this.scores[level] = [rank, s, this.messages[rank][(rank > 0) ? biggest : Math.floor(Math.random() * (this.messages[0].length - 1))]];
             if (complete) this.unlock(level + 1);

@@ -195,7 +195,7 @@ let avatar = {
         let solid = [isS(spots[0], true, false), isS(spots[1], true, false), isS(spots[2], true, false), isS(spots[3], true, false)];
         let clipped = XOR(solid);
         if (clipped !== -1) {
-            console.log("You've corner-clipped!");
+            //console.log("You've corner-clipped!");
             //this.drawTempSquares([[Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)]], "#1515ff", 0.9);
             let centerCo = [Math.floor((this.coor[0] + (this.box[0] / 2 + 1) * pixel) / unit), Math.floor((this.coor[1] + (this.box[1] + 2.99) * pixel) / unit)];
             //if (this.vcoor[0] > 0 && isS([centerCo[0], centerCo[1]], true)) this.coor[0] = centerCo[0] * unit - 1 * pixel;
@@ -212,7 +212,7 @@ let avatar = {
 
             if (center[0] >= 0 && center[0] < width && center[1] >= 0 && center[1] < height) {
                 if (currentLevel[center[1]][center[0]] == 1) {
-                    console.log("GET STUCK");
+                    //console.log("GET STUCK");
                     this.bFrame = [0, -1, center[0]];
                 } else if ([
                     currentLevel[(spots[0][1] < 0) ? 0 : (spots[0][1] >= height) ? height - 1 : spots[0][1]][spots[0][0]] == 1,
@@ -221,11 +221,11 @@ let avatar = {
                     currentLevel[(spots[3][1] < 0) ? 0 : (spots[3][1] >= height) ? height - 1 : spots[3][1]][spots[3][0]] == 1
                 ].reduce((a, x) => x ? a + 1 : a, 0) > 1) { // snap out of block
                     if (((beforeInPixels[0] + beforeInPixels[1]) / 2 / unit) % 1 > 0.5) { // needs to move LEFT
-                        console.log("SNAP LEFT");
+                        //console.log("SNAP LEFT");
                         if (this.vcoor[0] > 0) this.vcoor[0] = 0;
                         this.coor[0] = (center[0] + 0.3) * unit - 0.1;
                     } else {
-                        console.log("SNAP RIGHT");
+                        //console.log("SNAP RIGHT");
                         if (this.vcoor[0] < 0) this.vcoor[0] = 0;
                         this.coor[0] = (center[0] - 0.2) * unit + 0.1;
                     }
@@ -487,7 +487,6 @@ let Spikes = class {
             } else {
                 spike[3] = (info[0] == 2);
             }
-            console.log(spike[3]);
 
             let animState = (info[0]) ? Math.ceil(info[0] + 0.01) : 0;
             if (spike[2] == 1) animState = (animState - 3) * -1;
