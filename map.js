@@ -291,9 +291,10 @@ let score = {
         [3, 2, 2],
         [4, 0, 1],
         [2, 4, 4],
-        [5, 0, 2],
+        [4, 0, 1],
         [2, 1, 1], // LEVEL 20 (index 19)
         [2, 1, 0],
+        [5, 0, 2],
         [11, 1, 2],
         [2, 1, 0],
 
@@ -324,9 +325,9 @@ let score = {
     translate: ["gold", "silver", "bronze", "uselessClass"], // translate rank (0-3) to text ("gold", etc).
     messages: [ // 0-Gold 1-Silver 2-Bronze.
         [
-            "You've achieved <span class='gold'>Gold</span>, wondrous warrior!",
+            "You achieved <span class='gold'>Gold</span>, wondrous warrior!",
             "You've achieved <span class='gold'>Gold</span>, fantastic fighter!",
-            "You've achieved <span class='gold'>Gold</span>, super solver!",
+            "You've accomplished <span class='gold'>Gold</span>, super solver!",
             "Your rank is <span class='gold'>Gold</span>. Nothing left to achieve.",
             "Getting <span class='gold'>Gold</span> feels great, doesn't it?",
             "You've reached <span class='gold'>Gold</span> rank; nice work.",
@@ -336,7 +337,20 @@ let score = {
             "Don't stop working hard to get that <span class='gold'>Gold</span> rank!",
             "Good job reaching the rank of <span class='gold'>Gold</span>.",
             "Your skill has taken you all the way to <span class='gold'>Gold</span>; well done.",
-            "Great work; getting <span class='gold'>Gold</span> is certainly not easy."
+            "Great work; getting <span class='gold'>Gold</span> is certainly not easy.",
+            "Exceptional job. You have done what you came here to do. You got <span class='gold'>Gold</span>.",
+            "Nothing <span class='gold'>Gold</span> can stay. That is, nothing but your legendary rank on this level.",
+            "Your forefathers would be proud of your <span class='gold'>Gold</span>-level achievement.",
+            "Noiiiiice. <br>('Cause you got <span class='gold'>Gold</span>.)",
+            "Pretty fantastic, what you've done. That is, getting <span class='gold'>Gold</span>.",
+            "Nice work getting <span class='gold'>Gold</span> on this level.",
+            "Your wisdom is beyond all human understanding, and it led you to the esteemed <span class='gold'>Gold</span> rank.",
+            "It was your destiny to reach <span class='gold'>Gold</span>, my friend.",
+            "You've done better than Chuck Norris: you've done <span class='gold'>Gold</span>.",
+            "Ya done it, my friend. Ya got the medallion of the <span class='gold'>Gold</span> alloy.",
+            "Amazing! I'm proud of you for getting <span class='gold'>Gold</span> on this level.",
+            "I'm not sure how, but you managed to get a <span class='gold'>Gold</span> medal on this level. Congrats.",
+            "You're really crushing these levels! <span class='gold'>Gold</span> after <span class='gold'>Gold</span> after <span class='gold'>Gold</span>."
         ],
         [
             "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
@@ -732,7 +746,7 @@ levels.addLevel([
         ]
     ),
 ],
-5, 10
+0, 5
 ); // ^ LEVEL index 9
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -804,7 +818,7 @@ levels.addLevel([
         ]
     )
 ],
-4, 2
+5, 0
 ); // ^ LEVEL index 12
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -882,28 +896,28 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[15, 0, 1], [30, 0, 3]],
+[[15, 0, 1], [30, 0, 2]],
 0,
 [
     new Button(
         2, [2, 5], 0,
         [
-            new Lazer([7, [6, 9]], "Swap", true),
+            new Lazer([7, [3, 9]], "Swap", true),
             new Lazer([3, [-1, 5]], "Swap", false),
         ]
     ),
 ],
-0, 5
+0, 2
 ); // ^ LEVEL index 16
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -929,34 +943,34 @@ levels.addLevel([
         ]
     )
 ],
-15, 20
+8, 8
 ); // ^ LEVEL index 17
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[15, 0, 2], [40, 0, 3]],
+[[10, 0, 1], [25, 0, 2]],
 0,
 [
     new Button(
         2, [2, 5], 0,
         [
-            new Lazer([7, [6, 11]], "Swap", true),
+            new Lazer([7, [3, 11]], "Swap", true),
             new Lazer([3, [-1, 5]], "Swap", false),
         ]
     ),
 ],
-0, 8
+0, 2
 ); // ^ LEVEL index 18
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1007,6 +1021,33 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+],
+[[15, 0, 2], [40, 0, 3]],
+0,
+[
+    new Button(
+        2, [2, 5], 0,
+        [
+            new Lazer([7, [3, 11]], "Swap", true),
+            new Lazer([3, [-1, 5]], "Swap", false),
+        ]
+    ),
+],
+0, 8
+); // ^ LEVEL index 21
+levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1034,7 +1075,7 @@ levels.addLevel([
     )
 ],
 1, 3
-); // ^ LEVEL index 21
+); // ^ LEVEL index 22
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -1060,7 +1101,7 @@ levels.addLevel([
     ) 
 ],
 2, 0
-);  // ^ LEVEL index 22
+);  // ^ LEVEL index 23
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
@@ -1132,6 +1173,12 @@ levels.addLevel([
 0, 0
 );
 */
+
+// LEVEL PLAN: (all level names in INDEX VALUE)
+// Modify level 18 to only be introduce the `waiting` element;
+// move the current 18 to between 20 and 21
+// Move what used to be level index 21 to be like 30 or something.
+// Create new levels!!!!!!!!!!!!!!!!!!!!!!!!!
 
 let instructions = [
     [["W", "A", "S", "D"], "Run to the right"],
