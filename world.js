@@ -9,6 +9,7 @@ let avatar = {
     box: [6, 7], // 2 game pixels from left, 2 from top
     keys: [0, 0, 0, 0], // [A, W, D, S] 1 = pressed
     action: 0, // 0-still 1-left 2-right
+    moved: false, // stays false until you press a key at the start of a level
     dir: 1, // 0-left 1-right
     inAir: 0, // 0-grounded 1-in air
     //trapped: false, // true-stuck in wall/block
@@ -26,6 +27,7 @@ let avatar = {
         this.complete = false;
         this.coor = coor;
         this.dir = 1;
+        this.moved = false;
         this.vcoor = [0, 0];
         this.draw();
     },
@@ -47,6 +49,11 @@ let avatar = {
     physics: function () { // PHYSICS
         clear(5, this.coor);
         let key = [((!this.keys[3] || this.keys[1]) && !this.bFrame[1]) ? this.keys[2] - this.keys[0] : 0, (this.keys[3] > this.keys[1]) ? -1 : this.keys[1]]; // [x, y] values: -1, 0, 1
+        if (!this.moved) {
+            for (let i = 0; i < 4; i++) {
+                if (key[i]) this.moved = true;
+            }
+        }
         if (this.bFrame[1] == -1) {
             key = [0, 0];
             this.bFrame[1] = 0;
@@ -211,14 +218,14 @@ let avatar = {
             let center = [Math.floor((beforeInPixels[0] + beforeInPixels[1]) / 2 / unit), Math.floor((beforeInPixels[2] + beforeInPixels[3]) / 2 / unit)];
 
             if (center[0] >= 0 && center[0] < width && center[1] >= 0 && center[1] < height) {
-                if (currentLevel[center[1]][center[0]] == 1) {
+                if (levels.currentLevelMap[center[1]][center[0]] == 1) {
                     //console.log("GET STUCK");
                     this.bFrame = [0, -1, center[0]];
                 } else if ([
-                    currentLevel[(spots[0][1] < 0) ? 0 : (spots[0][1] >= height) ? height - 1 : spots[0][1]][spots[0][0]] == 1,
-                    currentLevel[(spots[1][1] < 0) ? 0 : (spots[1][1] >= height) ? height - 1 : spots[1][1]][spots[1][0]] == 1,
-                    currentLevel[(spots[2][1] < 0) ? 0 : (spots[2][1] >= height) ? height - 1 : spots[2][1]][spots[2][0]] == 1,
-                    currentLevel[(spots[3][1] < 0) ? 0 : (spots[3][1] >= height) ? height - 1 : spots[3][1]][spots[3][0]] == 1
+                    levels.currentLevelMap[(spots[0][1] < 0) ? 0 : (spots[0][1] >= height) ? height - 1 : spots[0][1]][spots[0][0]] == 1,
+                    levels.currentLevelMap[(spots[1][1] < 0) ? 0 : (spots[1][1] >= height) ? height - 1 : spots[1][1]][spots[1][0]] == 1,
+                    levels.currentLevelMap[(spots[2][1] < 0) ? 0 : (spots[2][1] >= height) ? height - 1 : spots[2][1]][spots[2][0]] == 1,
+                    levels.currentLevelMap[(spots[3][1] < 0) ? 0 : (spots[3][1] >= height) ? height - 1 : spots[3][1]][spots[3][0]] == 1
                 ].reduce((a, x) => x ? a + 1 : a, 0) > 1) { // snap out of block
                     if (((beforeInPixels[0] + beforeInPixels[1]) / 2 / unit) % 1 > 0.5) { // needs to move LEFT
                         //console.log("SNAP LEFT");
@@ -233,7 +240,7 @@ let avatar = {
             }
             if (levels.currentLevel == levelsWpowers[0] || levels.currentLevel == levelsWpowers[1]) {
                 if (center[1] >= 0 && center[1] < height) {
-                    let value = currentLevel[center[1]][center[0]];
+                    let value = levels.currentLevelMap[center[1]][center[0]];
                     if (value == 4 || value == 5) { // CAPTURED A POWERUP!
                         ctx[1].clearRect(center[0] * unit, center[1] * unit, unit, unit);
                         powers[value - 4] = true;
@@ -318,7 +325,7 @@ let Ghost = class {
             a[1] = f[3] + 4;
             if (f[6][0] == 2) {
                 ctx[4].globalAlpha = 1;
-                currentLevel[Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
+                levels.currentLevelMap[Math.floor(f[1] / unit)][Math.floor(f[0] / unit)] = 1.5;
             }
         }
         ctx[4].drawImage(img[2], ((f[6][1] == -1) ? f[3] * 100 : a[0] * 100) + 400, (f[6][1] == -1) ? 700 : a[1] * 100, 100, 100, f[0], f[1], unit, unit);
@@ -349,7 +356,7 @@ let Ghost = class {
 // PHYSICS
 
 function swapTime(override = false) {
-    if ((avatar.time && levels.scores[1] < levels.powers[levels.currentLevel][0]) || override) { // if avatar is allowed to swap
+    if ((avatar.time && avatar.moved && levels.scores[1] < levels.powers[levels.currentLevel][0]) || override) { // if avatar is allowed to swap
         time *= -1;
         if (!override) { // pressed the key (not the swap-lazer)
             levels.scores[1]++;
@@ -419,10 +426,13 @@ let Lazer = class {
     update (button) {
         if (!this.onScreen) return;
         // use "button" to figure everything out!! update this.onScreen.
+        //console.log("(Lazers) First: " + button.first + " ... index: " + ((!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first));
         let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
-
+        
         if (this.onScreen) this.active = (info[1] > 0 == this.opp);
-        else {/*State of being during the out-going animation*/}
+        else {
+            /*State of being during the out-going animation*/
+        }
 
 
         let ys = this.location[1]; // the y's
@@ -478,6 +488,7 @@ let Spikes = class {
     }
     update (button) {
         if (!this.onScreen) return;
+        //console.log("(Spikes) First: " + button.first + " ... index: " + ((!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first));
         let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
 
         for (let s = 0; s < this.spikes.length; s++) {
@@ -544,6 +555,7 @@ let Walls = class {
     }
     update (button) {
         if (!this.onScreen) return;
+        //console.log("(Walls) First: " + button.first + " ... index: " + ((!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first));
         let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
 
         for (let s = 0; s < this.walls.length; s++) {
@@ -606,15 +618,15 @@ let Blocks = class {
     }
     update (button) {
         if (!this.onScreen) return;
-        let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor(frame / GFuel) - button.first];
+        let info = button.memory[(!button.appear || !this.onScreen) ? 0 : Math.floor((frame) / GFuel) - button.first];
 
         for (let s = 0; s < this.blocks.length; s++) {
             let block = this.blocks[s];
             block[3] = (info[1] > 0 == (block[2] != true));
             if (block[3]) {
-                currentLevel[block[1]][block[0]] = 1;
+                levels.currentLevelMap[block[1]][block[0]] = 1;
             } else {
-                currentLevel[block[1]][block[0]] = levels.levels[levels.currentLevel][block[1]][block[0]];
+                levels.currentLevelMap[block[1]][block[0]] = levels.levels[levels.currentLevel][block[1]][block[0]];
             }
 
             ctx[2].clearRect(block[0] * unit, block[1] * unit, unit, unit);
