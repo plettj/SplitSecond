@@ -40,6 +40,8 @@ let dom = {
             case 1: // Levels Menu
                 dom.menus[1].classList.remove("off");
                 dom.menus[1].classList.add("on");
+                //console.log(levels.currentLevel);
+                //if (!autoStart && levels.currentLevel == -1) console.log("Don't show arrowwwwwwwwwwwwwww");
                 setTimeout(function () {
                     document.body.querySelectorAll("#Select td")[(levels.currentLevel == -1) ? 0 : levels.currentLevel].focus();
                     dom.updateSide();
@@ -104,7 +106,7 @@ let dom = {
             return;
         } if (code == 82 && dom.displayed == -1) { // R
             levels.startLevel(levels.currentLevel);
-        } else if ((code == 80 || code == 27) && dom.displayed == -1) { // P
+        } else if ((code == 80 || code == 27) && dom.displayed == -1) { // P or [esc]
             dom.newMenu(0);
         } else if (code == 27) { // [esc]
             dom.play();
@@ -207,13 +209,13 @@ let dom = {
         let l = parseInt(element.textContent) - 1;
         let personalBest = 0;
         for (let l = 0; l < document.querySelectorAll("#Select td:not(.locked)").length - 1; l++) {
-            personalBest += score.displayScore(score.myBest[l], false);
+            personalBest += score.displayScore(score.myBest[l], false, l);
         }
         if (document.querySelectorAll("#Select td:not(.locked)").length == score.myBest.length) {
             let final = document.querySelectorAll("#Select td:not(.locked)")[score.myBest.length - 1];
             let possClass = final.childNodes[1].classList[1];
             if (possClass == score.translate[0] || possClass == score.translate[1] || possClass == score.translate[2]) {
-                personalBest += score.displayScore(score.myBest[l], false);
+                personalBest += score.displayScore(score.myBest[l], false, l);
             }
         }
         document.body.querySelector("#DevelopersRecord").textContent = personalBest;
@@ -286,23 +288,27 @@ let dom = {
     },
     scoreInfo: function (level) {
         let rank = score.scores[level][0];
-        let displays = [score.displayScore(score.goals[level][0], true), score.displayScore(score.goals[level][1], true)]; // [gold, silver]
-        dom.medals[1].style.left = "calc(" + Math.ceil(displays[1] / displays[0] * 100) + "% - var(--unit) * 0.45)";
-        dom.medals[2].style.left = "calc(" + Math.ceil(100 / displays[0] * 100) + "% - var(--unit) * 0.45)";
+        let displays = [score.displayScore(score.goals[level][0], true, level), score.displayScore(score.goals[level][1], true, level)]; // [gold, silver]
+        dom.medals[0].style.left = "calc(" + Math.ceil(displays[0] / 10) + "% - var(--unit) * 0.45)";
+        dom.medals[1].style.left = "calc(" + Math.ceil(displays[1] / 10) + "% - var(--unit) * 0.45)";
+        dom.medals[2].style.left = "calc(10% - var(--unit) * 0.45)";
         if (rank == 3) {
             dom.progressFill.style.width = "3.5%";
             document.body.querySelector("#Scores").classList.remove("on");
             return;
         } else {
             let nextMedal = (rank < 2) ? 0 : 1;
-            let yours = score.displayScore(score.scores[level][1], true);
-            let goal = score.displayScore(score.goals[level][nextMedal], true);
+            let yours = score.displayScore(score.scores[level][1], true, level);
+            let goal = score.displayScore(score.goals[level][nextMedal], true, level);
             if (rank == 0) {
-                dom.progressFill.style.width = "100%";
                 document.querySelector("#NextScoreTitle").textContent = "Gold's score:";
             } else {
-                dom.progressFill.style.width = Math.floor(yours / displays[0] * 100 - 2) + "%";
                 document.querySelector("#NextScoreTitle").textContent = "Next medal:";
+            }
+            if (yours < 1000) dom.progressFill.style.width = Math.floor(yours / 10) + "%";
+            else {
+                dom.progressFill.style.width = "103.5%";
+                dom.progressFill.backgroundColor = "rgba(0, 0, 0, 0.45)";
             }
             dom.bestScore.textContent = yours;
             dom.nextScore.textContent = goal;
