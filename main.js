@@ -135,14 +135,24 @@ function animate() {
         then = now - (elapsed % fpsInterval);
         // actual looping code below!
         if (!paused) {
-            frame += time;
             avatar.physics();
-            levels.updateTime();
+            frame += time;
             if (!(frame % Math.round(60 / stepSpeed))) {
                 stepCounter++;
                 step += time;
             }
-            if (!(frame % GFuel)) { // Run the Ghosts + Update the Level objects
+            let canSwap = levels.powers[levels.currentLevel][0];
+            if (avatar.moved) {
+                levels.updateTime();
+                if (!canSwap) {
+                    for (let i = 0; i < levels.buttons[levels.currentLevel].length; i++) {
+                        if (levels.buttons[levels.currentLevel][i].type == 2) {
+                            canSwap = 1;
+                        }
+                    }
+                }
+            } else levels.updateTime(true);
+            if (!(frame % GFuel) && canSwap) { // Run the Ghosts + Update the Level objects
                 nextGhost.learn();
                 clear(4);
                 for (g in levels.ghosts) {
