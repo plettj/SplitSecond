@@ -75,11 +75,13 @@ function save() {
     if (statisticTwo) GFuel = 1;
     else GFuel = 3;
     tempScoreRecord = [];
-    for (let l = 1; l < levels.levels.length; l++) {
+    for (let l = 1; l <= levels.levels.length; l++) {
         if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
-            if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
-                // first level with no completion
+            if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
+                console.log("Best level is now: ", l);
                 saved["bestLevel"] = l;
+            }} else {
+                console.log("Saved that you beat the final level!");
             }
             tempScoreRecord.push(score.scores[l - 1]);
         }
@@ -187,13 +189,15 @@ let levels = {
             this.buttons[level].forEach(function (button) {
                 button.activate(false);
             });
-        } else {
+        } else if (level < this.levels.length) {
             // No idea if the below code is something that helps with the lag AT ALL
             for (let i = 0; i < this.currentLevelMap.length; i++) {
                 delete this.currentLevelMap[i];
             }
             delete this.currentLevelMap;
             this.currentLevelMap = this.levels[level].map(row => [...row]);
+        } else {
+            this.startLevel(level - 1);
         }
         if (level >= this.levels.length) level = this.levels.length - 1;
         time = 1;
@@ -217,7 +221,7 @@ let levels = {
     },
     endLevel: function () {
         // run the closing animation
-        //let info = score.calculate(this.currentLevel, [Math.floor(Math.abs(this.scores[0][1] - this.scores[0][0]) / 60), this.scores[1], this.scores[2][0]]);
+        let info = score.calculate(this.currentLevel, [Math.floor(Math.abs(this.scores[0][1] - this.scores[0][0]) / 60), this.scores[1], this.scores[2][0]]);
         
         //console.log("Total Time: " + Math.abs(this.scores[0][1] - this.scores[0][0]) + ", Time-Swaps: " + this.scores[1] + ", Dino-Blocks: " + this.scores[2][0] + ", Rank: " + info[0] + ".");
         //console.log(info);
@@ -232,7 +236,7 @@ let levels = {
         this.buttons[this.currentLevel].forEach(function (button) {
             button.activate(false);
         });
-        
+
         document.body.querySelector("#LevelsMenu .content .back").style.display = "block";
         
         if (autoStart) {
@@ -279,12 +283,10 @@ let levels = {
     },
     updateTime: function (start) { // updates the score based on the total time
         if (start) {
-            console.log("Not starting yet!");
             let okToWait = true;
             this.buttons[this.currentLevel].forEach(function (button) {
                 if (button.memory[0][1] !== 1) {
                     button.first = Math.floor(frame / GFuel);
-                    console.log("Button first: " + button.first);
                 } else {
                     button.first = 0;
                     okToWait = false;
@@ -321,7 +323,7 @@ let score = {
         [2, 1, 1],
         [2, 1, 0],
         [3, 1, 1],
-        [3, 2, 0], // LEVEL 15
+        [2, 2, 0], // LEVEL 15
         [3, 2, 2],
         [4, 0, 1],
         [2, 4, 4],
@@ -434,7 +436,7 @@ let score = {
     },
     calibrate: function ([seconds, swaps, blocks], sum = false) {
         // The below code needs to be super calibrated!
-        let calibratedScore = [seconds * 11, swaps * 150, blocks * 100];
+        let calibratedScore = [seconds * 11, swaps * 79, blocks * 47];
         if (!sum) return calibratedScore;
         else return calibratedScore.reduce((a, b) => a + b, 0);
     },
@@ -455,8 +457,9 @@ let score = {
             console.log("You've beat the final level!!");
             if (newLevel == levels.levels.length) {
                 let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
-                console.log(score.translate[this.scores[newLevel - 1][0]]);
+                console.log("And you got " + score.translate[this.scores[newLevel - 1][0]] + ".    (noice)");
                 bar.classList.add(score.translate[this.scores[newLevel - 1][0]]);
+                save();
             }
             return;
         }
@@ -797,15 +800,111 @@ levels.addLevel([
 [],
 0, 0 // swaps, blocks
 ); // ^ LEVEL index ##
+
+// DIFFICULTY: 7 / 10
+// MY PERSONAL BEST ON BELOW: [2, 1, 0]
+levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 0, 0, 0, 2, 2, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 2, 0, 0, 0, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+],
+[[3, 1, 0], [12, 1, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
+0, // [goal-y]
+[
+    new Button(
+        1, [1, 8], 1,
+        [
+            new Lazer([10, [-1, 11]], "Kill", false),
+            new Lazer([11, [-1, 11]], "Kill", true),
+            new Lazer([12, [-1, 11]], "Kill", false)
+        ],
+    ),
+],
+1, 0 // swaps, blocks
+); // ^ LEVEL index ##
+
+// DIFFICULTY: 5 / 10
+// MY PERSONAL BEST ON BELOW: [3, 2, 3]
+levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1],
+    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1],
+    [0, 0, 2, 2, 0, 2, 2, 2, 2, 2, 2, 0, 2, 2, 0, 0],
+    [3, 0, 0, 2, 2, 2, 2, 0, 0, 0, 1, 1, 1, 1, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 0, 0],
+    [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0]
+],
+[[6, 2, 3], [12, 3, 3]], // [Gold, Silver] --> [seconds, swaps, blocks]
+8, // [goal-y]
+[],
+3, 3 // swaps, blocks
+); // ^ LEVEL index ##
+
+// DIFFICULTY: 5 / 10
+// MY PERSONAL BEST ON BELOW: [4, 3, 2]
+levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+    [0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2, 2, 0],
+    [0, 0, 1, 0, 0, 0, 0, 2, 2, 2, 2, 0, 0, 0, 1, 1],
+    [3, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1],
+    [1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 2, 0, 1, 1, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+],
+[[12, 3, 2], [20, 6, 3]], // [Gold, Silver] --> [seconds, swaps, blocks]
+5, // [goal-y]
+[
+    new Button(
+        0, [1, 7], 0,
+        [
+            new Walls([[2, 5, 1]])
+        ]
+    ),
+],
+6, 5 // swaps, blocks
+); // ^ LEVEL index ##
+
+// DIFFICULTY: 9 / 10
+// MY PERSONAL BEST ON BELOW: [11, 0, 0]
+levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 2, 2, 1],
+    [0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 0, 2, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+    [1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0],
+    [3, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+],
+[[25, 0, 0], [60, 0, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
+2, // [goal-y]
+[],
+0, 0 // swaps, blocks
+); // ^ LEVEL index ##
 */
-
-
-
-
-
-
-
-
 
 
 
@@ -947,7 +1046,7 @@ levels.addLevel([
     [3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
 ],
-[[8, 0, 0], [15, 0, 0]],
+[[4, 0, 0], [15, 0, 0]],
 0,
 [],
 0, 0
@@ -1018,7 +1117,7 @@ levels.addLevel([
     [3, 0, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1],
 ],
-[[2, 0, 0], [15, 0, 0]],
+[[3, 0, 0], [15, 0, 0]],
 0,
 [],
 0, 0
@@ -1037,7 +1136,7 @@ levels.addLevel([
     [3, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 ],
-[[10, 0, 0], [25, 0, 1]],
+[[8, 0, 0], [25, 0, 1]],
 0,
 [
     new Button(
@@ -1368,11 +1467,11 @@ levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1],
     [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 2, 0, 0, 0],
     [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 2, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
     [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
