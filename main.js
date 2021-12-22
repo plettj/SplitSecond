@@ -142,16 +142,17 @@ function animate() {
                 step += time;
             }
             let canSwap = levels.powers[levels.currentLevel][0];
-            if (avatar.moved) {
-                levels.updateTime();
-                if (!canSwap) {
-                    for (let i = 0; i < levels.buttons[levels.currentLevel].length; i++) {
-                        if (levels.buttons[levels.currentLevel][i].type == 2) {
-                            canSwap = 1;
-                        }
+            if (!canSwap) {
+                for (let i = 0; i < levels.buttons[levels.currentLevel].length; i++) {
+                    if (levels.buttons[levels.currentLevel][i].type == 2) {
+                        canSwap = 1;
                     }
                 }
-            } else levels.updateTime(true);
+            }
+
+            if (avatar.moved) levels.updateTime();
+            else levels.updateTime(true);
+
             if (!(frame % GFuel) && canSwap) { // Run the Ghosts + Update the Level objects
                 nextGhost.learn();
                 clear(4);

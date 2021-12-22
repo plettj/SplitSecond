@@ -457,6 +457,8 @@ let Lazer = class {
             let inLazer = inRect(beforeIP, this.points);
             if (inLazer) {
                 levels.startLevel(levels.currentLevel);
+                delete avatar.keys
+                avatar.keys = [0, 0, 0, 0];
             }
         }
     }
