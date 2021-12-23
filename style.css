@@ -20,6 +20,9 @@
 
 body {
     background-color: #343538;
+    --darkMode: transparent;
+    --darkMode2: transparent;
+    --pauseButton: url("images/Pause.png");
     --x: 1;
     --y: 1;
     --g1: #f0ec2e;
@@ -66,10 +69,12 @@ canvas {
     /*display: none; Not sure if I want greyscale; I think I do. */
     -webkit-backdrop-filter: grayscale(100%);
     backdrop-filter: grayscale(100%);
+    /*background-color: var(--darkMode);*/
 }
 .cover.two.on {
     -webkit-backdrop-filter: blur(calc(var(--unit) / 5));
     backdrop-filter: blur(calc(var(--unit) / 5));
+    /*background-color: var(--darkMode2);*/
 }
 .cover.three {
     pointer-events: none;
@@ -131,7 +136,7 @@ canvas {
     height: var(--unit);
     top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
     right: calc((100% - var(--unit) * (var(--width) - 0.6)) / 2);
-    background-image: url("images/Pause.png");
+    background-image: var(--pauseButton);
     background-size: var(--unit);
     cursor: pointer;
     opacity: 1;
