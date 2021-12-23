@@ -106,10 +106,11 @@ let dom = {
             return;
         } if (code == 82 && dom.displayed == -1) { // R
             levels.startLevel(levels.currentLevel);
-        } else if ((code == 80 || code == 27) && dom.displayed == -1) { // P or [esc]
+        } else if ((code == 80 || code == 27) && dom.displayed == -1 && levels.currentLevel >= 0) { // P or [esc]
             dom.newMenu(0);
-        } else if (code == 27) { // [esc]
-            dom.play();
+        } else if (code == 27 && (levels.currentLevel >= 0 || dom.displayed == 2)) { // [esc]
+            if (levels.currentLevel >= 0) dom.play();
+            else dom.back();
         } else if (code == 37 || code == 65) { // left
             if (dom.displayed == 1) {
                 if (element.previousElementSibling != null) {
@@ -345,6 +346,14 @@ let dom = {
                 save();
                 levels.startLevel(levels.currentLevel);
                 break;
+            case "darkMode":
+                saved["darkMode"] = !saved["darkMode"];
+                if (saved["darkMode"]) graphics = "imagesTwo";
+                else graphics = "images";
+                dom.checkboxes[n].checked = saved["darkMode"];
+                save();
+                location.reload();
+                break;
         }
     }
 }
@@ -412,6 +421,7 @@ function visible() {
     dom.updateTotalScore(score.calcTotal());
     dom.checkboxes[0].checked = autoStart;
     dom.checkboxes[1].checked = statisticTwo;
+    dom.checkboxes[2].checked = saved["darkMode"];
 }
 
 function startGame() {

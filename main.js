@@ -5,7 +5,7 @@ let coolMathGames = false;
 let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
-let graphics = "images"; // = "imagesTwo"; for Dahlia's
+let graphics = "images"; // = "imagesTwo"; for darkMode!
 let levelsWpowers = [5, 8]; // the levels that hold powers
 let powers = [false, false]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
@@ -34,6 +34,7 @@ let saved = {
     "powers": [false, false],
     "autoStart": true,
     "statisticTwo": false,
+    "darkMode": false,
     "scores": []
 }
 
@@ -49,6 +50,12 @@ if (!previousSaved) { // stuff hasn't been saved yet
     powers = [saved["powers"][0], saved["powers"][1]];
     autoStart = saved["autoStart"];
     statisticTwo = saved["statisticTwo"];
+    if (saved["darkMode"]) {
+        document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.2)");
+        document.body.style.setProperty("--darkMode2", "rgba(0, 0, 0, 0.48)");
+        document.body.style.setProperty("--pauseButton", 'url("imagesTwo/Pause.png")');
+        graphics = "imagesTwo";
+    }
     if (statisticTwo) GFuel = 1;
     else GFuel = 3;
     if (saved["scores"].length < 1) {
@@ -141,8 +148,9 @@ function animate() {
                 stepCounter++;
                 step += time;
             }
+            let buttons = levels.buttons[levels.currentLevel].length;
             let canSwap = levels.powers[levels.currentLevel][0];
-            if (!canSwap) {
+            if (!canSwap && buttons) {
                 for (let i = 0; i < levels.buttons[levels.currentLevel].length; i++) {
                     if (levels.buttons[levels.currentLevel][i].type == 2) {
                         canSwap = 1;
@@ -153,13 +161,15 @@ function animate() {
             if (avatar.moved) levels.updateTime();
             else levels.updateTime(true);
 
-            if (!(frame % GFuel) && canSwap) { // Run the Ghosts + Update the Level objects
-                nextGhost.learn();
-                clear(4);
-                for (g in levels.ghosts) {
-                    levels.ghosts[g].newFrame();
-                }
+            if (!(frame % GFuel) && canSwap || buttons) { // Run the Ghosts + Update the Level objects
                 levels.update();
+                if (canSwap) {
+                    nextGhost.learn();
+                    clear(4);
+                    for (g in levels.ghosts) {
+                        levels.ghosts[g].newFrame();
+                    }
+                }
             }
         }
     }

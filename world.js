@@ -656,6 +656,9 @@ let Button = class {
         // this.frame is: Math.floor(frame / GFuel);
     }
     activate (activate = true, simple = false) {
+        this.objects.forEach(function (object) {
+            object.activate(activate, simple);
+        });
         if (activate) {
             this.onScreen = true;
             this.draw(simple, true);
@@ -666,9 +669,6 @@ let Button = class {
             this.memory.push([0, this.dir]);
             this.first = 0;
         }
-        this.objects.forEach(function (object) {
-            object.activate(activate, simple);
-        });
     }
     draw (simple = false, first = false) {
         if (!this.onScreen || !this.appear) return;
