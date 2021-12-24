@@ -706,8 +706,8 @@ let Button = class {
                 let now = b.memory[f - b.first];
 
                 if (previous == undefined) {
-                    console.log("type: " + b.type);
-                    console.log(b.memory.length, (((f - b.first - time >= 0)) ? ((f - b.first - time < b.memory.length) ? f - b.first - time : b.memory.length - 2) : 1));
+                    //console.log("type: " + b.type);
+                    //console.log(b.memory.length, (((f - b.first - time >= 0)) ? ((f - b.first - time < b.memory.length) ? f - b.first - time : b.memory.length - 2) : 1));
                 }
 
                 if (animationFrameCalc(previous[0], (b.dir / 2 + 0.5), true) > now[0]) {
