@@ -78,10 +78,10 @@ function save() {
     for (let l = 1; l <= levels.levels.length; l++) {
         if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
             if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
-                console.log("Best level is now: ", l);
+                //console.log("Best level is now: ", l);
                 saved["bestLevel"] = l;
             }} else {
-                console.log("Saved that you beat the final level!");
+                //console.log("Saved that you beat the final level!");
             }
             tempScoreRecord.push(score.scores[l - 1]);
         }
@@ -346,7 +346,7 @@ let score = {
         [8, 1, 0], // 31
         [7, 2, 1], // 32
         [4, 3, 4], // 33
-        [11, 2, 1], // 34
+        [8, 1, 2], // 34
         [11, 3, 0], // 35
         [11, 0, 0], // 36
         [99, 99, 99]
@@ -421,7 +421,7 @@ let score = {
         let biggest = diff.indexOf(Math.max(...diff));
         biggest = (biggest == -1) ? Math.floor(Math.random() * 3) : biggest;
         let previousBest = this.scores[level][1].reduce((a, b) => a + b, 0);
-        console.log("(Level " + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
+        //console.log("(Level " + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
         if (previousBest >= total || previousBest == 0) {
             this.scores[level] = [rank, s, this.messages[rank][(rank > 0) ? biggest : Math.floor(Math.random() * (this.messages[0].length - 1))]];
             if (complete) this.unlock(level + 1);
@@ -434,6 +434,9 @@ let score = {
         let calibratedScore = [seconds * 11, swaps * 79, blocks * 47];
         if (!sum) return calibratedScore;
         else return calibratedScore.reduce((a, b) => a + b, 0);
+    },
+    unCalibrate: function ([seconds, swaps, blocks]) {
+        return [Math.round(seconds / 11), Math.round(swaps / 79), Math.round(blocks / 47)];
     },
     displayScore: function (values, alreadyCalibrated, level) {
         let value = (!alreadyCalibrated) ? this.calibrate(values).reduce((a, b) => a + b, 0) : values.reduce((a, b) => a + b, 0);
@@ -449,10 +452,10 @@ let score = {
         // unlock the level in the html.
         //console.log("Unlocking Level " + (newLevel + 1));
         if (newLevel >= levels.levels.length) {
-            console.log("You've beat the final level!!");
+            //console.log("You've beat the final level!!");
             if (newLevel == levels.levels.length) {
                 let bar = document.querySelector("tr #td" + (newLevel) + " .bar");
-                console.log("And you got " + score.translate[this.scores[newLevel - 1][0]] + ".    (noice)");
+                //console.log("And you got " + score.translate[this.scores[newLevel - 1][0]] + ".    (noice)");
                 bar.classList.add(score.translate[this.scores[newLevel - 1][0]]);
                 save();
             }
