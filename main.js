@@ -35,6 +35,7 @@ let saved = {
     "autoStart": true,
     "statisticTwo": false,
     "darkMode": false,
+    "fullStats": false,
     "scores": []
 }
 
@@ -51,8 +52,8 @@ if (!previousSaved) { // stuff hasn't been saved yet
     autoStart = saved["autoStart"];
     statisticTwo = saved["statisticTwo"];
     if (saved["darkMode"]) {
-        document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.2)");
-        document.body.style.setProperty("--darkMode2", "rgba(0, 0, 0, 0.48)");
+        document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.45)");
+        document.body.style.setProperty("--darkMode2", "rgba(0, 0, 0, 0.05)");
         document.body.style.setProperty("--pauseButton", 'url("imagesTwo/Pause.png")');
         graphics = "imagesTwo";
     }
@@ -192,9 +193,16 @@ function keyPressed(code, num) {
 
 document.addEventListener("keydown", function(event) {
     let k = event.keyCode;
-    if (k == 9 || k == 38 || k == 40) event.preventDefault();
+    console.log(event.shiftKey + " " + event.ctrlKey + " " + k);
+    if (k == 9 || k == 38 || k == 40) {
+        event.preventDefault();
+    } else if (k == 123 || (event.ctrlKey && event.shiftKey && (k == 73 || k == 74))) {
+        event.preventDefault();
+        return false;
+    }
     keyPressed(k, 1);
-});
+}, false);
+
 document.addEventListener("keyup", function(event) {
 	keyPressed(event.keyCode, 0);
 });
