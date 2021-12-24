@@ -20,8 +20,8 @@
 
 body {
     background-color: #343538;
-    --darkMode: transparent;
-    --darkMode2: transparent;
+    --darkMode: rgba(0, 0, 0, 0.01);
+    --darkMode2: rgba(0, 0, 0, 0.01);
     --pauseButton: url("images/Pause.png");
     --x: 1;
     --y: 1;
@@ -39,7 +39,7 @@ body {
 
     overflow: hidden;
     font-family: Arcology;
-    color: rgb(75, 75, 75);
+    color: rgb(60, 60, 60);
 }
 
 canvas {
@@ -69,12 +69,12 @@ canvas {
     /*display: none; Not sure if I want greyscale; I think I do. */
     -webkit-backdrop-filter: grayscale(100%);
     backdrop-filter: grayscale(100%);
-    /*background-color: var(--darkMode);*/
+    background-color: var(--darkMode);
 }
 .cover.two.on {
     -webkit-backdrop-filter: blur(calc(var(--unit) / 5));
     backdrop-filter: blur(calc(var(--unit) / 5));
-    /*background-color: var(--darkMode2);*/
+    background-color: var(--darkMode2);
 }
 .cover.three {
     pointer-events: none;
@@ -207,6 +207,61 @@ canvas {
     border-bottom: calc(var(--unit) * 0.06) solid black;
     outline: none;
 }
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    background-color: black;
+    border: calc(var(--unit) / 16) solid black;
+    padding: calc(var(--unit) / 6);
+    cursor: pointer;
+}
+input[type="checkbox"]:hover, input[type="checkbox"]:checked:active {
+    background-color: #444;
+}
+input[type="checkbox"]:checked:hover, input[type="checkbox"]:active {
+    background-color: #ddd;
+}
+input[type="checkbox"]:checked {
+    background-color: white;
+}
+#InfoButton {
+    position: absolute;
+    border: none;
+    outline: none;
+    font-family: D_D;
+    text-align: left;
+    font-size: calc(var(--unit) * 0.35);
+    left: calc(var(--unit) * 12);
+    color: black;
+    background-color: rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    top: calc(var(--unit) * 6.65);
+    height: calc(var(--unit) * 0.6);
+    padding: calc(var(--unit) * 0.1) calc(var(--unit) * 0);
+    width: calc(var(--unit) * 1.3);
+    transition-duration: 0.3s;
+    -o-transition-duration: 0.3s;
+    -moz-transition-duration: 0.3;
+    -webkit-transition-duration: 0.3s;
+}
+#InfoButton h2 {
+    font-size: calc(var(--unit) * 0.45);
+    text-align: center;
+    font-weight: 200;
+}
+#InfoButton:hover {
+    background-color: rgba(0, 0, 0, 0.08);
+}
+#InfoButton span.white {
+    -webkit-text-fill-color: var(--s3);
+}
+#InfoButton.active {
+    height: calc(var(--unit) * 5);
+    width: calc(var(--unit) * 3.5);
+    top: calc(var(--unit) * 4.35);
+    left: calc(var(--unit) * 11.8);
+    padding: calc(var(--unit) * 0.2) calc(var(--unit) * 0.15);
+}
+
 
 .button {
     font-size: calc(var(--unit) * 0.5);
@@ -385,13 +440,14 @@ canvas {
     width: calc(var(--unit) * 1.25);
 }
 
+
 #LMessage {
     margin-left: calc(var(--unit) * -0.03);
     width: calc(var(--unit) * var(--width) * 0.353);
     height: calc(var(--unit) * 0.9);
     font-size: calc(var(--unit) * 0.35);
-    padding: calc(var(--unit) * 0.1) 0 calc(var(--unit) * 0.3) 0;
     font-family: D_D;
+    padding: calc(var(--unit) * 0.1) 0 calc(var(--unit) * 0.3) 0;
 }
 #LMessage span {
     -webkit-text-fill-color: black;
@@ -480,6 +536,35 @@ canvas {
 #Scores td.bronze {
     -webkit-text-fill-color: var(--b1);
 }
+#Scores span.white {
+    -webkit-text-fill-color: var(--s3);
+}
+#Scores span.gold {
+    -webkit-text-fill-color: var(--g1);
+}
+#Scores span.bronze {
+    -webkit-text-fill-color: var(--b1);
+}
+/*
+#Scores td:not(.little):last-child.gold {
+    -webkit-text-fill-color: var(--g1);
+}
+#Scores td:not(.little):last-child.silver {
+    -webkit-text-fill-color: var(--s2);
+}
+#Scores td:not(.little):last-child.bronze {
+    -webkit-text-fill-color: var(--b1);
+}
+
+#Scores #PerformanceDivider {
+    height: calc(var(--unit) / 4);
+    margin: 0;
+    padding: 0;
+}
+#Scores #TinyTitle {
+    text-align: left;
+}
+*/
 
 .instruction {
     position: absolute;

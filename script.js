@@ -54,6 +54,7 @@ let dom = {
                 break;
         }
         dom.displayed = menu;
+        dom.toggleInfo(document.body.querySelector("#InfoButton"), true);
     },
     back: function (toPause = false) {
         if (!toPause) dom.newMenu();
@@ -298,31 +299,67 @@ let dom = {
             document.body.querySelector("#Scores").classList.remove("on");
             return;
         } else {
-            let nextMedal = (rank < 2) ? 0 : 1;
-            let yours = score.displayScore(score.scores[level][1], true, level);
-            let goal = score.displayScore(score.goals[level][nextMedal], true, level);
-            if (rank == 0) {
-                document.querySelector("#NextScoreTitle").textContent = "Gold's score:";
-            } else {
-                document.querySelector("#NextScoreTitle").textContent = "Next medal:";
-            }
-            if (yours < 1000) dom.progressFill.style.width = Math.floor(yours / 10) + "%";
-            else {
-                dom.progressFill.style.width = "103.5%";
-                dom.progressFill.backgroundColor = "rgba(0, 0, 0, 0.45)";
-            }
-            dom.bestScore.textContent = yours;
-            dom.nextScore.textContent = goal;
-            score.translate.forEach(function (name) {
-                if (name !== "") {
-                    dom.bestScore.classList.remove(name);
-                    dom.nextScore.classList.remove(name);
-                }
-            });
-            //console.log(rank);
+            if (saved["fullStats"]) {
+                // Step 1: make HTML that supports this
+                    // Solution: use stuff I've already made for this!
+                // Step 2: write the CSS so this actually works nicely in the sidebar menu
+                    // Solution: scrap stuff I've already made for this; instead, repurpose normal stuff!
+                // Step 3: write the JS that makes this display actually the right stuff
 
-            dom.bestScore.classList.add(score.translate[rank]);
-            dom.nextScore.classList.add(score.translate[(rank > 0) ? rank - 1 : 0]);
+                // Step 4: make sure it works when setting is on, and doesn't appear when setting is off
+
+                // Step 5: fix random bugs that will inevitably appear
+                let yours = score.unCalibrate(score.scores[level][1]);
+                let myBest = score.myBest[level];
+                document.querySelector("#NextScoreTitle").textContent = "Perfect score:";
+                let yours2 = score.displayScore(score.scores[level][1], true, level);
+                if (yours2 < 1000) {
+                    dom.progressFill.style.width = Math.floor(yours2 / 10) + "%";
+                    dom.progressFill.style.backgroundImage = "linear-gradient(0.125turn, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.45) calc(100% - var(--unit) * 0.15), transparent calc(100% - var(--unit) * 0.15))";
+                } else {
+                    dom.progressFill.style.width = "100%";
+                    dom.progressFill.style.backgroundImage = "linear-gradient(0turn, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.55) 100%)";
+                }
+                //console.log("yours: " + yours + "; myBest: " + myBest);
+                score.translate.forEach(function (name) {
+                    if (name !== "") {
+                        dom.bestScore.classList.remove(name);
+                        dom.nextScore.classList.remove(name);
+                    }
+                });
+                let comparisons = [];
+                for (let i = 0; i < 3; i++) {
+                    comparisons.push((yours[i] > myBest[i]) ? 2 : 0);
+                }
+                dom.bestScore.innerHTML = "<span class='" + score.translate[comparisons[0]]+ "'>" + yours[0] + "</span> " + "<span class='" + score.translate[comparisons[1]]+ "'>" + yours[1] + "</span> <span class='" + score.translate[comparisons[2]] + "'>" + yours[2] + "</span>";
+                dom.nextScore.innerHTML = "<span class='white'>" + myBest[0] + " " + myBest[1] + " " + myBest[2] + "</span>";
+            } else {
+                let nextMedal = (rank < 2) ? 0 : 1;
+                let yours = score.displayScore(score.scores[level][1], true, level);
+                let goal = score.displayScore(score.goals[level][nextMedal], true, level);
+                if (rank == 0) {
+                    document.querySelector("#NextScoreTitle").textContent = "Gold's score:";
+                } else {
+                    document.querySelector("#NextScoreTitle").textContent = "Next medal:";
+                }
+                if (yours < 1000) {
+                    dom.progressFill.style.width = Math.floor(yours / 10) + "%";
+                    dom.progressFill.style.backgroundImage = "linear-gradient(0.125turn, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.45) calc(100% - var(--unit) * 0.15), transparent calc(100% - var(--unit) * 0.15))";
+                } else {
+                    dom.progressFill.style.width = "100%";
+                    dom.progressFill.style.backgroundImage = "linear-gradient(0turn, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.55) 100%)";
+                }
+                dom.bestScore.textContent = yours;
+                dom.nextScore.textContent = goal;
+                score.translate.forEach(function (name) {
+                    if (name !== "") {
+                        dom.bestScore.classList.remove(name);
+                        dom.nextScore.classList.remove(name);
+                    }
+                });
+                dom.bestScore.classList.add(score.translate[rank]);
+                dom.nextScore.classList.add(score.translate[(rank > 0) ? rank - 1 : 0]);
+            }
         }
         document.body.querySelector("#Scores").classList.add("on");
     },
@@ -354,6 +391,22 @@ let dom = {
                 save();
                 location.reload();
                 break;
+            case "fullStats":
+                saved["fullStats"] = !saved["fullStats"];
+                dom.checkboxes[n].checked = saved["fullStats"];
+                save();
+                break;
+        }
+    },
+    toggleInfo: function (button, mustClose = false) {
+        let opening  = button.classList.toggle("active");
+        if (opening && !mustClose) { // Create content
+            setTimeout(function () {
+                if (button.classList.contains("active")) button.innerHTML = '<h2>Info</h2>The scores are displayed in the format "<span class="white">A B C</span>" where <span class="white">A</span> is the number of in-game seconds you took to complete the level, <span class="white">B</span> is the number of time-swaps you used, and <span class="white">C</span> is the number of dino-blocks you created.';
+            }, 300);
+        } else { // Remove content
+            button.innerHTML = '<h2>Info</h2>';
+            if (mustClose) button.classList.remove("active");
         }
     }
 }
@@ -421,7 +474,8 @@ function visible() {
     dom.updateTotalScore(score.calcTotal());
     dom.checkboxes[0].checked = autoStart;
     dom.checkboxes[1].checked = statisticTwo;
-    dom.checkboxes[2].checked = saved["darkMode"];
+    dom.checkboxes[2].checked = saved["fullStats"];
+    dom.checkboxes[3].checked = saved["darkMode"];
 }
 
 function startGame() {
@@ -448,7 +502,10 @@ function fullDelete() {
             "bestLevel": 0,
             "powers": [false, false],
             "autoStart": true,
-            "scores": []
+            "scores": [],
+            "fullStats": false,
+            "statisticTwo": false,
+            "darkMode": false
         }));
         location.reload();
     //}

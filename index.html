@@ -49,12 +49,21 @@
                             <td><p class="label">Smoothed ghost animation (higher memory rate)</p></td>
                         </tr>
                         <tr>
-                            <td><input type="checkbox" onclick="dom.swapPref(2, 'darkMode')" tabindex="0"></td>
-                            <td><p class="label">Graphical "Dark-Mode"</p></td>
+                            <td><input type="checkbox" onclick="dom.swapPref(2, 'fullStats')" tabindex="0"></td>
+                            <td>
+                                <p class="label">Compare to the perfect score on level display</p>
+                                <button id="InfoButton" class="active" onclick="dom.toggleInfo(this);">
+                                    <h2>Info</h2>The scores are displayed in the format "<span class="white">A B C</span>" where <span class="white">A</span> is the number of in-game seconds you took to complete the level, <span class="white">B</span> is the number of time-swaps you used, and <span class="white">C</span> is the number of dino-blocks you created.
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" onclick="dom.swapPref(3, 'darkMode')" tabindex="0"></td>
+                            <td><p class="label">Dark mode</p></td>
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <div class="button" onclick="fullDelete();" tabindex="0">Restart: delete all progress and preferences</div>
+                                <div class="button" onclick="fullDelete();" tabindex="0">Full restart: delete all progress and preferences</div>
                             </td>
                         </tr>
                     </table>
@@ -96,24 +105,42 @@
                         </tr>
                         <!--
                         <tr>
-                            <td colspan="2" class="small">Gold stats:</td>
+                            <td colspan="2" id="PerformanceDivider" class="little"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" id="TinyTitle" class="little">Performance Stats&emsp;<span>&lt;i&gt;</span></td>
+                        </tr>
+                        <tr>
+                            <td class="little">[<span id="YourPerformance">6, 2, 1</span>]</td>
+                            <td class="little right">[<span id="PerfectPerformance">2, 2, 0</span>]</td>
+                        </tr>
+                        -->
+                        <!--
+                        <tr>
+                            <td colspan="2" id="TinyTitle">Performance Stats</td>
                         </tr>
                         <tr>
                             <td colspan="2">
-
                                 <table id="TinyTable">
                                     <tr>
+                                        <td class="small spacer"></td>
                                         <td class="small secondsTitle">Seconds</td>
                                         <td class="small swapsTitle">Swaps</td>
                                         <td class="small dinoblocksTitle">Dino-Blocks</td>
                                     </tr>
                                     <tr>
-                                        <td class="small secondsNum">2</td>
-                                        <td class="small swapsNum">3</td>
-                                        <td class="small dinoblocksNum">1</td>
+                                        <td class="small miniTitle yours">Your best:</td>
+                                        <td class="small secondsNum yours">6</td>
+                                        <td class="small swapsNum yours">1</td>
+                                        <td class="small dinoblocksNum yours">2</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="small miniTitle perfect">Perfect:</td>
+                                        <td class="small secondsNum perfect">2</td>
+                                        <td class="small swapsNum perfect">0</td>
+                                        <td class="small dinoblocksNum perfect">2</td>
                                     </tr>
                                 </table>
-
                             </td>
                         </tr>
                         -->
