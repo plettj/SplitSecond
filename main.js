@@ -3,11 +3,12 @@
 // GLOBAL VARIABLES
 let coolMathGames = false;
 let beginningLevel = 0;
+let allUnlocked = false;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!
 let levelsWpowers = [5, 8]; // the levels that hold powers
-let powers = [false, false]; // unlocked: [swapping, blocking]
+let powers = [allUnlocked, allUnlocked]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
 if (window.innerWidth < (width + 0.5) * unit) unit = Math.floor(window.innerWidth / (width + 0.5) / 4) * 4;
@@ -31,12 +32,13 @@ let nextGhost = undefined;
 
 let saved = {
     "bestLevel": 0,
-    "powers": [false, false],
+    "powers": [allUnlocked, allUnlocked],
     "autoStart": true,
     "statisticTwo": false,
     "darkMode": false,
     "fullStats": false,
-    "scores": []
+    "scores": [],
+    "copyJlp": true
 }
 
 let previousSaved = localStorage.getItem('saved');
@@ -193,7 +195,6 @@ function keyPressed(code, num) {
 
 document.addEventListener("keydown", function(event) {
     let k = event.keyCode;
-    console.log(event.shiftKey + " " + event.ctrlKey + " " + k);
     if (k == 9 || k == 38 || k == 40) {
         event.preventDefault();
     } else if (k == 123 || (event.ctrlKey && event.shiftKey && (k == 73 || k == 74))) {

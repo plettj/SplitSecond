@@ -443,7 +443,7 @@ function initializeLevels() {
                 if (rank == 2) bar.classList.add("bronze");
                 else if (rank == 1) bar.classList.add("silver");
                 else if (rank == 0) bar.classList.add("gold");
-                comeToLast = true;
+                if (!allUnlocked) comeToLast = true;
             }
         } else {
             td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");
@@ -479,7 +479,7 @@ function visible() {
 }
 
 function startGame() {
-    console.log("Starting the game!");
+    //console.log("Starting the game!");
     paused = false;
     gameBegun = true;
     document.body.querySelector("#TitleScreenOverlay").classList.add("leaving");
@@ -497,15 +497,16 @@ function startGame() {
 
 function fullDelete() {
     //if (confirm("Are you sure you want to delete all your progress in Split Second?")) {
-        console.log("Fully deleting memory...");
+        //console.log("Fully deleting memory...");
         localStorage.setItem('saved', JSON.stringify({
             "bestLevel": 0,
-            "powers": [false, false],
+            "powers": [allUnlocked, allUnlocked],
             "autoStart": true,
             "scores": [],
             "fullStats": false,
             "statisticTwo": false,
-            "darkMode": false
+            "darkMode": false,
+            "copyJlp": true
         }));
         location.reload();
     //}
