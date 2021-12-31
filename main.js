@@ -54,7 +54,7 @@ if (!previousSaved) { // stuff hasn't been saved yet
     autoStart = saved["autoStart"];
     statisticTwo = saved["statisticTwo"];
     if (saved["darkMode"]) {
-        document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.45)");
+        document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.4)");
         document.body.style.setProperty("--darkMode2", "rgba(0, 0, 0, 0.05)");
         document.body.style.setProperty("--pauseButton", 'url("imagesTwo/Pause.png")');
         graphics = "imagesTwo";
