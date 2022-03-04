@@ -16,6 +16,7 @@ let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
+if (coolMathGames) document.body.style.setProperty("--coolmathGamesScreen", `url("images/CoolmathGamesImage.png")`);
 let paused = true;
 let gameBegun = false; // initial title screen boolean
 let swapDelay = 250; // milliseconds before you can swap time again
@@ -29,6 +30,14 @@ let time = 1; // -1 = BACKWARDS TIME
 let frame = 0; // CORE OPERATION: going up when forward, down when backward!
 let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier with larger numbers)
 let nextGhost = undefined;
+
+
+let currentURL = window.location.href;
+console.log(currentURL);
+/*if (!((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (!coolMathGames && currentURL.includes("127.0.0.1:5500")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
+    throw {name: "INVALID_URL", message: "The game is being run illegally."};
+}*/
+
 
 let saved = {
     "bestLevel": 0,
@@ -117,8 +126,18 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png", "Objects.
 // *** Where it all starts ***
 window.onload = function () {
     score.init();
-    setTimeout(function () {
-        visible();
+    if (coolMathGames) {
+        setTimeout(function () {
+            visible();
+            dom.coolMathTitle.style.opacity = 0;
+            if (!veryveryfirst) {
+                levels.startLevel(beginningLevel);
+                levels.drawLevel(beginningLevel, true);
+                startAnimating(60); // 60 fps
+            }
+            ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
+        }, 1000);
+    } else {
         dom.coolMathTitle.style.opacity = 0;
         if (!veryveryfirst) {
             levels.startLevel(beginningLevel);
@@ -126,7 +145,9 @@ window.onload = function () {
             startAnimating(60); // 60 fps
         }
         ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
-    }, 1000);
+        setTimeout(visible, 300); // Length of menu animation transition-duration
+    }
+    
 }
 
 // To run actual frame-by-frame animation
@@ -200,7 +221,7 @@ function keyPressed(code, num) {
 
 document.addEventListener("keydown", function(event) {
     let k = event.keyCode;
-    console.log(event.shiftKey + " " + event.ctrlKey + " " + k);
+    //console.log(event.shiftKey + " " + event.ctrlKey + " " + k);
     if (k == 9 || k == 38 || k == 40) {
         event.preventDefault();
     } else if (k == 123 || (event.ctrlKey && event.shiftKey && (k == 73 || k == 74))) {

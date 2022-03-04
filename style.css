@@ -22,6 +22,8 @@ body {
     background-color: #343538;
     --darkMode: rgba(0, 0, 0, 0.01);
     --darkMode2: rgba(0, 0, 0, 0.01);
+    --coolmathGamesScreen: url();
+
     --pauseButton: url("images/Pause.png");
     --playButton: url("images/Play.png");
     --titleScreen: url("images/TitleScreen.png");
@@ -714,7 +716,7 @@ input[type="checkbox"]:checked {
     height: calc(var(--unit) * var(--height));
     left: calc((100% - var(--unit) * var(--width)) / 2);
     top: calc((100% - var(--unit) * var(--height)) / 2);
-    background-image: url("images/CoolmathGamesImage.png");
+    background-image: var(--coolmathGamesScreen);
     background-color: black;
     background-size: calc(var(--unit) * var(--width)) calc(var(--unit) * var(--height));
     pointer-events: none;
