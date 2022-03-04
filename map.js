@@ -382,6 +382,9 @@ let score = {
             "You've reached <span class='gold'>Gold</span> rank; nice work.",
             "Good luck with the rest of the levels!",
             "You're <span class='gold'>Gold</span>, my friend.",
+            "That time you beat this level was so jazzy, <span class='gold'>Gold</span>-level player.",
+            "Wow! Chuck Norris didn't even get <span class='gold'>Gold</span> on this level.",
+            "To beat this level requires superior intellect. And you beat this level.",
             "Excellent job perfoming at a <span class='gold'>Gold</span>-medal level.",
             "Don't stop working hard to get that <span class='gold'>Gold</span> rank!",
             "Good job reaching the rank of <span class='gold'>Gold</span>.",
@@ -402,9 +405,9 @@ let score = {
             "You're really crushing these levels! <span class='gold'>Gold</span> after <span class='gold'>Gold</span> after <span class='gold'>Gold</span>."
         ],
         [
-            "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
-            "If <span class='silver'>Silver</span> isn't enough for you, you may want to try doing <span class='ital'>less time-swaps</span> to improve your rank.",
-            "If you're wondering how to achieve the <span class='gold'>Gold</span> rank, using <span class='ital'>less dino-blocks</span> might help you the most."
+            "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level will be best.",
+            "If <span class='silver'>Silver</span> isn't enough for you, you should try doing <span class='ital'>less time-swaps</span> to improve your rank.",
+            "If you're wondering how to achieve the <span class='gold'>Gold</span> rank, using <span class='ital'>less dino-blocks</span> will help you most on this level."
         ],
         [
             "You're at <span class='bronze'>Bronze</span>, but to get to <span class='silver'>Silver</span>, you should try to complete this level in <span class='ital'>less in-game time</span>.",
