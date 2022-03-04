@@ -23,6 +23,9 @@ body {
     --darkMode: rgba(0, 0, 0, 0.01);
     --darkMode2: rgba(0, 0, 0, 0.01);
     --pauseButton: url("images/Pause.png");
+    --playButton: url("images/Play.png");
+    --titleScreen: url("images/TitleScreen.png");
+    --modeValue: 255;
     --x: 1;
     --y: 1;
     --g1: #f0ec2e;
@@ -703,6 +706,25 @@ input[type="checkbox"]:checked {
 #SettingsMenu div.button:hover {
     color: #d62a1d;
 }
+
+#CoolmathGamesOverlay {
+    position: absolute;
+    z-index: 3;
+    width: calc(var(--unit) * var(--width));
+    height: calc(var(--unit) * var(--height));
+    left: calc((100% - var(--unit) * var(--width)) / 2);
+    top: calc((100% - var(--unit) * var(--height)) / 2);
+    background-image: url("images/CoolmathGamesImage.png");
+    background-color: black;
+    background-size: calc(var(--unit) * var(--width)) calc(var(--unit) * var(--height));
+    pointer-events: none;
+    opacity: 1;
+    transition-duration: 0.6s;
+    -o-transition-duration: 0.6s;
+    -moz-transition-duration: 0.6s;
+    -webkit-transition-duration: 0.6s;
+}
+
 #TitleScreen,#TitleScreenOverlay {
     position: absolute;
     width: calc(var(--unit) * var(--width));
@@ -712,18 +734,18 @@ input[type="checkbox"]:checked {
     z-index: 2;
 }
 #TitleScreen {
-    background-image: url("images/TitleScreen.png");
-    background-color: rgba(255, 255, 255, 0);
+    background-image: var(--titleScreen);
+    background-color: rgba(var(--modeValue), var(--modeValue), var(--modeValue), 0);
     background-size: calc(var(--unit) * var(--width)) calc(var(--unit) * var(--height));
 }
 #TitleScreenOverlay {
-    background-color: rgba(255, 255, 255, 0);
+    background-color: rgba(var(--modeValue), var(--modeValue), var(--modeValue), 0);
     transition-duration: 0.5s;
     pointer-events: none;
     z-index: 3;
 }
 #TitleScreenOverlay.leaving {
-    background-color: rgba(255, 255, 255, 1);
+    background-color: rgba(var(--modeValue), var(--modeValue), var(--modeValue), 1);
 }
 #TitleScreen.gone {
     background-image: none;
@@ -733,7 +755,7 @@ input[type="checkbox"]:checked {
     background-color: transparent;
     outline: none;
     border: none;
-    background-image: url("images/Play.png");
+    background-image: var(--playButton);
     background-size: calc(var(--unit) * 3) calc(var(--unit) * 2.5);
     position: absolute;
     width: calc(var(--unit) * 3);

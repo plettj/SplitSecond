@@ -9,6 +9,7 @@ let dom = {
     pauseTitle: document.body.querySelector("#PauseTitle"),
     pauseNum: document.body.querySelector("#CurrLevel"),
     pauseButton: document.body.querySelector("#Pause"),
+    coolMathTitle: document.body.querySelector("#CoolmathGamesOverlay"),
     powers: document.body.querySelector("#Powers"),
     instruction: document.body.querySelector(".instruction"),
     progressFill: document.body.querySelector("#ProgressFill"),
@@ -443,7 +444,7 @@ function initializeLevels() {
                 if (rank == 2) bar.classList.add("bronze");
                 else if (rank == 1) bar.classList.add("silver");
                 else if (rank == 0) bar.classList.add("gold");
-                comeToLast = true;
+                if (!allUnlocked) comeToLast = true;
             }
         } else {
             td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");
@@ -489,6 +490,11 @@ function startGame() {
         levels.startLevel(beginningLevel);
         levels.drawLevel(beginningLevel, true);
         startAnimating(60); // 60 fps
+
+        //------- Coolmath Games -------//
+        //parent.cmgGameEvent("start");
+        //------------------------------//
+
     }, 500);
     setTimeout(function () {
         document.body.querySelector("#TitleScreenOverlay").style.display = "none";
@@ -498,9 +504,9 @@ function startGame() {
 function fullDelete() {
     //if (confirm("Are you sure you want to delete all your progress in Split Second?")) {
         console.log("Fully deleting memory...");
-        localStorage.setItem('saved', JSON.stringify({
+        localStorage.setItem('SplitSecond-Saved', JSON.stringify({
             "bestLevel": 0,
-            "powers": [false, false],
+            "powers": [allUnlocked, allUnlocked],
             "autoStart": true,
             "scores": [],
             "fullStats": false,

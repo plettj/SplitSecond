@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Split Second V-2.5</title>
+        <title>Split Second - Play it now at CoolmathGames.com</title>
 	    <link rel="stylesheet" href="style.css">
         <link rel="icon" type="image/x-icon" href="imagesTwo/favicon.png">
         <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
@@ -59,7 +59,7 @@
                         </tr>
                         <tr>
                             <td><input type="checkbox" onclick="dom.swapPref(3, 'darkMode')" tabindex="0"></td>
-                            <td><p class="label">Dark mode</p></td>
+                            <td><p class="label">Dark mode graphic set</p></td>
                         </tr>
                         <tr>
                             <td colspan="2">
@@ -103,47 +103,6 @@
                             <td id="NextScoreTitle">Next medal:</td>
                             <td id="NextScore" class="gold">999</td>
                         </tr>
-                        <!--
-                        <tr>
-                            <td colspan="2" id="PerformanceDivider" class="little"></td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" id="TinyTitle" class="little">Performance Stats&emsp;<span>&lt;i&gt;</span></td>
-                        </tr>
-                        <tr>
-                            <td class="little">[<span id="YourPerformance">6, 2, 1</span>]</td>
-                            <td class="little right">[<span id="PerfectPerformance">2, 2, 0</span>]</td>
-                        </tr>
-                        -->
-                        <!--
-                        <tr>
-                            <td colspan="2" id="TinyTitle">Performance Stats</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <table id="TinyTable">
-                                    <tr>
-                                        <td class="small spacer"></td>
-                                        <td class="small secondsTitle">Seconds</td>
-                                        <td class="small swapsTitle">Swaps</td>
-                                        <td class="small dinoblocksTitle">Dino-Blocks</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="small miniTitle yours">Your best:</td>
-                                        <td class="small secondsNum yours">6</td>
-                                        <td class="small swapsNum yours">1</td>
-                                        <td class="small dinoblocksNum yours">2</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="small miniTitle perfect">Perfect:</td>
-                                        <td class="small secondsNum perfect">2</td>
-                                        <td class="small swapsNum perfect">0</td>
-                                        <td class="small dinoblocksNum perfect">2</td>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                        -->
                     </table>
                     <div id="LMessage">This level has not been completed.</div>
                 </section>
@@ -166,6 +125,7 @@
         <section id="TitleScreen">
             <button id="FirstPlay" onclick="startGame();"></button>
         </section>
+        <div id="CoolmathGamesOverlay"></div>
 
         <div class="cover three"></div>
     </body>

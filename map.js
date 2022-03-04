@@ -75,19 +75,21 @@ function save() {
     if (statisticTwo) GFuel = 1;
     else GFuel = 3;
     tempScoreRecord = [];
-    for (let l = 1; l <= levels.levels.length; l++) {
-        if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
-            if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
-                //console.log("Best level is now: ", l);
-                saved["bestLevel"] = l;
-            }} else {
-                //console.log("Saved that you beat the final level!");
+    if (!allUnlocked) {
+        for (let l = 1; l <= levels.levels.length; l++) {
+            if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
+                if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
+                    //console.log("Best level is now: ", l);
+                    saved["bestLevel"] = l;
+                }} else {
+                    //console.log("Saved that you beat the final level!");
+                }
+                tempScoreRecord.push(score.scores[l - 1]);
             }
-            tempScoreRecord.push(score.scores[l - 1]);
         }
     }
     saved["scores"] = tempScoreRecord;
-    localStorage.setItem('saved', JSON.stringify(saved));
+    localStorage.setItem('SplitSecond-Saved', JSON.stringify(saved));
 }
 
 // LEVELS
@@ -193,6 +195,11 @@ let levels = {
             this.buttons[level].forEach(function (button) {
                 button.activate(false);
             });
+
+            //------- Coolmath Games -------//
+            //parent.cmgGameEvent("replay", (level + 1).toString());
+            //------------------------------//
+
         } else if (level < this.levels.length) {
             // No idea if the below code is something that helps with the lag AT ALL
             for (let i = 0; i < this.currentLevelMap.length; i++) {
@@ -200,8 +207,16 @@ let levels = {
             }
             delete this.currentLevelMap;
             this.currentLevelMap = this.levels[level].map(row => [...row]);
+
+            //------- Coolmath Games -------//
+            //parent.cmgGameEvent("start", (level + 1).toString());
+            //------------------------------//
+
         } else {
-            this.startLevel(level - 1);
+            console.log("You beat the final level!");
+            //this.startLevel(level - 1);
+            dom.newMenu(2);
+            return;
         }
         if (level >= this.levels.length) level = this.levels.length - 1;
         time = 1;
