@@ -197,7 +197,7 @@ let levels = {
             });
 
             //------- Coolmath Games -------//
-            parent.cmgGameEvent("replay", (level + 1).toString());
+            // parent.cmgGameEvent("replay", (level + 1).toString());
             //------------------------------//
 
         } else if (level < this.levels.length) {
@@ -209,7 +209,7 @@ let levels = {
             this.currentLevelMap = this.levels[level].map(row => [...row]);
 
             //------- Coolmath Games -------//
-            parent.cmgGameEvent("start", (level + 1).toString());
+            // parent.cmgGameEvent("start", (level + 1).toString());
             //------------------------------//
 
         } else {

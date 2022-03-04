@@ -1,7 +1,7 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = true;
+let coolMathGames = false;
 let beginningLevel = 0;
 let allUnlocked = false;
 let width = 16; // in units
