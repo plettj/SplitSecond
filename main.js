@@ -1,9 +1,9 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = false;
+let coolMathGames = true;
 let beginningLevel = 0;
-let allUnlocked = true;
+let allUnlocked = false;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!

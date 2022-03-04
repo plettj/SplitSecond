@@ -492,7 +492,7 @@ function startGame() {
         startAnimating(60); // 60 fps
 
         //------- Coolmath Games -------//
-        //parent.cmgGameEvent("start");
+        parent.cmgGameEvent("start");
         //------------------------------//
 
     }, 500);
