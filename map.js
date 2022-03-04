@@ -75,19 +75,21 @@ function save() {
     if (statisticTwo) GFuel = 1;
     else GFuel = 3;
     tempScoreRecord = [];
-    for (let l = 1; l <= levels.levels.length; l++) {
-        if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
-            if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
-                //console.log("Best level is now: ", l);
-                saved["bestLevel"] = l;
-            }} else {
-                //console.log("Saved that you beat the final level!");
+    if (!allUnlocked) {
+        for (let l = 1; l <= levels.levels.length; l++) {
+            if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
+                if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
+                    //console.log("Best level is now: ", l);
+                    saved["bestLevel"] = l;
+                }} else {
+                    //console.log("Saved that you beat the final level!");
+                }
+                tempScoreRecord.push(score.scores[l - 1]);
             }
-            tempScoreRecord.push(score.scores[l - 1]);
         }
     }
     saved["scores"] = tempScoreRecord;
-    localStorage.setItem('saved', JSON.stringify(saved));
+    localStorage.setItem('SplitSecond-Saved', JSON.stringify(saved));
 }
 
 // LEVELS
@@ -193,6 +195,11 @@ let levels = {
             this.buttons[level].forEach(function (button) {
                 button.activate(false);
             });
+
+            //------- Coolmath Games -------//
+            // parent.cmgGameEvent("replay", (level + 1).toString());
+            //------------------------------//
+
         } else if (level < this.levels.length) {
             // No idea if the below code is something that helps with the lag AT ALL
             for (let i = 0; i < this.currentLevelMap.length; i++) {
@@ -200,8 +207,15 @@ let levels = {
             }
             delete this.currentLevelMap;
             this.currentLevelMap = this.levels[level].map(row => [...row]);
+
+            //------- Coolmath Games -------//
+            // parent.cmgGameEvent("start", (level + 1).toString());
+            //------------------------------//
+
         } else {
+            console.log("You beat the final level!");
             this.startLevel(level - 1);
+            return;
         }
         if (level >= this.levels.length) level = this.levels.length - 1;
         time = 1;
@@ -244,10 +258,15 @@ let levels = {
         document.body.querySelector("#LevelsMenu .content .back").style.display = "block";
         
         if (autoStart) {
-            dom.newLevel(true);
+            if (this.currentLevel < levels.levels.length - 1) {
+                dom.newLevel(true);
+                setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
+                setTimeout(dom.newLevel, 1700);
+            } else {
+                dom.newMenu(0);
+                dom.newMenu(1);
+            }
             // setTimeout for when to start the next level
-            setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
-            setTimeout(dom.newLevel, 1700);
         } else {
             setTimeout(function () {
                 dom.newLevel(false);
@@ -348,7 +367,7 @@ let score = {
         [4, 3, 4], // 33
         [8, 1, 2], // 34
         [11, 3, 0], // 35
-        [11, 0, 0], // 36
+        [8, 0, 0], // 36
         [99, 99, 99]
     ],
     totalScore: 0, // total calibrated score.
@@ -363,6 +382,9 @@ let score = {
             "You've reached <span class='gold'>Gold</span> rank; nice work.",
             "Good luck with the rest of the levels!",
             "You're <span class='gold'>Gold</span>, my friend.",
+            "That time you beat this level was so jazzy, <span class='gold'>Gold</span>-level player.",
+            "Wow! Chuck Norris didn't even get <span class='gold'>Gold</span> on this level.",
+            "To beat this level requires superior intellect. And you beat this level.",
             "Excellent job perfoming at a <span class='gold'>Gold</span>-medal level.",
             "Don't stop working hard to get that <span class='gold'>Gold</span> rank!",
             "Good job reaching the rank of <span class='gold'>Gold</span>.",
@@ -383,9 +405,9 @@ let score = {
             "You're really crushing these levels! <span class='gold'>Gold</span> after <span class='gold'>Gold</span> after <span class='gold'>Gold</span>."
         ],
         [
-            "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level might be best.",
-            "If <span class='silver'>Silver</span> isn't enough for you, you may want to try doing <span class='ital'>less time-swaps</span> to improve your rank.",
-            "If you're wondering how to achieve the <span class='gold'>Gold</span> rank, using <span class='ital'>less dino-blocks</span> might help you the most."
+            "To reach <span class='gold'>Gold</span>, focussing on taking <span class='ital'>less in-game time</span> to solve this level will be best.",
+            "If <span class='silver'>Silver</span> isn't enough for you, you should try doing <span class='ital'>less time-swaps</span> to improve your rank.",
+            "If you're wondering how to achieve the <span class='gold'>Gold</span> rank, using <span class='ital'>less dino-blocks</span> will help you most on this level."
         ],
         [
             "You're at <span class='bronze'>Bronze</span>, but to get to <span class='silver'>Silver</span>, you should try to complete this level in <span class='ital'>less in-game time</span>.",
@@ -421,7 +443,7 @@ let score = {
         let biggest = diff.indexOf(Math.max(...diff));
         biggest = (biggest == -1) ? Math.floor(Math.random() * 3) : biggest;
         let previousBest = this.scores[level][1].reduce((a, b) => a + b, 0);
-        //console.log("(Level " + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
+        console.log("(Level " + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
         if (previousBest >= total || previousBest == 0) {
             this.scores[level] = [rank, s, this.messages[rank][(rank > 0) ? biggest : Math.floor(Math.random() * (this.messages[0].length - 1))]];
             if (complete) this.unlock(level + 1);
@@ -1905,33 +1927,33 @@ levels.addLevel([
 3, 0 // swaps, blocks
 ); // ^ LEVEL index 34
 levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+    [2, 0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
-    [0, 1, 0, 2, 2, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2],
-    [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ],
-[[75, 0, 0], [150, 0, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
+[[25, 0, 0], [90, 0, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
 0, // [goal-y]
 [
     new Button(
         0, [0, 0], 0,
         [
-            new Spikes([[4, 0, 1], [10, 0, 1]], 1)
+            new Spikes([[7, 3, 1], [9, 3, 1]], 1)
         ],
         true
     ),
     new Button(
         0, [0, 0], 0,
         [
-            new Spikes([[5, 0, 1], [6, 0, 1], [8, 0, 1], [9, 0, 1]], 0)
+            new Spikes([[8, 3, 1]], 0)
         ],
         true
     )
@@ -1942,14 +1964,14 @@ levels.addLevel([
 let instructions = [
     [["W", "A", "S", "D"], "Run to the right"],
     [[], "Jump through semi-solid platforms"],
-    [["R", "P"], "Restart, or Pause"],
+    [["R", "P"], "Restart and Pause"],
     [[], ""],
     [[], ""],
     [[], ""],
     [["E"], "Swap the direction of time!"],
     [[], ""],
     [[], ""],
-    [["S"], "Create a dino-block!"],
+    [["S"], "Try making a dino-block"],
     [["S", "E"], "Dino-blocks can be support..."],
     [[], ""], // LEVEL index 11
     [[], ""],
@@ -1975,47 +1997,6 @@ let instructions = [
     [[], ""],
     [[], ""],
     [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
+    [[], "Thanks for playing!"],
     [[], ""]
 ];

@@ -3,18 +3,20 @@
 // GLOBAL VARIABLES
 let coolMathGames = false;
 let beginningLevel = 0;
+let allUnlocked = false;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!
 let levelsWpowers = [5, 8]; // the levels that hold powers
-let powers = [false, false]; // unlocked: [swapping, blocking]
-let unit = (Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 : 50;
-if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
-if (window.innerWidth < (width + 0.5) * unit) unit = Math.floor(window.innerWidth / (width + 0.5) / 4) * 4;
+let powers = [allUnlocked, allUnlocked]; // unlocked: [swapping, blocking]
+let unit = (Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 : 50;
+if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
+if (window.innerWidth < (width + 0.1) * unit) unit = Math.floor(window.innerWidth / (width + 0.1) / 4) * 4;
 let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
 document.body.style.setProperty("--height", height);
+if (coolMathGames) document.body.style.setProperty("--coolmathGamesScreen", `url("images/CoolmathGamesImage.png")`);
 let paused = true;
 let gameBegun = false; // initial title screen boolean
 let swapDelay = 250; // milliseconds before you can swap time again
@@ -29,9 +31,17 @@ let frame = 0; // CORE OPERATION: going up when forward, down when backward!
 let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier with larger numbers)
 let nextGhost = undefined;
 
+
+let currentURL = window.location.href;
+console.log(currentURL);
+if (!((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (!coolMathGames && currentURL.includes("127.0.0.1:5500")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
+    throw {name: "INVALID_URL", message: "The game is being run illegally."};
+}
+
+
 let saved = {
     "bestLevel": 0,
-    "powers": [false, false],
+    "powers": [allUnlocked, allUnlocked],
     "autoStart": true,
     "statisticTwo": false,
     "darkMode": false,
@@ -39,14 +49,14 @@ let saved = {
     "scores": []
 }
 
-let previousSaved = localStorage.getItem('saved');
+let previousSaved = localStorage.getItem('SplitSecond-Saved');
 let veryveryfirst = false;
 if (!previousSaved) { // stuff hasn't been saved yet
     setTimeout(function () {
         save();
     }, 2000);
 } else { // update based on save
-    saved = JSON.parse(localStorage.getItem('saved'));
+    saved = JSON.parse(localStorage.getItem('SplitSecond-Saved'));
     beginningLevel = saved["bestLevel"];
     powers = [saved["powers"][0], saved["powers"][1]];
     autoStart = saved["autoStart"];
@@ -55,22 +65,25 @@ if (!previousSaved) { // stuff hasn't been saved yet
         document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.45)");
         document.body.style.setProperty("--darkMode2", "rgba(0, 0, 0, 0.05)");
         document.body.style.setProperty("--pauseButton", 'url("imagesTwo/Pause.png")');
+        document.body.style.setProperty("--playButton", 'url("imagesTwo/Play.png")');
+        document.body.style.setProperty("--titleScreen", 'url("imagesTwo/TitleScreen.png")');
+        document.body.style.setProperty("--modeValue", 0);
         graphics = "imagesTwo";
     }
     if (statisticTwo) GFuel = 1;
     else GFuel = 3;
-    if (saved["scores"].length < 1) {
+    //if (saved["scores"].length < 1) {
         veryveryfirst = true;
-    } else {
-        document.body.querySelector("#TitleScreen").style.display = "none";
-        gameBegun = true;
-        paused = false;
-    }
+    //} else {
+    //    document.body.querySelector("#TitleScreen").style.display = "none";
+    //    gameBegun = true;
+    //    paused = false;
+    //}
     // saved["scores"] is done over in the map.js file
 }
 
-// localStorage.setItem('saved', JSON.stringify(saved));
-// saved = JSON.parse(localStorage.getItem('saved'));
+// localStorage.setItem('SplitSecond-Saved', JSON.stringify(saved));
+// saved = JSON.parse(localStorage.getItem('SplitSecond-Saved'));
 
 setTimeout(function () {
     document.body.querySelector("#ProgressFill").classList.remove("silver");
@@ -113,13 +126,28 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png", "Objects.
 // *** Where it all starts ***
 window.onload = function () {
     score.init();
-    if (!veryveryfirst) {
-        levels.startLevel(beginningLevel);
-        levels.drawLevel(beginningLevel, true);
-        startAnimating(60); // 60 fps
+    if (coolMathGames) {
+        setTimeout(function () {
+            visible();
+            dom.coolMathTitle.style.opacity = 0;
+            if (!veryveryfirst) {
+                levels.startLevel(beginningLevel);
+                levels.drawLevel(beginningLevel, true);
+                startAnimating(60); // 60 fps
+            }
+            ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
+        }, 1000);
+    } else {
+        dom.coolMathTitle.style.opacity = 0;
+        if (!veryveryfirst) {
+            levels.startLevel(beginningLevel);
+            levels.drawLevel(beginningLevel, true);
+            startAnimating(60); // 60 fps
+        }
+        ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
+        setTimeout(visible, 300); // Length of menu animation transition-duration
     }
-    ctx[0].drawImage(img[1], 0, 0, unit * width, unit * height);
-    setTimeout(visible, 300); // should be the length of menu animation
+    
 }
 
 // To run actual frame-by-frame animation
@@ -193,7 +221,7 @@ function keyPressed(code, num) {
 
 document.addEventListener("keydown", function(event) {
     let k = event.keyCode;
-    console.log(event.shiftKey + " " + event.ctrlKey + " " + k);
+    //console.log(event.shiftKey + " " + event.ctrlKey + " " + k);
     if (k == 9 || k == 38 || k == 40) {
         event.preventDefault();
     } else if (k == 123 || (event.ctrlKey && event.shiftKey && (k == 73 || k == 74))) {

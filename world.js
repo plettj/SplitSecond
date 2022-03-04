@@ -724,8 +724,8 @@ let Button = class {
         // draw itself
         b.draw()
         
-        if (!(f % 50)) {
+        //if (!(f % 50)) {
             //console.log(this.memory.map((v) => Math.ceil(v)));
-        }
+        //}
     }
 }
