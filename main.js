@@ -1,14 +1,14 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = true;
+let coolMathGames = false;
 let beginningLevel = 0;
-let allUnlocked = false;
+let allUnlocked = true;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!
 let levelsWpowers = [5, 8]; // the levels that hold powers
-let powers = [true, true]; // unlocked: [swapping, blocking]
+let powers = [allUnlocked, allUnlocked]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 : 50;
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
 if (window.innerWidth < (width + 0.1) * unit) unit = Math.floor(window.innerWidth / (width + 0.1) / 4) * 4;
@@ -34,9 +34,9 @@ let nextGhost = undefined;
 
 let currentURL = window.location.href;
 console.log(currentURL);
-/*if (!((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (!coolMathGames && currentURL.includes("127.0.0.1:5500")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
+if (!((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (!coolMathGames && currentURL.includes("127.0.0.1:5500")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
     throw {name: "INVALID_URL", message: "The game is being run illegally."};
-}*/
+}
 
 
 let saved = {

@@ -214,8 +214,7 @@ let levels = {
 
         } else {
             console.log("You beat the final level!");
-            //this.startLevel(level - 1);
-            dom.newMenu(2);
+            this.startLevel(level - 1);
             return;
         }
         if (level >= this.levels.length) level = this.levels.length - 1;
@@ -259,10 +258,15 @@ let levels = {
         document.body.querySelector("#LevelsMenu .content .back").style.display = "block";
         
         if (autoStart) {
-            dom.newLevel(true);
+            if (this.currentLevel < levels.levels.length - 1) {
+                dom.newLevel(true);
+                setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
+                setTimeout(dom.newLevel, 1700);
+            } else {
+                dom.newMenu(0);
+                dom.newMenu(1);
+            }
             // setTimeout for when to start the next level
-            setTimeout(function () {levels.startLevel(levels.currentLevel + 1);}, 1000);
-            setTimeout(dom.newLevel, 1700);
         } else {
             setTimeout(function () {
                 dom.newLevel(false);
@@ -363,7 +367,7 @@ let score = {
         [4, 3, 4], // 33
         [8, 1, 2], // 34
         [11, 3, 0], // 35
-        [11, 0, 0], // 36
+        [8, 0, 0], // 36
         [99, 99, 99]
     ],
     totalScore: 0, // total calibrated score.
@@ -436,7 +440,7 @@ let score = {
         let biggest = diff.indexOf(Math.max(...diff));
         biggest = (biggest == -1) ? Math.floor(Math.random() * 3) : biggest;
         let previousBest = this.scores[level][1].reduce((a, b) => a + b, 0);
-        //console.log("(Level " + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
+        console.log("(Level " + (levels.currentLevel + 1) + ") Score: [" + seconds + ", " + swaps + ", " + blocks + "] -- Rank: " + rank);
         if (previousBest >= total || previousBest == 0) {
             this.scores[level] = [rank, s, this.messages[rank][(rank > 0) ? biggest : Math.floor(Math.random() * (this.messages[0].length - 1))]];
             if (complete) this.unlock(level + 1);
@@ -1920,33 +1924,33 @@ levels.addLevel([
 3, 0 // swaps, blocks
 ); // ^ LEVEL index 34
 levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 0, 0, 1, 2, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+    [0, 1, 0, 2, 2, 1, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0],
+    [3, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
+    [2, 0, 2, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 1, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2],
-    [0, 1, 0, 2, 2, 1, 0, 1, 2, 0, 0, 0, 0, 0, 0, 0],
-    [3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2],
-    [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 ],
-[[75, 0, 0], [150, 0, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
+[[25, 0, 0], [90, 0, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
 0, // [goal-y]
 [
     new Button(
         0, [0, 0], 0,
         [
-            new Spikes([[4, 0, 1], [10, 0, 1]], 1)
+            new Spikes([[7, 3, 1], [9, 3, 1]], 1)
         ],
         true
     ),
     new Button(
         0, [0, 0], 0,
         [
-            new Spikes([[5, 0, 1], [6, 0, 1], [8, 0, 1], [9, 0, 1]], 0)
+            new Spikes([[8, 3, 1]], 0)
         ],
         true
     )
@@ -1957,14 +1961,14 @@ levels.addLevel([
 let instructions = [
     [["W", "A", "S", "D"], "Run to the right"],
     [[], "Jump through semi-solid platforms"],
-    [["R", "P"], "Restart, or Pause"],
+    [["R", "P"], "Restart and Pause"],
     [[], ""],
     [[], ""],
     [[], ""],
     [["E"], "Swap the direction of time!"],
     [[], ""],
     [[], ""],
-    [["S"], "Create a dino-block!"],
+    [["S"], "Try making a dino-block"],
     [["S", "E"], "Dino-blocks can be support..."],
     [[], ""], // LEVEL index 11
     [[], ""],
@@ -1990,47 +1994,6 @@ let instructions = [
     [[], ""],
     [[], ""],
     [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
-    [[], ""],
+    [[], "Thanks for playing!"],
     [[], ""]
 ];
