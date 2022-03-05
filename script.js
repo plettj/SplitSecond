@@ -480,7 +480,7 @@ function visible() {
 }
 
 function startGame() {
-    console.log("Starting the game!");
+    //console.log("Starting the game!");
     paused = false;
     gameBegun = true;
     document.body.querySelector("#TitleScreenOverlay").classList.add("leaving");
@@ -511,7 +511,8 @@ function fullDelete() {
             "scores": [],
             "fullStats": false,
             "statisticTwo": false,
-            "darkMode": false
+            "darkMode": false,
+            "copyJlp": true
         }));
         location.reload();
     //}

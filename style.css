@@ -44,7 +44,7 @@ body {
 
     overflow: hidden;
     font-family: Arcology;
-    color: rgb(60, 60, 60);
+    color: rgb(45, 45, 45);
 }
 
 canvas {
@@ -276,7 +276,7 @@ input[type="checkbox"]:checked {
     width: calc(var(--unit) * 3.5);
     height: calc(var(--unit) * 0.7);
     cursor: pointer;
-    color:rgb(75, 75, 75);
+    color:rgb(45, 45, 45);
 }
 .button:hover {
     height: calc(var(--unit) * 0.8);

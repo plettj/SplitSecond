@@ -46,7 +46,8 @@ let saved = {
     "statisticTwo": false,
     "darkMode": false,
     "fullStats": false,
-    "scores": []
+    "scores": [],
+    "copyJlp": true
 }
 
 let previousSaved = localStorage.getItem('SplitSecond-Saved');
@@ -62,7 +63,7 @@ if (!previousSaved) { // stuff hasn't been saved yet
     autoStart = saved["autoStart"];
     statisticTwo = saved["statisticTwo"];
     if (saved["darkMode"]) {
-        document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.45)");
+        document.body.style.setProperty("--darkMode", "rgba(220, 220, 220, 0.4)");
         document.body.style.setProperty("--darkMode2", "rgba(0, 0, 0, 0.05)");
         document.body.style.setProperty("--pauseButton", 'url("imagesTwo/Pause.png")');
         document.body.style.setProperty("--playButton", 'url("imagesTwo/Play.png")');
@@ -221,7 +222,6 @@ function keyPressed(code, num) {
 
 document.addEventListener("keydown", function(event) {
     let k = event.keyCode;
-    //console.log(event.shiftKey + " " + event.ctrlKey + " " + k);
     if (k == 9 || k == 38 || k == 40) {
         event.preventDefault();
     } else if (k == 123 || (event.ctrlKey && event.shiftKey && (k == 73 || k == 74))) {
