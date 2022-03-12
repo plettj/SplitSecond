@@ -63,7 +63,7 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <div class="button" onclick="fullDelete();" tabindex="0">Full restart: delete all progress and preferences</div>
+                                <div class="button restart" onclick="deletePopUp();" tabindex="0">Full restart: delete all progress</div>
                             </td>
                         </tr>
                     </table>
@@ -130,6 +130,16 @@
             <button id="FirstPlay" onclick="startGame();"></button>
         </section>
         <div id="CoolmathGamesOverlay"></div>
+
+        <main id="ConfirmPopUp" style="visibility: hidden;" onclick="this.style.visibility = 'hidden';">
+            <div class="content">
+                <h1 style="font-weight: 300; text-align: center; line-height: var(--unit);">Confirm</h1>
+                Are you sure you want to <span style="color: #d62a1d;">delete all your progress</span>?<br>
+                This is irreversible.
+                <button class="confirmButton cancel">Cancel</button>
+                <button class="confirmButton confirm" onclick="fullDelete();">Confirm</button>
+            </div>
+        </main>
 
         <div class="cover three"></div>
     </body>

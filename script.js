@@ -170,7 +170,7 @@ let dom = {
             } else if (dom.displayed == 2) {
                 // settings menu right button...
 
-                // don't do anything since settings only have vertical controls
+                // don't do anything since settings only have vertical controls!!
             }
         } else if (code == 40 || code == 83) { // Down
             if (dom.displayed == 0 || dom.displayed == 2) {
@@ -501,19 +501,21 @@ function startGame() {
     }, 1000);
 }
 
+function deletePopUp() {
+    document.body.querySelector("#ConfirmPopUp").style.visibility = "visible";
+}
+
 function fullDelete() {
-    //if (confirm("Are you sure you want to delete all your progress in Split Second?")) {
-        console.log("Fully deleting memory...");
-        localStorage.setItem('SplitSecond-Saved', JSON.stringify({
-            "bestLevel": 0,
-            "powers": [false, false],
-            "autoStart": true,
-            "scores": [],
-            "fullStats": false,
-            "statisticTwo": false,
-            "darkMode": false,
-            "copyJlp": true
-        }));
-        location.reload();
-    //}
+    console.log("Fully deleting all progress and preferences.");
+    localStorage.setItem('SplitSecond-Saved', JSON.stringify({
+        "bestLevel": 0,
+        "powers": [false, false],
+        "autoStart": true,
+        "scores": [],
+        "fullStats": false,
+        "statisticTwo": false,
+        "darkMode": false,
+        "copyJlp": true
+    }));
+    location.reload();
 }

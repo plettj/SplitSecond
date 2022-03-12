@@ -1,8 +1,8 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = true;
-let developerMode = true;
+let coolMathGames = false;
+let developerMode = false;
 let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
