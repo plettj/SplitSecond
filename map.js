@@ -74,18 +74,16 @@ function save() {
     if (statisticTwo) GFuel = 1;
     else GFuel = 3;
     tempScoreRecord = [];
-    if (!allUnlocked) {
-        saved["powers"] = [powers[0], powers[1]];
-        for (let l = 1; l <= levels.levels.length; l++) {
-            if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
-                if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
-                    //console.log("Best level is now: ", l);
-                    saved["bestLevel"] = l;
-                }} else {
-                    //console.log("Saved that you beat the final level!");
-                }
-                tempScoreRecord.push(score.scores[l - 1]);
+    saved["powers"] = [powers[0], powers[1]];
+    for (let l = 1; l <= levels.levels.length; l++) {
+        if (score.scores[l - 1][1][0] + score.scores[l - 1][1][1] + score.scores[l - 1][1][2] > 0) {
+            if (l !== levels.levels.length) {if (score.scores[l][1][0] + score.scores[l][1][1] + score.scores[l][1][2] <= 0) {
+                //console.log("Best level is now: ", l);
+                saved["bestLevel"] = l;
+            }} else {
+                //console.log("Saved that you beat the final level!");
             }
+            tempScoreRecord.push(score.scores[l - 1]);
         }
     }
     saved["scores"] = tempScoreRecord;
@@ -197,7 +195,7 @@ let levels = {
             });
 
             //------- Coolmath Games -------//
-            // parent.cmgGameEvent("replay", (level + 1).toString());
+            if (coolMathGames) parent.cmgGameEvent("replay", (level + 1).toString());
             //------------------------------//
 
         } else if (level < this.levels.length) {
@@ -209,7 +207,7 @@ let levels = {
             this.currentLevelMap = this.levels[level].map(row => [...row]);
 
             //------- Coolmath Games -------//
-            // parent.cmgGameEvent("start", (level + 1).toString());
+            if (coolMathGames) parent.cmgGameEvent("start", (level + 1).toString());
             //------------------------------//
 
         } else {

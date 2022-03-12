@@ -444,7 +444,7 @@ function initializeLevels() {
                 if (rank == 2) bar.classList.add("bronze");
                 else if (rank == 1) bar.classList.add("silver");
                 else if (rank == 0) bar.classList.add("gold");
-                if (!allUnlocked) comeToLast = true;
+                comeToLast = true;
             }
         } else {
             td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");
@@ -492,7 +492,7 @@ function startGame() {
         startAnimating(60); // 60 fps
 
         //------- Coolmath Games -------//
-        // parent.cmgGameEvent("start");
+        if (coolMathGames) parent.cmgGameEvent("start");
         //------------------------------//
 
     }, 500);
@@ -506,7 +506,7 @@ function fullDelete() {
         console.log("Fully deleting memory...");
         localStorage.setItem('SplitSecond-Saved', JSON.stringify({
             "bestLevel": 0,
-            "powers": [allUnlocked, allUnlocked],
+            "powers": [false, false],
             "autoStart": true,
             "scores": [],
             "fullStats": false,

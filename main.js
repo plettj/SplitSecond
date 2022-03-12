@@ -1,14 +1,14 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = false;
+let coolMathGames = true;
+let developerMode = true;
 let beginningLevel = 0;
-let allUnlocked = false;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!
 let levelsWpowers = [5, 8]; // the levels that hold powers
-let powers = [allUnlocked, allUnlocked]; // unlocked: [swapping, blocking]
+let powers = [false, false]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 : 50;
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
 if (window.innerWidth < (width + 0.1) * unit) unit = Math.floor(window.innerWidth / (width + 0.1) / 4) * 4;
@@ -34,14 +34,14 @@ let nextGhost = undefined;
 
 let currentURL = window.location.href;
 console.log(currentURL);
-if (!((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (!coolMathGames && currentURL.includes("127.0.0.1:5500")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
+if (!developerMode && !((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
     throw {name: "INVALID_URL", message: "The game is being run illegally."};
 }
 
 
 let saved = {
     "bestLevel": 0,
-    "powers": [allUnlocked, allUnlocked],
+    "powers": [false, false],
     "autoStart": true,
     "statisticTwo": false,
     "darkMode": false,
@@ -224,7 +224,7 @@ document.addEventListener("keydown", function(event) {
     let k = event.keyCode;
     if (k == 9 || k == 38 || k == 40) {
         event.preventDefault();
-    } else if (k == 123 || (event.ctrlKey && event.shiftKey && (k == 73 || k == 74))) {
+    } else if (!developerMode && (k == 123 || (event.ctrlKey && event.shiftKey && (k == 73 || k == 74)) || (event.metaKey && event.altKey && (k == 73 || k == 74)))) {
         event.preventDefault();
         return false;
     }
