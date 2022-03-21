@@ -2,16 +2,21 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = false;
-let developerMode = false;
+let developerMode = true;
+let screenRecorderMode = false;
 let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!
-let levelsWpowers = [5, 8]; // the levels that hold powers
-let powers = [false, false]; // unlocked: [swapping, blocking]
+let levelsWpowers = [5, 0]; // the levels that hold powers
+let powers = [developerMode, developerMode]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 : 50;
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
 if (window.innerWidth < (width + 0.1) * unit) unit = Math.floor(window.innerWidth / (width + 0.1) / 4) * 4;
+if (screenRecorderMode) {
+    console.log(window.innerHeight);
+    unit = 864 / 12;
+}
 let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
@@ -41,7 +46,7 @@ if (!developerMode && !((!coolMathGames && currentURL.includes("splitsecond.surg
 
 let saved = {
     "bestLevel": 0,
-    "powers": [false, false],
+    "powers": [developerMode, developerMode],
     "autoStart": true,
     "statisticTwo": false,
     "darkMode": false,

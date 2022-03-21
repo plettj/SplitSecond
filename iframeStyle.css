@@ -1,0 +1,22 @@
+* {
+    margin: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body {
+    background-color: #343538;
+    overflow: scroll;
+    font-family: Arcology;
+    color: rgb(45, 45, 45);
+}
+
+iframe {
+    width: 70%;
+    height: 650px;
+    border: 5px solid red;
+    position: relative;
+    margin-top: 20%;
+    margin-left: 15%;
+    margin-bottom: 20%;
+}

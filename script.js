@@ -72,28 +72,34 @@ let dom = {
         else if (level == undefined) level = levels.currentLevel;
         else if (level - 1 !== levels.currentLevel) levels.startLevel(level - 1);
         dom.close();
-        dom.pauseButton.classList.remove("off");
-        dom.powers.classList.remove("off");
-        dom.instruction.classList.remove("off");
+        if (!screenRecorderMode) {
+            dom.pauseButton.classList.remove("off");
+            dom.powers.classList.remove("off");
+            dom.instruction.classList.remove("off");
+        }
         dom.covers.forEach(function (e) {e.classList.remove("on");});
         paused = false;
         dom.displayed = -1;
     },
     newLevel: function (nextL = false) {
         if (nextL) {
-            dom.levelNum.textContent = levels.currentLevel + 2;
-            dom.covers.forEach(function (e) {e.classList.add("on");});
-            dom.levelText.classList.add("on");
             dom.pauseButton.classList.add("off");
             dom.powers.classList.add("off");
             dom.instruction.classList.add("off");
+            if (!screenRecorderMode) {
+                dom.levelNum.textContent = levels.currentLevel + 2;
+                dom.covers.forEach(function (e) {e.classList.add("on");});
+                dom.levelText.classList.add("on");
+            }
             dom.displayed = 3;
         } else {
-            dom.covers.forEach(function (e) {e.classList.remove("on");});
             dom.levelText.classList.remove("on");
-            dom.pauseButton.classList.remove("off");
-            dom.powers.classList.remove("off");
-            dom.instruction.classList.remove("off");
+            if (!screenRecorderMode) {
+                dom.covers.forEach(function (e) {e.classList.remove("on");});
+                dom.pauseButton.classList.remove("off");
+                dom.powers.classList.remove("off");
+                dom.instruction.classList.remove("off");
+            }
             dom.displayed = -1;
             if (!autoStart) dom.preview = -1;
             dom.updateInstruct();
@@ -444,7 +450,7 @@ function initializeLevels() {
                 if (rank == 2) bar.classList.add("bronze");
                 else if (rank == 1) bar.classList.add("silver");
                 else if (rank == 0) bar.classList.add("gold");
-                comeToLast = true;
+                if (!screenRecorderMode) comeToLast = true;
             }
         } else {
             td.setAttribute("onclick", "dom.play(" + (s + 1) + ");");
@@ -494,6 +500,8 @@ function startGame() {
         //------- Coolmath Games -------//
         if (coolMathGames) parent.cmgGameEvent("start");
         //------------------------------//
+        
+        document.body.focus();
 
     }, 500);
     setTimeout(function () {
@@ -509,7 +517,7 @@ function fullDelete() {
     console.log("Fully deleting all progress and preferences.");
     localStorage.setItem('SplitSecond-Saved', JSON.stringify({
         "bestLevel": 0,
-        "powers": [false, false],
+        "powers": [developerMode, developerMode],
         "autoStart": true,
         "scores": [],
         "fullStats": false,
