@@ -23,10 +23,10 @@ let dom = {
     preview: -1, // the currently-displayed level
     newMenu: function (menu = 1) {
         dom.close();
+        dom.menus[menu].classList.remove("off");
+        dom.menus[menu].classList.add("on");
         switch (menu) {
             case 0: // Pause Menu
-                dom.menus[0].classList.remove("off");
-                dom.menus[0].classList.add("on");
                 dom.pauseNum.textContent = levels.currentLevel + 1;
                 dom.pauseButton.classList.add("off");
                 dom.powers.classList.add("off");
@@ -36,22 +36,18 @@ let dom = {
                 setTimeout(function () {
                     if (document.body.querySelector(":focus") != null) document.body.querySelector(":focus").blur();
                     dom.focuses[0].focus();
-                }, 0);
+                }, 300);
                 break;
             case 1: // Levels Menu
-                dom.menus[1].classList.remove("off");
-                dom.menus[1].classList.add("on");
-                //console.log(levels.currentLevel);
-                //if (!autoStart && levels.currentLevel == -1) console.log("Don't show arrowwwwwwwwwwwwwww");
                 setTimeout(function () {
                     document.body.querySelectorAll("#Select td")[(levels.currentLevel == -1) ? 0 : levels.currentLevel].focus();
                     dom.updateSide();
-                }, 0);
+                }, 300);
                 break;
             case 2: // Settings Menu
-                dom.menus[2].classList.remove("off");
-                dom.menus[2].classList.add("on");
-                setTimeout(function () {dom.focuses[2].focus();}, 0);
+                setTimeout(function () {
+                    dom.focuses[2].focus();
+                }, 300);
                 break;
         }
         dom.displayed = menu;

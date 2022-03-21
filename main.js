@@ -14,7 +14,6 @@ let unit = (Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50) ? Math
 if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
 if (window.innerWidth < (width + 0.1) * unit) unit = Math.floor(window.innerWidth / (width + 0.1) / 4) * 4;
 if (screenRecorderMode) {
-    console.log(window.innerHeight);
     unit = 864 / 12;
 }
 let pixel = unit / 10;
@@ -38,7 +37,7 @@ let nextGhost = undefined;
 
 
 let currentURL = window.location.href;
-console.log(currentURL);
+//console.log(currentURL);
 if (!developerMode && !((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
     throw {name: "INVALID_URL", message: "The game is being run illegally."};
 }
@@ -131,6 +130,8 @@ makeImages(["BlockTileset.png", "Background.png", "AvatarTileset.png", "Objects.
 
 // *** Where it all starts ***
 window.onload = function () {
+    if (document.body.querySelector(":focus") != null) document.body.querySelector(":focus").blur();
+    dom.pauseButton.focus();
     score.init();
     if (coolMathGames) {
         setTimeout(function () {
