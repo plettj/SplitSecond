@@ -1,7 +1,7 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = true;
+let coolMathGames = false;
 let developerMode = false;
 let screenRecorderMode = false;
 let beginningLevel = 0;
@@ -39,7 +39,7 @@ let nextGhost = undefined;
 let currentURL = window.location.href;
 //console.log(currentURL);
 if (!developerMode && !((!coolMathGames && currentURL.includes("splitsecond.surge.sh")) || (coolMathGames && currentURL.includes(".coolmathgames.com")))){
-    throw {name: "INVALID_URL", message: "The game is being run illegally."};
+    //throw {name: "INVALID_URL", message: "The game is being run illegally."};
 }
 
 
