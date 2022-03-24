@@ -8,7 +8,7 @@ let beginningLevel = 0;
 let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!
-let levelsWpowers = [5, 0]; // the levels that hold powers
+let levelsWpowers = [5, 8]; // the levels that hold powers
 let powers = [developerMode, developerMode]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 : 50;
 unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
