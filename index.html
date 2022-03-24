@@ -3,25 +3,148 @@
     <head>
         <meta charset="utf-8">
         <title>Split Second</title>
-	    <link rel="stylesheet" href="iframeStyle.css">
+	    <link rel="stylesheet" href="style.css">
         <link rel="icon" type="image/x-icon" href="imagesTwo/Favicon.png">
+        <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>-->
     </head>
-    
     <body>
+        <div class="instruction">
+            <div class="key off"></div> <div class="key off"></div> <div class="key off"></div> <div class="key off"></div>  <p class="text margin"></p>
+        </div>
+        <!-- Canvases are created with JavaScript -->
+        <p class="belowCanvases"></p>
+        <div class="cover one"></div>
+        <div class="cover two"></div>
 
-        <button onclick="fullScreen();" style="position: absolute; left: 0; top: 0;">Full Screen!</button>
+        <div class="bigText">
+            LEVEL <span id="NextLevel">2</span><br>
+            <div class="small">enters from the future</div>
+        </div>
 
-        <iframe src="SSindex.html"></iframe>
+        <main id="PauseMenu" class="menu off" style="visibility: hidden;">
+            <div class="content">
+                <div class="title" id="PauseTitle">Level <span id="CurrLevel">1</span></div>
+                <div class="button play" onclick="dom.play();" tabindex="0">Resume</div>
+                <div class="button restart" onclick="dom.restart();" tabindex="0">Restart</div>
+                <div class="button levels" onclick="dom.newMenu();" tabindex="0">Levels</div>
+            </div>
+        </main>
+        <main id="SettingsMenu" class="menu off" style="visibility: hidden;">
+            <div class="content">
+                <div class="back" onclick="dom.back();" tabindex="0"></div>
+                <div class="title">Settings</div>
+                
+                <section class="settingsTop">
+                    <p>Total score: <span id="TotalScore">0</span></p>
+                    <p style="font-size: calc(var(--unit) * 0.3); margin-top: calc(var(--unit) * -1.4);">Perfect score at your level: <span id="DevelopersRecord" style="color: black;">0</span></p>
+                </section>
+                <section class="settingsBottom">
+                    <table>
+                        <tr>
+                            <td><input type="checkbox" checked onclick="dom.swapPref(0, 'autoStart')" tabindex="0"></td>
+                            <td><p class="label">Auto-start next level, after completion</p></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" onclick="dom.swapPref(1, 'statisticTwo')" tabindex="0"></td>
+                            <td><p class="label">Smoothed ghost animation (higher memory rate)</p></td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" onclick="dom.swapPref(2, 'fullStats')" tabindex="0"></td>
+                            <td>
+                                <p class="label">Compare to the perfect score on level display</p>
+                                <button id="InfoButton" class="active" onclick="dom.toggleInfo(this);">
+                                    <h2>Info</h2>The scores are displayed in the format "<span class="white">A B C</span>" where <span class="white">A</span> is the number of in-game seconds you took to complete the level, <span class="white">B</span> is the number of time-swaps you used, and <span class="white">C</span> is the number of dino-blocks you created.
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><input type="checkbox" onclick="dom.swapPref(3, 'darkMode')" tabindex="0"></td>
+                            <td><p class="label">Dark mode graphic set</p></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div class="button restart" onclick="deletePopUp();" tabindex="0">Full restart: delete all progress</div>
+                            </td>
+                        </tr>
+                    </table>
+                </section>
+                <section class="reference" style="position: absolute; left: calc(var(--unit) * 0.44); bottom: calc(var(--unit) * 0.75);">
+                    <p class="label" style="font-size: calc(var(--unit) * 0.45);">Designed and Programmed by Josiah Plett, 2021</p>
+                    <p class="label" style="font-size: calc(var(--unit) * 0.30);">Special thanks to Jayden Hagerty, and to Berkley, Caleb, Christine, Lucia, Pio, Thien, and the other playtesters.</p>
+                </section>
+            </div>
+        </main>
+        <main id="LevelsMenu" class="menu off" style="visibility: hidden;">
+            <div class="content">
+                <div class="settings" onclick="dom.newMenu(2);" tabindex="0"></div>
+                <div class="back" onclick="dom.back(true);" tabindex="0"></div>
+                <div class="title">Levels</div>
+                <section class="scroll">
+                    <table id="Select">
+                        <!-- Levels, created with JavaScript (script.js) -->
+                    </table>
+                </section>
+                <section id="Level">
+                    <div id="LNumber" class="lsize">1</div>
+                    <canvas id="LCanvas" class="lsize"></canvas>
+                    <div id="LRankHolder">
+                        <aside class="line left"></aside>
+                        <span id="LRank">Unsolved</span>
+                        <aside class="line right"></aside>
+                    </div>
+                    <div id="ProgressBack">
+                        <div id="ProgressFill" class="gold"></div>
+                        <div class="progressMedal bronze"></div>
+                        <div class="progressMedal silver"></div>
+                        <div class="progressMedal gold"></div>
+                    </div>
+                    <table id="Scores">
+                        <tr>
+                            <td>Your best score:</td>
+                            <td id="BestScore" class="gold">0</td>
+                        </tr>
+                        <tr>
+                            <td id="NextScoreTitle">Next medal:</td>
+                            <td id="NextScore" class="gold">999</td>
+                        </tr>
+                    </table>
+                    <div id="LMessage">This level has not been completed.</div>
+                </section>
+            </div>
+        </main>
 
+        <div id="Powers">
+            <section class="powerBox">
+                <div class="Pswap">
+                <p>0</p>
+            </section>
+            <section class="powerBox">
+                <div class="Pblock">
+                <p>0</p>
+            </section>
+        </div>
+        <div id="Pause" onclick="dom.newMenu(0);"></div>
+
+        <div id="TitleScreenOverlay"></div>
+        <section id="TitleScreen">
+            <button id="FirstPlay" onclick="startGame();"></button>
+        </section>
+        <div id="CoolmathGamesOverlay"></div>
+
+        <main id="ConfirmPopUp" style="visibility: hidden;" onclick="this.style.visibility = 'hidden';">
+            <div class="content">
+                <h1 style="font-weight: 300; text-align: center; line-height: var(--unit);">Confirm</h1>
+                Are you sure you want to <span style="color: #d62a1d;">delete all your progress</span>?<br>
+                This is irreversible.
+                <button class="confirmButton cancel">Cancel</button>
+                <button class="confirmButton confirm" onclick="fullDelete();">Confirm</button>
+            </div>
+        </main>
+
+        <div class="cover three"></div>
     </body>
-
-    <script>
-        function fullScreen() {
-            document.getElementsByTagName("iframe")[0].className = "fullScreen";
-        }
-        function cmgGameEvent(value, level = "") {
-            console.log("cmgGameEvent: " + value + " ||| level: " + level);
-        }
-    </script>
-    
+	<script src="main.js"></script>
+	<script src="world.js"></script>
+	<script src="map.js"></script>
+	<script src="script.js"></script>
 </html>

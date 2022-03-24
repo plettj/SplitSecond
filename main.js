@@ -2,7 +2,7 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = true;
-let developerMode = true;
+let developerMode = false;
 let screenRecorderMode = false;
 let beginningLevel = 0;
 let width = 16; // in units
