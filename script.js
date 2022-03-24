@@ -494,11 +494,15 @@ function startGame() {
         startAnimating(60); // 60 fps
 
         //------- Coolmath Games -------//
-        if (coolMathGames) parent.cmgGameEvent("start");
+        if (coolMathGames) {
+            let parent = window.parent;
+            parent.cmgGameEvent("start");
+        }
         //------------------------------//
         
-        document.body.focus();
-
+        //console.log(document.body.firstElementChild);
+        document.body.firstElementChild.focus();
+        console.log(document.body.querySelector(":focus"));
     }, 500);
     setTimeout(function () {
         document.body.querySelector("#TitleScreenOverlay").style.display = "none";

@@ -1,7 +1,7 @@
 // GLOBAL, INITIALIZATION, & EVENTS
 
 // GLOBAL VARIABLES
-let coolMathGames = false;
+let coolMathGames = true;
 let developerMode = true;
 let screenRecorderMode = false;
 let beginningLevel = 0;
@@ -11,7 +11,7 @@ let graphics = "images"; // = "imagesTwo"; for darkMode!
 let levelsWpowers = [5, 0]; // the levels that hold powers
 let powers = [developerMode, developerMode]; // unlocked: [swapping, blocking]
 let unit = (Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50) ? Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 : 50;
-if (!coolMathGames) unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
+unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
 if (window.innerWidth < (width + 0.1) * unit) unit = Math.floor(window.innerWidth / (width + 0.1) / 4) * 4;
 if (screenRecorderMode) {
     unit = 864 / 12;
@@ -241,9 +241,16 @@ document.addEventListener("keyup", function(event) {
 	keyPressed(event.keyCode, 0);
 });
 
+window.addEventListener("resize", function(event) {
+    this.location.reload();
+});
+
 document.addEventListener("mousedown", function (e) { // stops blurring
-    e.preventDefault();
+    let focussed = document.body.querySelector(":focus");
+    if (gameBegun && dom.displayed > 0 && focussed != null) {
+        e.preventDefault();
+    }
     return false;
 });
 
-document.addEventListener('contextmenu', event => event.preventDefault());
+if (!developerMode) document.addEventListener('contextmenu', event => event.preventDefault());

@@ -195,7 +195,10 @@ let levels = {
             });
 
             //------- Coolmath Games -------//
-            if (coolMathGames) parent.cmgGameEvent("replay", (level + 1).toString());
+            if (coolMathGames) {
+                let parent = window.parent;
+                parent.cmgGameEvent("replay", (level + 1).toString());
+            }
             //------------------------------//
 
         } else if (level < this.levels.length) {
@@ -207,7 +210,10 @@ let levels = {
             this.currentLevelMap = this.levels[level].map(row => [...row]);
 
             //------- Coolmath Games -------//
-            if (coolMathGames) parent.cmgGameEvent("start", (level + 1).toString());
+            if (coolMathGames) {
+                let parent = window.parent;
+                parent.cmgGameEvent("start", (level + 1).toString());
+            }
             //------------------------------//
 
         } else {
@@ -670,6 +676,46 @@ levels.addLevel([
 0, 0 // swaps, blocks
 ); // VIDEO LEVEL 0
 */
+
+levels.addLevel([
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+    [0, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0],
+    [3, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1],
+],
+[[25, 0, 0], [90, 0, 0]], // [Gold, Silver] --> [seconds, swaps, blocks]
+0, // [goal-y]
+[
+    new Button(
+        3, [4, 10], 0,
+        [
+            new Spikes([[8, 10, 0], [9, 10, 0], [13, 7, 1]], 0),
+            new Blocks([[3, 6, 1], [8, 4, 0], [9, 4, 0]])
+        ]
+    ),
+    new Button(
+        1, [0, 0], 1,
+        [
+            new Lazer([6, [-1, 12]], "Kill", false)
+        ]
+    ),
+    new Button(
+        1, [12, 8], 0,
+        [
+            new Lazer([11, [-1, 9]], "Kill", false)
+        ]
+    ),
+],
+5, 2 // swaps, blocks
+); // ^ LEVEL index 35
 
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

@@ -9,8 +9,19 @@
     
     <body>
 
+        <button onclick="fullScreen();" style="position: absolute; left: 0; top: 0;">Full Screen!</button>
+
         <iframe src="SSindex.html"></iframe>
 
     </body>
+
+    <script>
+        function fullScreen() {
+            document.getElementsByTagName("iframe")[0].className = "fullScreen";
+        }
+        function cmgGameEvent(value, level = "") {
+            console.log("cmgGameEvent: " + value + " ||| level: " + level);
+        }
+    </script>
     
 </html>
