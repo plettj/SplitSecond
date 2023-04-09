@@ -321,7 +321,7 @@ let score = {
         [1, 0, 0],
         [2, 0, 0], // LEVEL 5 (not index)
         [2, 0, 0],
-        [2, 1, 0],
+        [1, 1, 0],
         [2, 1, 0],
         [2, 0, 0],
         [4, 0, 0], // LEVEL 10
@@ -359,11 +359,13 @@ let score = {
         [
             "You achieved <span class='gold'>Gold</span>, wondrous warrior!",
             "You've achieved <span class='gold'>Gold</span>, fantastic fighter!",
-            "You've accomplished <span class='gold'>Gold</span>, super solver!",
+            "You accomplished <span class='gold'>Gold</span>, super solver!",
             "Your rank is <span class='gold'>Gold</span>. Nothing left to achieve.",
             "Getting <span class='gold'>Gold</span> feels great, doesn't it?",
+            "Impressive work. Getting <span class='gold'>Gold</span> is not for the faint of heart.",
             "You've reached <span class='gold'>Gold</span> rank; nice work.",
             "Good luck with the rest of the levels!",
+            "Never let anyone tell you that you can't succeed, buddy.",
             "You're <span class='gold'>Gold</span>, my friend.",
             "Excellent job perfoming at a <span class='gold'>Gold</span>-medal level.",
             "Don't stop working hard to get that <span class='gold'>Gold</span> rank!",
@@ -749,7 +751,7 @@ levels.addLevel([
 [[8, 0, 0], [25, 0, 1]],
 0,
 [],
-0, 3
+1, 3
 ); // ^ LEVEL index 9
 levels.addLevel([
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
