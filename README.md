@@ -2,15 +2,15 @@
 
 In a 3-dimensional pixel-art world, take Jiffy the Dino through a maze of mind-bending un-reality to conquer impossible puzzles!
 
-Play it now at [CoolmathGames.com](https://www.coolmathgames.com/0-split-second)!
+Play it now at [CoolmathGames.com](https://www.coolmathgames.com/0-split-second), or on [plett.fun](https://plett.fun/split-second).
 
 ### Gameplay
 
 Control your movement through space and time using these controls.
 
-- AWD/←↑→   --->   Run and Jump
-- S/↓   --->   Create a Dino-Block
-- E/space   --->   Swap the direction of time!
+- AWD/←↑→ ---> Run and Jump
+- S/↓ ---> Create a Dino-Block
+- E/space ---> Swap the direction of time!
 
 ### License
 

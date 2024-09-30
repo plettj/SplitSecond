@@ -1,554 +1,617 @@
 * {
-    /*Top Right Bottom Left*/
-    margin: 0;
-    user-select: none;
-    -webkit-user-select: none;
+  /*Top Right Bottom Left*/
+  margin: 0;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 @font-face {
-    font-family: Arcology; src: url('fonts/Arcology.ttf');
+  font-family: Arcology;
+  src: url("fonts/Arcology.ttf");
 }
 @font-face {
-    font-family: VCR_OSD; src: url('fonts/VCR_OSD_MONO_1.001.ttf');
+  font-family: VCR_OSD;
+  src: url("fonts/VCR_OSD_MONO_1.001.ttf");
 }
 @font-face {
-    font-family: D_D; src: url('fonts/DisposableDroidBB.ttf');
+  font-family: D_D;
+  src: url("fonts/DisposableDroidBB.ttf");
 }
 @font-face {
-    font-family: D_D_I; src: url('fonts/DisposableDroidBB_ital.ttf');
+  font-family: D_D_I;
+  src: url("fonts/DisposableDroidBB_ital.ttf");
 }
 
 body {
-    background-color: #343538;
-    --darkMode: rgba(0, 0, 0, 0.01);
-    --darkMode2: rgba(0, 0, 0, 0.01);
-    --coolmathGamesScreen: url();
+  background-color: #343538;
+  --darkMode: rgba(0, 0, 0, 0.01);
+  --darkMode2: rgba(0, 0, 0, 0.01);
+  --coolmathGamesScreen: url();
 
-    --pauseButton: url("images/Pause.png");
-    --playButton: url("images/Play.png");
-    --titleScreen: url("images/TitleScreen.png");
-    --modeValue: 255;
-    --x: 1;
-    --y: 1;
-    --g1: #f0ec2e;
-    --g2: #b5a926;
-    --g3: #f7fac8;
-    --s1: #b6baba;
-    --s2: #8c8d8f;
-    --s3: #e6e8e7;
-    --b1: #f07026;
-    --b2: #96461e;
-    --b3: #f5d7b3;
-    --u1: #000000;
-    --u2: #000000; /* for a slight gradient on the unsolved levels */
+  --pauseButton: url("images/Pause.png");
+  --playButton: url("images/Play.png");
+  --titleScreen: url("images/TitleScreen.png");
+  --modeValue: 255;
+  --x: 1;
+  --y: 1;
+  --g1: #f0ec2e;
+  --g2: #b5a926;
+  --g3: #f7fac8;
+  --s1: #b6baba;
+  --s2: #8c8d8f;
+  --s3: #e6e8e7;
+  --b1: #f07026;
+  --b2: #96461e;
+  --b3: #f5d7b3;
+  --u1: #000000;
+  --u2: #000000; /* for a slight gradient on the unsolved levels */
 
-    overflow: hidden;
-    font-family: Arcology;
-    color: rgb(45, 45, 45);
+  overflow: hidden;
+  font-family: Arcology;
+  color: rgb(45, 45, 45);
 }
 
 canvas {
-    position: absolute;
-    left: calc((100% - var(--unit) * var(--width)) / 2);
-    top: calc((100% - var(--unit) * var(--height)) / 2);
-    background-color: rgba(0, 0, 0, 0);
-    /* filter: grayscale(100%); */
+  position: absolute;
+  left: calc((100% - var(--unit) * var(--width)) / 2);
+  top: calc((100% - var(--unit) * var(--height)) / 2);
+  background-color: rgba(0, 0, 0, 0);
+  /* filter: grayscale(100%); */
 }
 
 .cover {
-    position: absolute;
-    width: calc(var(--unit) * var(--width));
-    height: calc(var(--unit) * var(--height));
-    left: calc((100% - var(--unit) * var(--width)) / 2);
-    top: calc((100% - var(--unit) * var(--height)) / 2);
-    background-color: rgba(0, 0, 0, 0.01);
+  position: absolute;
+  width: calc(var(--unit) * var(--width));
+  height: calc(var(--unit) * var(--height));
+  left: calc((100% - var(--unit) * var(--width)) / 2);
+  top: calc((100% - var(--unit) * var(--height)) / 2);
+  background-color: rgba(0, 0, 0, 0.01);
 }
 .cover.one {
-    transition: backdrop-filter 0.2s ease-in-out;
-    transition-delay: 0.2s;
+  transition: backdrop-filter 0.2s ease-in-out;
+  transition-delay: 0.2s;
 }
 .cover.two {
-    transition: backdrop-filter 0.4s ease-in-out;
+  transition: backdrop-filter 0.4s ease-in-out;
 }
 .cover.one.on {
-    /*display: none; Not sure if I want greyscale; I think I do. */
-    -webkit-backdrop-filter: grayscale(100%);
-    backdrop-filter: grayscale(100%);
-    background-color: var(--darkMode);
+  /*display: none; Not sure if I want greyscale; I think I do. */
+  -webkit-backdrop-filter: grayscale(100%);
+  backdrop-filter: grayscale(100%);
+  background-color: var(--darkMode);
 }
 .cover.two.on {
-    -webkit-backdrop-filter: blur(calc(var(--unit) / 5));
-    backdrop-filter: blur(calc(var(--unit) / 5));
-    background-color: var(--darkMode2);
+  -webkit-backdrop-filter: blur(calc(var(--unit) / 5));
+  backdrop-filter: blur(calc(var(--unit) / 5));
+  background-color: var(--darkMode2);
 }
 .cover.three {
-    pointer-events: none;
-    outline: calc(var(--unit) * var(--width) * 2) solid black;
+  pointer-events: none;
+  outline: calc(var(--unit) * var(--width) * 2) solid black;
 }
 
 @keyframes textFly {
-    from {
-        top: calc(var(--unit) * -5);
-    } to {
-        top: 100%;
-    }
+  from {
+    top: calc(var(--unit) * -5);
+  }
+  to {
+    top: 100%;
+  }
 }
 @keyframes menuFly {
-    from {
-        top: -100%;
-    } to {
-        top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
-    }
+  from {
+    top: -100%;
+  }
+  to {
+    top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
+  }
 }
 @keyframes menuFlyOut {
-    from {
-        top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
-    } to {
-        top: 100%;
-    }
+  from {
+    top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
+  }
+  to {
+    top: 100%;
+  }
 }
 
 .bigText {
-    position: absolute;
-    font-size: calc(var(--unit) * 1.5);
-    text-align: center;
-    width: 100%;
-    top: calc(var(--unit) * -5);
-    color: black;
-    display: none;
+  position: absolute;
+  font-size: calc(var(--unit) * 1.5);
+  text-align: center;
+  width: 100%;
+  top: calc(var(--unit) * -5);
+  color: black;
+  display: none;
 }
 .small {
-    font-size: calc(var(--unit) / 2);
-    margin: auto;
-    margin-top: calc(var(--unit) * 1);
-    text-overflow: initial;
-    -webkit-text-stroke-width: 0;
-    width: calc(var(--unit) * 6);
+  font-size: calc(var(--unit) / 2);
+  margin: auto;
+  margin-top: calc(var(--unit) * 1);
+  text-overflow: initial;
+  -webkit-text-stroke-width: 0;
+  width: calc(var(--unit) * 6);
 }
 #NextLevel {
-    -webkit-text-fill-color: white; /* Will override color (regardless of order) */
-    -webkit-text-stroke-width: calc(var(--unit) / 15);
-    -webkit-text-stroke-color: black;
+  -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+  -webkit-text-stroke-width: calc(var(--unit) / 15);
+  -webkit-text-stroke-color: black;
 }
 .bigText.on {
-    display: block;
-    animation: textFly 1.2s cubic-bezier(.2, 1, .8, 0) 0.4s;
+  display: block;
+  animation: textFly 1.2s cubic-bezier(0.2, 1, 0.8, 0) 0.4s;
 }
 
 #Pause {
-    position: absolute;
-    width: var(--unit);
-    height: var(--unit);
-    top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
-    right: calc((100% - var(--unit) * (var(--width) - 0.6)) / 2);
-    background-image: var(--pauseButton);
-    background-size: var(--unit);
-    cursor: pointer;
-    opacity: 1;
-    transition-duration: 0.1s;
-    transition-property: opacity;
-    cursor: pointer;
+  position: absolute;
+  width: var(--unit);
+  height: var(--unit);
+  top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
+  right: calc((100% - var(--unit) * (var(--width) - 0.6)) / 2);
+  background-image: var(--pauseButton);
+  background-size: var(--unit);
+  cursor: pointer;
+  opacity: 1;
+  transition-duration: 0.1s;
+  transition-property: opacity;
+  cursor: pointer;
 }
 #Pause.off {
-    opacity: 0;
-    pointer-events: none;
+  opacity: 0;
+  pointer-events: none;
 }
 #Pause:hover {
-    background-position-y: bottom;
-    height: calc(var(--unit) * 11 / 10);
-    top: calc((100% - var(--unit) * (var(--height) - 0.4)) / 2);
+  background-position-y: bottom;
+  height: calc(var(--unit) * 11 / 10);
+  top: calc((100% - var(--unit) * (var(--height) - 0.4)) / 2);
 }
 
-.menu {/* All the menu pages. */
-    position: absolute;
-    top: -100%;
-    left: calc((100% - var(--unit) * (var(--width) - 0.6)) / 2);
-    width: calc(var(--unit) * (var(--width) - 0.6));
-    height: calc(var(--unit) * (var(--height) - 0.6));
+.menu {
+  /* All the menu pages. */
+  position: absolute;
+  top: -100%;
+  left: calc((100% - var(--unit) * (var(--width) - 0.6)) / 2);
+  width: calc(var(--unit) * (var(--width) - 0.6));
+  height: calc(var(--unit) * (var(--height) - 0.6));
 }
 .menu.on {
-    animation: menuFly 0.4s cubic-bezier(.4, 1, .6, 1) 0s 1 both;
+  animation: menuFly 0.4s cubic-bezier(0.4, 1, 0.6, 1) 0s 1 both;
 }
 .menu.off {
-    animation: menuFlyOut 0.3s cubic-bezier(.31, .68, .46, .83) 0s 1 none;
-    top: 100%;
+  animation: menuFlyOut 0.3s cubic-bezier(0.31, 0.68, 0.46, 0.83) 0s 1 none;
+  top: 100%;
 }
 
 .title {
-    font-size: var(--unit);
-    text-align: center;
-    color: black;
-    margin-top: calc(var(--unit) * 1 / 5);
+  font-size: var(--unit);
+  text-align: center;
+  color: black;
+  margin-top: calc(var(--unit) * 1 / 5);
 }
 
 .settings {
-    position: absolute;
-    left: calc(var(--unit) * 3 / 10);
-    top: calc(var(--unit) * 3 / 10);
-    width: calc(var(--unit) * 9 / 10);
-    height: calc(var(--unit) * 9 / 10);
-    background-image: url("images/Buttons.png");
-    background-size: calc(var(--unit) * 9 / 5);
-    cursor: pointer;
+  position: absolute;
+  left: calc(var(--unit) * 3 / 10);
+  top: calc(var(--unit) * 3 / 10);
+  width: calc(var(--unit) * 9 / 10);
+  height: calc(var(--unit) * 9 / 10);
+  background-image: url("images/Buttons.png");
+  background-size: calc(var(--unit) * 9 / 5);
+  cursor: pointer;
 }
 .settings:hover {
-    background-position-x: calc(var(--unit) / 10);
+  background-position-x: calc(var(--unit) / 10);
 }
 .back {
-    position: absolute;
-    right: calc(var(--unit) * 0.3);
-    top: calc(var(--unit) * 0.3);
-    width: calc(var(--unit) * 0.9);
-    height: calc(var(--unit) * 0.9);
-    background-image: url("images/Buttons.png");
-    background-size: calc(var(--unit) * 9 / 5);
-    background-position-x: right;
-    cursor: pointer;
+  position: absolute;
+  right: calc(var(--unit) * 0.3);
+  top: calc(var(--unit) * 0.3);
+  width: calc(var(--unit) * 0.9);
+  height: calc(var(--unit) * 0.9);
+  background-image: url("images/Buttons.png");
+  background-size: calc(var(--unit) * 9 / 5);
+  background-position-x: right;
+  cursor: pointer;
 }
 .back:hover {
-    background-position-x: calc(var(--unit) * 0.81);
+  background-position-x: calc(var(--unit) * 0.81);
 }
-.back:focus,.settings:focus {
-    border-bottom: calc(var(--unit) * 0.06) solid black;
-    outline: none;
+.back:focus,
+.settings:focus {
+  border-bottom: calc(var(--unit) * 0.06) solid black;
+  outline: none;
 }
 input[type="checkbox"] {
-    -webkit-appearance: none;
-    background-color: black;
-    border: calc(var(--unit) / 16) solid black;
-    padding: calc(var(--unit) / 6);
-    cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: black;
+  border: calc(var(--unit) / 16) solid black;
+  padding: calc(var(--unit) / 6);
+  cursor: pointer;
 }
-input[type="checkbox"]:hover, input[type="checkbox"]:checked:active {
-    background-color: #444;
+input[type="checkbox"]:hover,
+input[type="checkbox"]:checked:active {
+  background-color: #444;
 }
-input[type="checkbox"]:checked:hover, input[type="checkbox"]:active {
-    background-color: #ddd;
+input[type="checkbox"]:checked:hover,
+input[type="checkbox"]:active {
+  background-color: #ddd;
 }
 input[type="checkbox"]:checked {
-    background-color: white;
+  background-color: white;
 }
 #InfoButton {
-    position: absolute;
-    border: none;
-    outline: none;
-    font-family: D_D;
-    text-align: left;
-    font-size: calc(var(--unit) * 0.35);
-    left: calc(var(--unit) * 12);
-    color: black;
-    background-color: rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-    top: calc(var(--unit) * 6.65);
-    height: calc(var(--unit) * 0.6);
-    padding: calc(var(--unit) * 0.1) calc(var(--unit) * 0);
-    width: calc(var(--unit) * 1.3);
-    transition-duration: 0.3s;
-    -o-transition-duration: 0.3s;
-    -moz-transition-duration: 0.3;
-    -webkit-transition-duration: 0.3s;
+  position: absolute;
+  border: none;
+  outline: none;
+  font-family: D_D;
+  text-align: left;
+  font-size: calc(var(--unit) * 0.35);
+  left: calc(var(--unit) * 12);
+  color: black;
+  background-color: rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+  top: calc(var(--unit) * 6.65);
+  height: calc(var(--unit) * 0.6);
+  padding: calc(var(--unit) * 0.1) calc(var(--unit) * 0);
+  width: calc(var(--unit) * 1.3);
+  transition-duration: 0.3s;
+  -o-transition-duration: 0.3s;
+  -moz-transition-duration: 0.3;
+  -webkit-transition-duration: 0.3s;
 }
 #InfoButton h2 {
-    font-size: calc(var(--unit) * 0.45);
-    text-align: center;
-    font-weight: 200;
+  font-size: calc(var(--unit) * 0.45);
+  text-align: center;
+  font-weight: 200;
 }
 #InfoButton:hover {
-    background-color: rgba(0, 0, 0, 0.08);
+  background-color: rgba(0, 0, 0, 0.08);
 }
 #InfoButton span.white {
-    -webkit-text-fill-color: var(--s3);
+  -webkit-text-fill-color: var(--s3);
 }
 #InfoButton.active {
-    height: calc(var(--unit) * 5);
-    width: calc(var(--unit) * 3.5);
-    top: calc(var(--unit) * 4.35);
-    left: calc(var(--unit) * 11.8);
-    padding: calc(var(--unit) * 0.2) calc(var(--unit) * 0.15);
+  height: calc(var(--unit) * 5);
+  width: calc(var(--unit) * 3.5);
+  top: calc(var(--unit) * 4.35);
+  left: calc(var(--unit) * 11.8);
+  padding: calc(var(--unit) * 0.2) calc(var(--unit) * 0.15);
 }
-
 
 .button {
-    font-size: calc(var(--unit) * 0.5);
-    line-height: calc(var(--unit) * 0.7);
-    margin: auto;
-    margin-top: calc(var(--unit));
-    width: calc(var(--unit) * 3.5);
-    height: calc(var(--unit) * 0.7);
-    cursor: pointer;
-    color:rgb(45, 45, 45);
+  font-size: calc(var(--unit) * 0.5);
+  line-height: calc(var(--unit) * 0.7);
+  margin: auto;
+  margin-top: calc(var(--unit));
+  width: calc(var(--unit) * 3.5);
+  height: calc(var(--unit) * 0.7);
+  cursor: pointer;
+  color: rgb(45, 45, 45);
 }
 .button:hover {
-    height: calc(var(--unit) * 0.8);
-    margin-top: calc(var(--unit) * 0.9);
+  height: calc(var(--unit) * 0.8);
+  margin-top: calc(var(--unit) * 0.9);
 }
 .button:focus {
-    padding-left: calc(var(--unit) * 0.4);
-    color: black;
-    outline: none;
+  padding-left: calc(var(--unit) * 0.4);
+  color: black;
+  outline: none;
 }
 .button.play {
-    margin-top: calc(var(--unit) * 2.5);
+  margin-top: calc(var(--unit) * 2.5);
 }
 .button.play:hover {
-    margin-top: calc(var(--unit) * 2.4);
+  margin-top: calc(var(--unit) * 2.4);
 }
 .button span {
-    /*visibility: hidden;*/
-    font-size: calc(var(--unit) / 3);
-    line-height: calc(var(--unit) / 3);
-    letter-spacing: calc(var(--unit) / -10);
+  /*visibility: hidden;*/
+  font-size: calc(var(--unit) / 3);
+  line-height: calc(var(--unit) / 3);
+  letter-spacing: calc(var(--unit) / -10);
 }
 
 #Level {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    /*border-left: calc(var(--unit) * 0.1) solid black;*/
-    width: calc(var(--unit) * 5.5);
-    height: calc(var(--unit) * (var(--height) - 2.6));
-    padding: 0 calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.4); /*Top Right Bottom Left*/
-    color: black;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  /*border-left: calc(var(--unit) * 0.1) solid black;*/
+  width: calc(var(--unit) * 5.5);
+  height: calc(var(--unit) * (var(--height) - 2.6));
+  padding: 0 calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.4); /*Top Right Bottom Left*/
+  color: black;
 }
 .lsize {
-    position: absolute;
-    left: calc(var(--unit) * 0.36);
-    top: 0;
-    width: calc(var(--unit) * var(--width) * 0.353);
-    height: calc(var(--unit) * var(--height) * 0.353);
+  position: absolute;
+  left: calc(var(--unit) * 0.36);
+  top: 0;
+  width: calc(var(--unit) * var(--width) * 0.353);
+  height: calc(var(--unit) * var(--height) * 0.353);
 }
 #LNumber {
-    color:rgba(0, 0, 0, 0.45);
-    text-align: center;
-    font-size: calc(var(--unit) * 2.4);
-    line-height: calc(var(--unit) * var(--height) * 0.33);
+  color: rgba(0, 0, 0, 0.45);
+  text-align: center;
+  font-size: calc(var(--unit) * 2.4);
+  line-height: calc(var(--unit) * var(--height) * 0.33);
 }
 #LCanvas {
-    background-color: rgba(0, 0, 0, 0.1);
-    /*filter: grayscale(100%) contrast(180%) brightness(80%);*/
+  background-color: rgba(0, 0, 0, 0.1);
+  /*filter: grayscale(100%) contrast(180%) brightness(80%);*/
 }
 
 .scroll {
-    position: absolute;
-    left: calc(var(--unit) * -0.1);
-    bottom: 0;
-    padding-right: calc(var(--unit) * 0.2);
-    width: calc(var(--unit) * 9.2);
-    height: calc(var(--unit) * 9.4);
-    overflow-y: scroll;
+  position: absolute;
+  left: calc(var(--unit) * -0.1);
+  bottom: 0;
+  padding-right: calc(var(--unit) * 0.2);
+  width: calc(var(--unit) * 9.2);
+  height: calc(var(--unit) * 9.4);
+  overflow-y: scroll;
 }
 .scroll::-webkit-scrollbar {
-    width: calc(var(--unit) * 0.15);
+  width: calc(var(--unit) * 0.15);
 }
 .scroll::-webkit-scrollbar-track {
-    background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .scroll::-webkit-scrollbar-thumb {
-    background: black;
+  background: black;
 }
 .scroll::-webkit-scrollbar-thumb:hover {
-    background: rgb(50, 50, 50); 
+  background: rgb(50, 50, 50);
 }
 #Select {
-    margin-top: calc(var(--unit) * -0.15);
-    border-spacing: calc(var(--unit) * 0.15);
+  margin-top: calc(var(--unit) * -0.15);
+  border-spacing: calc(var(--unit) * 0.15);
 }
 #Select tr {
-    height: calc(var(--unit) * (9.3 / 4 - 0.3));
-    font-size: calc(var(--unit) * 0.7);
-    text-align: center;
-    color: black;
+  height: calc(var(--unit) * (9.3 / 4 - 0.3));
+  font-size: calc(var(--unit) * 0.7);
+  text-align: center;
+  color: black;
 }
 #Select td {
-    width: calc(var(--unit) * 9.3 / 4);
-    background-color: rgba(0, 0, 0, 0.1);
-    line-height: calc(var(--unit) * (9.3 / 4 - 0.3));
-    padding: 0;
+  width: calc(var(--unit) * 9.3 / 4);
+  background-color: rgba(0, 0, 0, 0.1);
+  line-height: calc(var(--unit) * (9.3 / 4 - 0.3));
+  padding: 0;
 }
 #Select td.locked {
-    color: rgba(0, 0, 0, 0.5);
+  color: rgba(0, 0, 0, 0.5);
 }
 #Select td:not(.locked):focus {
-    color: white;
-    background-color: rgba(0, 0, 0, 0.45);
-    outline: none;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.45);
+  outline: none;
 }
 
 #Select td:not(.locked) .bar {
-    height: calc(var(--unit) * 0.15);
-    width: 100%;
-    margin-top: calc(var(--unit) * -0.1);
+  height: calc(var(--unit) * 0.15);
+  width: 100%;
+  margin-top: calc(var(--unit) * -0.1);
 }
 .bar {
-    background-image: linear-gradient(-0.125turn, var(--u1), var(--u2), var(--u1));
+  background-image: linear-gradient(
+    -0.125turn,
+    var(--u1),
+    var(--u2),
+    var(--u1)
+  );
 }
 .bar.bronze {
-    background-image: linear-gradient(0.125turn, var(--b1), var(--b2), var(--b1), var(--b3), var(--b1));
+  background-image: linear-gradient(
+    0.125turn,
+    var(--b1),
+    var(--b2),
+    var(--b1),
+    var(--b3),
+    var(--b1)
+  );
 }
 .bar.silver {
-    background-image: linear-gradient(0.125turn, var(--s1), var(--s2), var(--s1), var(--s3), var(--s1));
+  background-image: linear-gradient(
+    0.125turn,
+    var(--s1),
+    var(--s2),
+    var(--s1),
+    var(--s3),
+    var(--s1)
+  );
 }
 .bar.gold {
-    background-image: linear-gradient(0.125turn, var(--g1), var(--g2), var(--g1), var(--g3), var(--g1));
+  background-image: linear-gradient(
+    0.125turn,
+    var(--g1),
+    var(--g2),
+    var(--g1),
+    var(--g3),
+    var(--g1)
+  );
 }
 
 #LRankHolder {
-    margin-top: calc(var(--unit) * (var(--height) * 0.353 + 0.2));
-    margin-left: calc(var(--unit) * -0.03);
-    width: calc(var(--unit) * var(--width) * 0.353);
-    font-size: calc(var(--unit) * 0.35);
-    text-align: center;
-    padding: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.2) 0;
-    background: linear-gradient(-0.125turn, black, black);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    -webkit-text-stroke-width: 0px;
-    -webkit-text-stroke-color: black;
+  margin-top: calc(var(--unit) * (var(--height) * 0.353 + 0.2));
+  margin-left: calc(var(--unit) * -0.03);
+  width: calc(var(--unit) * var(--width) * 0.353);
+  font-size: calc(var(--unit) * 0.35);
+  text-align: center;
+  padding: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.2) 0;
+  background: linear-gradient(-0.125turn, black, black);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: 0px;
+  -webkit-text-stroke-color: black;
 }
 #LRankHolder.gold {
-    background: linear-gradient(0.125turn, var(--g1) 40%, var(--g2) 46%, var(--g1), var(--g3) 54%, var(--g1) 60%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-stroke-width: 1px;
+  background: linear-gradient(
+    0.125turn,
+    var(--g1) 40%,
+    var(--g2) 46%,
+    var(--g1),
+    var(--g3) 54%,
+    var(--g1) 60%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke-width: 1px;
 }
 #LRankHolder.silver {
-    background-image: linear-gradient(0.125turn, var(--s1) 35%, var(--s2) 43%, var(--s1), var(--s3) 57%, var(--s1) 65%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-stroke-width: 1px;
+  background-image: linear-gradient(
+    0.125turn,
+    var(--s1) 35%,
+    var(--s2) 43%,
+    var(--s1),
+    var(--s3) 57%,
+    var(--s1) 65%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke-width: 1px;
 }
 #LRankHolder.bronze {
-    background-image: linear-gradient(0.125turn, var(--b1) 35%, var(--b2) 43%, var(--b1), var(--b3) 57%, var(--b1) 65%);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-stroke-width: 1px;
+  background-image: linear-gradient(
+    0.125turn,
+    var(--b1) 35%,
+    var(--b2) 43%,
+    var(--b1),
+    var(--b3) 57%,
+    var(--b1) 65%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-stroke-width: 1px;
 }
 .line {
-    position: relative;
-    height: calc(var(--unit) * 0.05);
-    background-color: black;
-    margin-top: calc(var(--unit) * 0.18);
-    width: calc(var(--unit) * 0.85);
-    transition-duration: 0.3s;
+  position: relative;
+  height: calc(var(--unit) * 0.05);
+  background-color: black;
+  margin-top: calc(var(--unit) * 0.18);
+  width: calc(var(--unit) * 0.85);
+  transition-duration: 0.3s;
 }
 .line.left {
-    float: left;
+  float: left;
 }
 .line.right {
-    float: right;
+  float: right;
 }
 .line.gold {
-    width: calc(var(--unit) * 1.4);
+  width: calc(var(--unit) * 1.4);
 }
-.line.silver,.line.bronze {
-    width: calc(var(--unit) * 1.25);
+.line.silver,
+.line.bronze {
+  width: calc(var(--unit) * 1.25);
 }
-
 
 #LMessage {
-    margin-left: calc(var(--unit) * -0.03);
-    width: calc(var(--unit) * var(--width) * 0.353);
-    height: calc(var(--unit) * 0.9);
-    font-size: calc(var(--unit) * 0.35);
-    font-family: D_D;
-    padding: calc(var(--unit) * 0.1) 0 calc(var(--unit) * 0.3) 0;
+  margin-left: calc(var(--unit) * -0.03);
+  width: calc(var(--unit) * var(--width) * 0.353);
+  height: calc(var(--unit) * 0.9);
+  font-size: calc(var(--unit) * 0.35);
+  font-family: D_D;
+  padding: calc(var(--unit) * 0.1) 0 calc(var(--unit) * 0.3) 0;
 }
 #LMessage span {
-    -webkit-text-fill-color: black;
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black;
+  -webkit-text-fill-color: black;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
 }
 #LMessage span.ital {
-    font-family: D_D_I;
-    -webkit-text-stroke-width: 0px;
+  font-family: D_D_I;
+  -webkit-text-stroke-width: 0px;
 }
 #LMessage span.gold {
-    -webkit-text-fill-color: var(--g1);
+  -webkit-text-fill-color: var(--g1);
 }
 #LMessage span.silver {
-    -webkit-text-fill-color: var(--s2);
+  -webkit-text-fill-color: var(--s2);
 }
 #LMessage span.bronze {
-    -webkit-text-fill-color: var(--b1);
+  -webkit-text-fill-color: var(--b1);
 }
 #ProgressBack {
-    background-color: rgba(0, 0, 0, 0.1);
-    height: calc(var(--unit) * 0.15);
-    width: calc(var(--unit) * var(--width) * 0.35);
-    margin: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.5) 0;
-    position: relative;
+  background-color: rgba(0, 0, 0, 0.1);
+  height: calc(var(--unit) * 0.15);
+  width: calc(var(--unit) * var(--width) * 0.35);
+  margin: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 0.5) 0;
+  position: relative;
 }
 #ProgressFill {
-    height: 100%;
-    width: 3.5%;
-    margin: 0;
-    transition-duration: 0.3s;
-    background-image: linear-gradient(0.125turn, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.45) calc(100% - var(--unit) * 0.15), transparent calc(100% - var(--unit) * 0.15));
+  height: 100%;
+  width: 3.5%;
+  margin: 0;
+  transition-duration: 0.3s;
+  background-image: linear-gradient(
+    0.125turn,
+    rgba(0, 0, 0, 0.45) 0%,
+    rgba(0, 0, 0, 0.45) calc(100% - var(--unit) * 0.15),
+    transparent calc(100% - var(--unit) * 0.15)
+  );
 }
 .progressMedal {
-    position: absolute;
-    width: calc(var(--unit) * 0.45);
-    height: calc(var(--unit) * 0.45);
-    top: calc(var(--unit) * -0.15);
-    background-image: url("images/Medals.png");
-    background-size: cover;
-    transition-duration: 0.1s;
+  position: absolute;
+  width: calc(var(--unit) * 0.45);
+  height: calc(var(--unit) * 0.45);
+  top: calc(var(--unit) * -0.15);
+  background-image: url("images/Medals.png");
+  background-size: cover;
+  transition-duration: 0.1s;
 }
 .progressMedal.bronze {
-    left: 0%;
+  left: 0%;
 }
 .progressMedal.silver {
-    left: 90%;
-    background-position: 50%;
+  left: 90%;
+  background-position: 50%;
 }
 .progressMedal.gold {
-    right: -1%;
-    background-position: 100%;
+  right: -1%;
+  background-position: 100%;
 }
 
 #Scores {
-    font-family: D_D;
-    font-size: calc(var(--unit) * 0.45);
-    margin: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 1.2) 0;
-    border-collapse: collapse;
-    width: calc(var(--unit) * var(--width) * 0.35);
+  font-family: D_D;
+  font-size: calc(var(--unit) * 0.45);
+  margin: calc(var(--unit) * 0.2) 0 calc(var(--unit) * 1.2) 0;
+  border-collapse: collapse;
+  width: calc(var(--unit) * var(--width) * 0.35);
 }
 #Scores:not(.on) {
-    display: none;
+  display: none;
 }
 #Scores td {
-    margin: calc(var(--unit) * 0.5) 0 0 0;
+  margin: calc(var(--unit) * 0.5) 0 0 0;
 }
 #Scores td:first-child {
-    width: 60%;
+  width: 60%;
 }
 #Scores td:last-child {
-    text-align: right;
-    width: 40%;
-    font-family: VCR_OSD;
-    font-size: calc(var(--unit) * 0.45);
-    -webkit-text-fill-color: black;
-    -webkit-text-stroke-width: 1px;
-    -webkit-text-stroke-color: black;
+  text-align: right;
+  width: 40%;
+  font-family: VCR_OSD;
+  font-size: calc(var(--unit) * 0.45);
+  -webkit-text-fill-color: black;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
 }
 #Scores td.gold {
-    -webkit-text-fill-color: var(--g1);
+  -webkit-text-fill-color: var(--g1);
 }
 #Scores td.silver {
-    -webkit-text-fill-color: var(--s2);
+  -webkit-text-fill-color: var(--s2);
 }
 #Scores td.bronze {
-    -webkit-text-fill-color: var(--b1);
+  -webkit-text-fill-color: var(--b1);
 }
 #Scores span.white {
-    -webkit-text-fill-color: var(--s3);
+  -webkit-text-fill-color: var(--s3);
 }
 #Scores span.gold {
-    -webkit-text-fill-color: var(--g1);
+  -webkit-text-fill-color: var(--g1);
 }
 #Scores span.bronze {
-    -webkit-text-fill-color: var(--b1);
+  -webkit-text-fill-color: var(--b1);
 }
 /*
 #Scores td:not(.little):last-child.gold {
@@ -572,255 +635,273 @@ input[type="checkbox"]:checked {
 */
 
 .instruction {
-    position: absolute;
-    z-index: 1;
-    width: calc(var(--unit) * (var(--width) - 2));
-    height: calc(var(--unit) * 3);
-    left: calc((100% - var(--unit) * (var(--width) - 2)) / 2);
-    top: calc((100% - var(--unit) * (var(--height) - 4)) / 2);
-    color: rgba(0, 0, 0, 0.4);
-    font-family: D_D;
-    font-size: calc(var(--unit) * 1);
-    line-height: calc(var(--unit) * 0.9);
-    opacity: 1;
-    transition-duration: 0.1s;
-    pointer-events: none;
+  position: absolute;
+  z-index: 1;
+  width: calc(var(--unit) * (var(--width) - 2));
+  height: calc(var(--unit) * 3);
+  left: calc((100% - var(--unit) * (var(--width) - 2)) / 2);
+  top: calc((100% - var(--unit) * (var(--height) - 4)) / 2);
+  color: rgba(0, 0, 0, 0.4);
+  font-family: D_D;
+  font-size: calc(var(--unit) * 1);
+  line-height: calc(var(--unit) * 0.9);
+  opacity: 1;
+  transition-duration: 0.1s;
+  pointer-events: none;
 }
 .instruction.off {
-    opacity: 0;
+  opacity: 0;
 }
 .instruction.permaOff {
-    display: none;
+  display: none;
 }
 .instruction .key {
-    border: calc(var(--unit) * 0.1) solid rgba(0, 0, 0, 0.65);
-    color: rgba(0, 0, 0, 0.65);
-    width: calc(var(--unit) * 0.8);
-    height: calc(var(--unit) * 0.8);
-    line-height: calc(var(--unit) * 0.9);
-    font-size: calc(var(--unit) * 0.8);
-    display: inline-block;
-    text-align: center;
+  border: calc(var(--unit) * 0.1) solid rgba(0, 0, 0, 0.65);
+  color: rgba(0, 0, 0, 0.65);
+  width: calc(var(--unit) * 0.8);
+  height: calc(var(--unit) * 0.8);
+  line-height: calc(var(--unit) * 0.9);
+  font-size: calc(var(--unit) * 0.8);
+  display: inline-block;
+  text-align: center;
 }
 .instruction .key.off {
-    background-color: transparent;
-    display: none;
+  background-color: transparent;
+  display: none;
 }
 .instruction p.text {
-    display: inline-block;
-    font-size: calc(var(--unit) * 0.8);
-    line-height: calc(var(--unit) * 0.9);
-    margin-left: 0;
+  display: inline-block;
+  font-size: calc(var(--unit) * 0.8);
+  line-height: calc(var(--unit) * 0.9);
+  margin-left: 0;
 }
 .instruction p.text.margin {
-    margin-left: calc(var(--unit) * 0.5);
+  margin-left: calc(var(--unit) * 0.5);
 }
-
 
 #Powers {
-    width: 50%;
-    height: calc(var(--unit) * 1);
-    position: absolute;
-    top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
-    left: calc((100% - var(--unit) * (var(--width) - 1)) / 2);
-    transition-duration: 0.1s;
-    pointer-events: none;
+  width: 50%;
+  height: calc(var(--unit) * 1);
+  position: absolute;
+  top: calc((100% - var(--unit) * (var(--height) - 0.6)) / 2);
+  left: calc((100% - var(--unit) * (var(--width) - 1)) / 2);
+  transition-duration: 0.1s;
+  pointer-events: none;
 }
 #Powers.off {
-    opacity: 0;
+  opacity: 0;
 }
 .powerBox {
-    width: calc(var(--unit) * 2.3);
-    height: calc(var(--unit) * 1);
-    display: inline-block;
-    opacity: 0;
-    transition-duration: 0.1s;
+  width: calc(var(--unit) * 2.3);
+  height: calc(var(--unit) * 1);
+  display: inline-block;
+  opacity: 0;
+  transition-duration: 0.1s;
 }
 .powerBox.on {
-    opacity: 1;
+  opacity: 1;
 }
 .powerBox div {
-    width: calc(var(--unit) * 0.6);
-    height: calc(var(--unit) * 0.6);
-    background-image: url("images/Symbols.png");
-    background-size: calc(var(--unit) * 1.4) calc(var(--unit) * 0.6);
-    margin-top: calc(var(--unit) * 0.2);
-    display: inline-block;
+  width: calc(var(--unit) * 0.6);
+  height: calc(var(--unit) * 0.6);
+  background-image: url("images/Symbols.png");
+  background-size: calc(var(--unit) * 1.4) calc(var(--unit) * 0.6);
+  margin-top: calc(var(--unit) * 0.2);
+  display: inline-block;
 }
 .powerBox div.Pblock {
-    background-position-x: calc(var(--unit) * -0.8);
+  background-position-x: calc(var(--unit) * -0.8);
 }
 .powerBox p {
-    display: inline-block;
-    margin-left: calc(var(--unit) * 0.9);
-    margin-top: calc(var(--unit) * 0.03);
-    font-size: calc(var(--unit) * 0.5);
-    color: rgba(0, 0, 0, 0.65);
-    transition-duration: 0.2s;
-    /*font-family: VCR_OSD;*/
+  display: inline-block;
+  margin-left: calc(var(--unit) * 0.9);
+  margin-top: calc(var(--unit) * 0.03);
+  font-size: calc(var(--unit) * 0.5);
+  color: rgba(0, 0, 0, 0.65);
+  transition-duration: 0.2s;
+  /*font-family: VCR_OSD;*/
 }
 .powerBox p.shake {
-    color: #d62a1d;
+  color: #d62a1d;
 }
 
 #SettingsMenu section {
-    width: 100%;
-    font-family: D_D;
+  width: 100%;
+  font-family: D_D;
 }
 #SettingsMenu section.settingsTop {
-    margin-top: calc(var(--unit) * 0.5);
-    height: calc(var(--unit) * 2.7);
-    line-height: calc(var(--unit) * 2);
+  margin-top: calc(var(--unit) * 0.5);
+  height: calc(var(--unit) * 2.7);
+  line-height: calc(var(--unit) * 2);
 }
 #SettingsMenu section.settingsTop p {
-    font-size: calc(var(--unit) * 0.45);
-    text-align: center;
+  font-size: calc(var(--unit) * 0.45);
+  text-align: center;
 }
 #SettingsMenu section.settingsTop p {
-    font-size: calc(var(--unit) * 0.8);
+  font-size: calc(var(--unit) * 0.8);
 }
 #TotalScore {
-    color: black;
+  color: black;
 }
 #SettingsMenu section.settingsBottom {
-    padding-left: calc(var(--unit) * 0.4);
+  padding-left: calc(var(--unit) * 0.4);
 }
 #SettingsMenu section.settingsBottom input {
-    border: none;
-    outline: none;
-    float: left;
-    width: calc(var(--unit) * 0.35);
-    height: calc(var(--unit) * 0.35);
-    opacity: 0.5;
+  border: none;
+  outline: none;
+  float: left;
+  width: calc(var(--unit) * 0.35);
+  height: calc(var(--unit) * 0.35);
+  opacity: 0.5;
 }
 #SettingsMenu section.settingsBottom p {
-    display: inline-block;
-    font-size: calc(var(--unit) * 0.5);
-    margin-left: calc(var(--unit) * 0.4);
-    margin-top: calc(var(--unit) * 0.2);
-    height: calc(var(--unit) * 0.7);
+  display: inline-block;
+  font-size: calc(var(--unit) * 0.5);
+  margin-left: calc(var(--unit) * 0.4);
+  margin-top: calc(var(--unit) * 0.2);
+  height: calc(var(--unit) * 0.7);
 }
 #SettingsMenu div.button {
-    /*font-size: calc(var(--unit) * 0.6);*/
-    width: auto;
-    margin-top: calc(var(--unit) * 0.15);
+  /*font-size: calc(var(--unit) * 0.6);*/
+  width: auto;
+  margin-top: calc(var(--unit) * 0.15);
 }
 #SettingsMenu div.button:hover {
-    color: #d62a1d;
+  color: #d62a1d;
 }
 
 #CoolmathGamesOverlay {
-    position: absolute;
-    z-index: 3;
-    width: calc(var(--unit) * var(--width));
-    height: calc(var(--unit) * var(--height));
-    left: calc((100% - var(--unit) * var(--width)) / 2);
-    top: calc((100% - var(--unit) * var(--height)) / 2);
-    background-image: var(--coolmathGamesScreen);
-    background-color: black;
-    background-size: calc(var(--unit) * var(--width)) calc(var(--unit) * var(--height));
-    pointer-events: none;
-    opacity: 1;
-    transition-duration: 0.6s;
-    -o-transition-duration: 0.6s;
-    -moz-transition-duration: 0.6s;
-    -webkit-transition-duration: 0.6s;
+  position: absolute;
+  z-index: 3;
+  width: calc(var(--unit) * var(--width));
+  height: calc(var(--unit) * var(--height));
+  left: calc((100% - var(--unit) * var(--width)) / 2);
+  top: calc((100% - var(--unit) * var(--height)) / 2);
+  background-image: var(--coolmathGamesScreen);
+  background-color: black;
+  background-size: calc(var(--unit) * var(--width))
+    calc(var(--unit) * var(--height));
+  pointer-events: none;
+  opacity: 1;
+  transition-duration: 0.6s;
+  -o-transition-duration: 0.6s;
+  -moz-transition-duration: 0.6s;
+  -webkit-transition-duration: 0.6s;
 }
 
-#TitleScreen,#TitleScreenOverlay {
-    position: absolute;
-    width: calc(var(--unit) * var(--width));
-    height: calc(var(--unit) * var(--height));
-    left: calc((100% - var(--unit) * var(--width)) / 2);
-    top: calc((100% - var(--unit) * var(--height)) / 2);
-    z-index: 2;
+#TitleScreen,
+#TitleScreenOverlay {
+  position: absolute;
+  width: calc(var(--unit) * var(--width));
+  height: calc(var(--unit) * var(--height));
+  left: calc((100% - var(--unit) * var(--width)) / 2);
+  top: calc((100% - var(--unit) * var(--height)) / 2);
+  z-index: 2;
 }
 #TitleScreen {
-    background-image: var(--titleScreen);
-    background-color: rgba(var(--modeValue), var(--modeValue), var(--modeValue), 0);
-    background-size: calc(var(--unit) * var(--width)) calc(var(--unit) * var(--height));
+  background-image: var(--titleScreen);
+  background-color: rgba(
+    var(--modeValue),
+    var(--modeValue),
+    var(--modeValue),
+    0
+  );
+  background-size: calc(var(--unit) * var(--width))
+    calc(var(--unit) * var(--height));
 }
 #TitleScreenOverlay {
-    background-color: rgba(var(--modeValue), var(--modeValue), var(--modeValue), 0);
-    transition-duration: 0.5s;
-    pointer-events: none;
-    z-index: 3;
+  background-color: rgba(
+    var(--modeValue),
+    var(--modeValue),
+    var(--modeValue),
+    0
+  );
+  transition-duration: 0.5s;
+  pointer-events: none;
+  z-index: 3;
 }
 #TitleScreenOverlay.leaving {
-    background-color: rgba(var(--modeValue), var(--modeValue), var(--modeValue), 1);
+  background-color: rgba(
+    var(--modeValue),
+    var(--modeValue),
+    var(--modeValue),
+    1
+  );
 }
 #TitleScreen.gone {
-    background-image: none;
-    display: none;
+  background-image: none;
+  display: none;
 }
 #TitleScreen #FirstPlay {
-    background-color: transparent;
-    outline: none;
-    border: none;
-    background-image: var(--playButton);
-    background-size: calc(var(--unit) * 3) calc(var(--unit) * 2.5);
-    position: absolute;
-    width: calc(var(--unit) * 3);
-    height: calc(var(--unit) * 1.2);
-    left: calc((100% - var(--unit) * var(--width)) / 2 + var(--unit) * 6.5);
-    top: calc((100% - var(--unit) * var(--height)) / 2 + var(--unit) * 8.9);
-    cursor: pointer;
-    pointer-events: all;
+  background-color: transparent;
+  outline: none;
+  border: none;
+  background-image: var(--playButton);
+  background-size: calc(var(--unit) * 3) calc(var(--unit) * 2.5);
+  position: absolute;
+  width: calc(var(--unit) * 3);
+  height: calc(var(--unit) * 1.2);
+  left: calc((100% - var(--unit) * var(--width)) / 2 + var(--unit) * 6.5);
+  top: calc((100% - var(--unit) * var(--height)) / 2 + var(--unit) * 8.9);
+  cursor: pointer;
+  pointer-events: all;
 }
 #TitleScreen #FirstPlay:hover {
-    top: calc((100% - var(--unit) * var(--height)) / 2 + var(--unit) * 8.8);
-    height: calc(var(--unit) * 1.3);
-    background-size: calc(var(--unit) * 3) calc(var(--unit) * 2.5);
-    background-position-y: bottom;
+  top: calc((100% - var(--unit) * var(--height)) / 2 + var(--unit) * 8.8);
+  height: calc(var(--unit) * 1.3);
+  background-size: calc(var(--unit) * 3) calc(var(--unit) * 2.5);
+  background-position-y: bottom;
 }
 
 #ConfirmPopUp {
-    visibility: visible;
-    position: absolute;
-    width: calc(var(--unit) * var(--width));
-    height: calc(var(--unit) * var(--height));
-    left: calc((100% - var(--unit) * var(--width)) / 2);
-    top: calc((100% - var(--unit) * var(--height)) / 2);
-    background-color: rgba(0, 0, 0, 0.7);
+  visibility: visible;
+  position: absolute;
+  width: calc(var(--unit) * var(--width));
+  height: calc(var(--unit) * var(--height));
+  left: calc((100% - var(--unit) * var(--width)) / 2);
+  top: calc((100% - var(--unit) * var(--height)) / 2);
+  background-color: rgba(0, 0, 0, 0.7);
 }
 #ConfirmPopUp > .content {
-    position: absolute;
-    top: calc(var(--unit) * 4);
-    left: calc(var(--unit) * 5);
-    width: calc(var(--unit) * 5);
-    height: calc(var(--unit) * 4);
-    padding: calc(var(--unit) * 0.2) calc(var(--unit) * 0.5) 0 calc(var(--unit) * 0.5);
-    color: rgb(20, 20, 20);
-    font-size: calc(var(--unit) * 0.35);
-    font-family: D_D; 
-    background-color: rgba(255, 255, 255, 0.75);
+  position: absolute;
+  top: calc(var(--unit) * 4);
+  left: calc(var(--unit) * 5);
+  width: calc(var(--unit) * 5);
+  height: calc(var(--unit) * 4);
+  padding: calc(var(--unit) * 0.2) calc(var(--unit) * 0.5) 0
+    calc(var(--unit) * 0.5);
+  color: rgb(20, 20, 20);
+  font-size: calc(var(--unit) * 0.35);
+  font-family: D_D;
+  background-color: rgba(255, 255, 255, 0.75);
 }
 #ConfirmPopUp > .content > .confirmButton {
-    position: absolute;
-    outline: none;
-    border: none;
-    width: calc(var(--unit) * 4);
-    height: calc(var(--unit) / 2);
-    left: calc(var(--unit) * 1);
-    font-family: D_D;
-    text-align: center;
-    font-size: calc(var(--unit) * 0.35);
-    font-weight: 500;
-    cursor: pointer;
-    padding: calc(var(--unit) * 0.1) calc(var(--unit) * 0);
+  position: absolute;
+  outline: none;
+  border: none;
+  width: calc(var(--unit) * 4);
+  height: calc(var(--unit) / 2);
+  left: calc(var(--unit) * 1);
+  font-family: D_D;
+  text-align: center;
+  font-size: calc(var(--unit) * 0.35);
+  font-weight: 500;
+  cursor: pointer;
+  padding: calc(var(--unit) * 0.1) calc(var(--unit) * 0);
 }
 .confirmButton.cancel {
-    background-color: rgba(0, 0, 0, 0.6);
-    color: whitesmoke;
-    top: calc(var(--unit) * 2.6);
+  background-color: rgba(0, 0, 0, 0.6);
+  color: whitesmoke;
+  top: calc(var(--unit) * 2.6);
 }
 .confirmButton.confirm {
-    background-color: rgba(240, 240, 240, 0.43);
-    top: calc(var(--unit) * 3.3);
+  background-color: rgba(240, 240, 240, 0.43);
+  top: calc(var(--unit) * 3.3);
 }
 .confirmButton.cancel:hover {
-    background-color:rgba(20, 20, 20, 0.95);
+  background-color: rgba(20, 20, 20, 0.95);
 }
 .confirmButton.confirm:hover {
-    background-color:rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.9);
 }
