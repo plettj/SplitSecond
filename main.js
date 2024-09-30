@@ -2,6 +2,7 @@
 
 // GLOBAL VARIABLES
 let coolMathGames = false;
+let allUnlocked = false;
 let developerMode = false;
 let screenRecorderMode = false;
 let beginningLevel = 0;
@@ -9,17 +10,15 @@ let width = 16; // in units
 let height = 12;
 let graphics = "images"; // = "imagesTwo"; for darkMode!
 let levelsWpowers = [5, 8]; // the levels that hold powers
-let powers = [developerMode, developerMode]; // unlocked: [swapping, blocking]
+let powers = [allUnlocked, allUnlocked]; // unlocked: [swapping, blocking]
 let unit =
-  Math.floor(window.innerHeight / (height + 0.1) / 4) * 4 < 50
-    ? Math.floor(window.innerHeight / (height + 0.1) / 4) * 4
+  Math.floor(window.innerHeight / (height + 0.5) / 4) * 4 < 50
+    ? Math.floor(window.innerHeight / (height + 0.5) / 4) * 4
     : 50;
-unit = Math.floor(window.innerHeight / (height + 0.1) / 2) * 2;
-if (window.innerWidth < (width + 0.1) * unit)
-  unit = Math.floor(window.innerWidth / (width + 0.1) / 4) * 4;
-if (screenRecorderMode) {
-  unit = 864 / 12;
-}
+if (!coolMathGames)
+  unit = Math.floor(window.innerHeight / (height + 0.5) / 4) * 4;
+if (window.innerWidth < (width + 0.5) * unit)
+  unit = Math.floor(window.innerWidth / (width + 0.5) / 4) * 4;
 let pixel = unit / 10;
 document.body.style.setProperty("--unit", unit + "px");
 document.body.style.setProperty("--width", width);
@@ -44,20 +43,21 @@ let GFuel = 3; // number of game frames per ghost frame (ghosts are choppier wit
 let nextGhost = undefined;
 
 let currentURL = window.location.href;
-//console.log(currentURL);
+console.log(currentURL);
+
 if (
-  !developerMode &&
-  !(
-    (!coolMathGames && currentURL.includes("splitsecond.surge.sh")) ||
-    (coolMathGames && currentURL.includes(".coolmathgames.com"))
-  )
+  (!developerMode &&
+    !coolMathGames &&
+    (currentURL === "https://splitsecond.surge.sh" ||
+      currentURL === "https://plett.fun/split-second")) ||
+  (coolMathGames && currentURL.includes(".coolmathgames.com"))
 ) {
-  //throw {name: "INVALID_URL", message: "The game is being run illegally."};
+  throw { name: "INVALID_URL", message: "The game is being run illegally." };
 }
 
 let saved = {
   bestLevel: 0,
-  powers: [developerMode, developerMode],
+  powers: [allUnlocked || developerMode, allUnlocked || developerMode],
   autoStart: true,
   statisticTwo: false,
   darkMode: false,
@@ -100,15 +100,18 @@ if (!previousSaved) {
   }
   if (statisticTwo) GFuel = 1;
   else GFuel = 3;
-  //if (saved["scores"].length < 1) {
-  veryveryfirst = true;
-  //} else {
-  //    document.body.querySelector("#TitleScreen").style.display = "none";
-  //    gameBegun = true;
-  //    paused = false;
-  //}
+  if (saved["scores"].length < 1) {
+    veryveryfirst = true;
+  } else {
+    document.body.querySelector("#TitleScreen").style.display = "none";
+    gameBegun = true;
+    paused = false;
+  }
   // saved["scores"] is done over in the map.js file
 }
+
+// localStorage.setItem('saved', JSON.stringify(saved));
+// saved = JSON.parse(localStorage.getItem('saved'));
 
 setTimeout(function () {
   document.body.querySelector("#ProgressFill").classList.remove("silver");
@@ -162,6 +165,7 @@ window.onload = function () {
     document.body.querySelector(":focus").blur();
   dom.pauseButton.focus();
   score.init();
+
   if (coolMathGames) {
     setTimeout(function () {
       visible();
@@ -268,10 +272,8 @@ document.addEventListener(
     if (k == 9 || k == 38 || k == 40) {
       event.preventDefault();
     } else if (
-      !developerMode &&
-      (k == 123 ||
-        (event.ctrlKey && event.shiftKey && (k == 73 || k == 74)) ||
-        (event.metaKey && event.altKey && (k == 73 || k == 74)))
+      k == 123 ||
+      (event.ctrlKey && event.shiftKey && (k == 73 || k == 74))
     ) {
       event.preventDefault();
       return false;
@@ -285,18 +287,10 @@ document.addEventListener("keyup", function (event) {
   keyPressed(event.keyCode, 0);
 });
 
-window.addEventListener("resize", function (event) {
-  this.location.reload();
-});
-
 document.addEventListener("mousedown", function (e) {
-  // stops blurring
-  let focussed = document.body.querySelector(":focus");
-  if (gameBegun && dom.displayed > 0 && focussed != null) {
-    e.preventDefault();
-  }
-  return false;
+  // DON'T prevent default, otherwise it can't be properly focussed in an i-frame!
+  // e.preventDefault(); // stops blurring.
+  // return false;
 });
 
-if (!developerMode)
-  document.addEventListener("contextmenu", (event) => event.preventDefault());
+document.addEventListener("contextmenu", (event) => event.preventDefault());

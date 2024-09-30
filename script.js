@@ -688,7 +688,7 @@ function startGame() {
 
     //console.log(document.body.firstElementChild);
     document.body.firstElementChild.focus();
-    console.log(document.body.querySelector(":focus"));
+    // console.log(document.body.querySelector(":focus"));
   }, 500);
   setTimeout(function () {
     document.body.querySelector("#TitleScreenOverlay").style.display = "none";
